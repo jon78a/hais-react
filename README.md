@@ -14,3 +14,7 @@ npm run test
 
 1. [Image lazy loading](./docs/ImageLazyLoading.md)
 2. [테이블 구현](./docs/테이블%20구현.md)
+
+## Conventions
+
+1. .ts는 spaces:4, .tsx는 spaces:2로 통일한다.
