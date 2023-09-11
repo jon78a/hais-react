@@ -3,25 +3,6 @@ import type { YN } from "../../types"
 
 /**
 @startuml
-class Student {
-  String userId
-  String id
-  String scoreId
-  String name
-  Enum<1, 2, 3> grade
-}
-@enduml
- */
-export interface Student {
-    userId: string;
-    id: string;
-    scoreId: string;
-    name: string;
-    grade: number;    
-}
-
-/**
-@startuml
 class User {
   String id
   String email
@@ -34,12 +15,12 @@ class User {
 @enduml
  */
 export interface User {
-    id: string;
-    email: string;
-    password: string;
-    authType: AuthType;
-    activated: boolean;
-    serviceAgreement: YN;
-    marketingAgreement: YN;
-    privacyAgreement: YN;
+  id: string;
+  email: string;
+  password: string;
+  authType: AuthType;
+  activated: boolean;
+  serviceAgreement: YN;
+  marketingAgreement: YN;
+  privacyAgreement: YN;
 }

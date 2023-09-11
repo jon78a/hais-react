@@ -17,4 +17,4 @@ npm run test
 
 ## Conventions
 
-1. .ts는 spaces:4, .tsx는 spaces:2로 통일한다.
+.
