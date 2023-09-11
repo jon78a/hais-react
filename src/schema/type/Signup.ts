@@ -18,7 +18,7 @@ export type StudentProfile = {
     targetMajor: number[];
 }
 
-export type UserCredentialForm = {
+export type UserCredential = {
     email: string;
     password: string;
     passwordConfirm: string;
