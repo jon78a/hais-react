@@ -8,7 +8,7 @@ class Student {
   String id
   String scoreId
   String name
-  Integer grade
+  Enum<1, 2, 3> grade
 }
 @enduml
  */
@@ -27,9 +27,9 @@ class User {
   String email
   String password
   Boolean activated
-  "Y" | "N" marketingAgreement
-  "Y" | "N" serviceAgreement
-  "Y" | "N" privacyAgreement
+  Enum<"Y", "N"> marketingAgreement
+  Enum<"Y", "N"> serviceAgreement
+  Enum<"Y", "N"> privacyAgreement
 }
 @enduml
  */
