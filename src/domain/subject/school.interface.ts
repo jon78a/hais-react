@@ -40,7 +40,7 @@ export interface ProfileScore {
 class Student {
   String userId
   String id
-  Enum<"a", "b", "c"> category
+  Enum<"A", "B", "C", "D", "E" | null> category
   String name
   Enum<1, 2, 3> schoolYear
 }
@@ -49,7 +49,7 @@ class Student {
 export interface Student {
   userId: string;
   id: string;
-  category: SubjectCategoryCode;
+  category: SubjectCategoryCode | null;
   name: string;
   schoolYear: number;
 }
