@@ -53,3 +53,18 @@ export interface Student {
   name: string;
   schoolYear: number;
 }
+
+// Repositories
+export interface SubjectRepository {
+  getByCode: (code: string) => Subject;
+  getByCategory: (category: SubjectCategoryCode) => Subject;
+}
+
+export interface ProfileScoreRepository {
+  findByUser: (userId: string) => ProfileScore[];
+}
+
+export interface StudentRepository {
+  getByUser: (userId: string) => Student;
+  findAll: () => Student[];
+}

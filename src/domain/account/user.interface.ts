@@ -24,3 +24,10 @@ export interface User {
   marketingAgreement: YN;
   privacyAgreement: YN;
 }
+
+// Repositories
+export interface UserRepository {
+  findMe: () => User;
+  save: (user: User) => void;
+  delete: (userId: string) => void;
+}

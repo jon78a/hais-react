@@ -1,6 +1,8 @@
 import { atom } from "recoil";
 import { Student } from "./school.interface";
 
+import type { DataStateType } from "../../types";
+
 export const defaultStudent: Student = {
   userId: "",
   id: "",
@@ -9,7 +11,10 @@ export const defaultStudent: Student = {
   schoolYear: 0
 }
 
-export const studentState = atom<Student>({
+export const studentState = atom<DataStateType<Student>>({
   key: "subject/school/Student",
-  default: defaultStudent
+  default: {
+    data: defaultStudent,
+    loading: false
+  }
 });
