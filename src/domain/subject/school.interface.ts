@@ -3,7 +3,7 @@ import type { SubjectCategoryCode } from "../../policy/subject";
 
 /**
 @startuml
-class CommonSubject {
+class Subject {
   String id
   String code
   Enum<"a", "b", "c"> category
@@ -22,6 +22,7 @@ export interface Subject {
 @startuml
 class ProfileScore {
   String id
+  String userId
   String subjectCode
   GradeEnum grade
 }
@@ -29,6 +30,7 @@ class ProfileScore {
  */
 export interface ProfileScore {
   id: string;
+  userId: string;
   subjectCode: string;
   grade: GradeEnum;
 }

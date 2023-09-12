@@ -11,24 +11,18 @@ export enum GradeEnum {
 }
 
 export type CreditType = |
-  "A+" |
-  "A0" |
-  "B+" |
-  "B0" |
-  "C+" |
-  "C0" |
-  "D+" |
-  "D0" |
-  "F";
+  "A" |
+  "B" |
+  "C" |
+  "D" |
+  "E" |
+  "I";
 
 export const creditMap = {
-  "A+": 4.5,
-  "A0": 4.0,
-  "B+": 3.5,
-  "B0": 3.0,
-  "C+": 2.5,
-  "C0": 2.0,
-  "D+": 1.5,
-  "D0": 1.0,
-  "F": NaN
+  "A": 90,
+  "B": 80,
+  "C": 70,
+  "D": 60,
+  "E": 40,
+  "I": 0,
 }
