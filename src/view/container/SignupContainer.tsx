@@ -5,7 +5,7 @@ import { UserRepository } from "../../domain/account/user.interface";
 import { hasCheckedEssentialAgreement } from "../../policy/account";
 import { useSignupStep } from "../../recoil-hooks/useSignupStep";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
-import { NAME_REGEX } from "../../policy/account";
+import * as accountPolicy from "../../policy/account";
 import { studentState } from "../../domain/subject/school.impl";
 
 export default function SignupContainer({
@@ -81,7 +81,7 @@ export default function SignupContainer({
       @enduml
       */
       submitStudentInfo(form) {
-        if (!NAME_REGEX.test(form.name)) {
+        if (!accountPolicy.NAME_REGEX.test(form.name)) {
           setUserSnapshot({
             data: defaultUser,
             error: userErrorMap.NO_NAME,

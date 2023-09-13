@@ -1,5 +1,15 @@
 import type { AuthSessionStatusType } from "../../policy/auth";
 
+/**
+@startuml
+class AuthSession {
+  String id
+  String userId
+  number expiredAt
+  Enum<"REGISTER", "GRANT"> status
+}
+@enduml
+ */
 export interface AuthSession {
   id: string;
   userId: string;
@@ -7,6 +17,14 @@ export interface AuthSession {
   status: AuthSessionStatusType
 }
 
+/**
+@startuml
+class UserCredential {
+  String email
+  String password
+}
+@enduml
+ */
 export interface UserCredential {
   email: string;
   password: string;
