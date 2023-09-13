@@ -147,7 +147,6 @@ export default function SignupContainer({
       },
       /**
       @startuml submitCredential
-
       User -> Client: [Action] 제출 버튼 클릭
       Client -> Service: [Dispatch] 권한 정보 제출 (아이디/비밀번호)
       Service -> Model: 권한 정보 저장
