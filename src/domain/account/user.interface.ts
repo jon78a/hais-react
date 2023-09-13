@@ -1,5 +1,5 @@
 import type { AuthType } from "../../policy/auth";
-import type { YN } from "../../types"
+import type { ErrorDetail, YN } from "../../types"
 
 /**
 @startuml
@@ -18,16 +18,24 @@ export interface User {
   id: string;
   email: string;
   password: string;
-  authType: AuthType;
+  authType: AuthType | null;
   activated: boolean;
   serviceAgreement: YN;
   marketingAgreement: YN;
   privacyAgreement: YN;
 }
 
+export interface UserErrorMap {
+  SIGNUP_FAILED: ErrorDetail;
+  UNCHECKED_ESSENCIAL_AGREEMENT: ErrorDetail;
+  NO_NAME: ErrorDetail;
+  NO_SCHOOL_YEAR: ErrorDetail;
+  NO_SUBJECT_CATEGORY: ErrorDetail;
+}
+
 // Repositories
 export interface UserRepository {
-  findMe: () => User;
-  save: (user: User) => void;
-  delete: (userId: string) => void;
+  findMe: () => Promise<User>;
+  save: (user: User) => Promise<void>;
+  delete: (userId: string) => Promise<void>;
 }

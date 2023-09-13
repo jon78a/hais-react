@@ -56,15 +56,15 @@ export interface Student {
 
 // Repositories
 export interface SubjectRepository {
-  getByCode: (code: string) => Subject;
-  getByCategory: (category: SubjectCategoryCode) => Subject;
+  getByCode: (code: string) => Promise<Subject>;
+  getByCategory: (category: SubjectCategoryCode) => Promise<Subject>;
 }
 
 export interface ProfileScoreRepository {
-  findByUser: (userId: string) => ProfileScore[];
+  findByUser: (userId: string) => Promise<ProfileScore[]>;
 }
 
 export interface StudentRepository {
-  getByUser: (userId: string) => Student;
-  findAll: () => Student[];
+  getByUser: (userId: string) => Promise<Student>;
+  findAll: () => Promise<Student[]>;
 }

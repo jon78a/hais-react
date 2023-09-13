@@ -13,7 +13,6 @@ interface SignupService {
   selectVerification: (authType: SelectedAuth) => void;
   submitCredential: (form: UserCredential) => void;
   signupComplete: () => void;
-  redirect: () => void;
 }
 
 export const SignupContext = createContext<SignupService | undefined>(undefined);
