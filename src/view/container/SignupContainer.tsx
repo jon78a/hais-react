@@ -22,7 +22,7 @@ export default function SignupContainer({
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
   const [studentSnapshot, setStudentSnapshot] = useRecoilState(studentState);
 
-  const {step, setStep} = useSignupStep();
+  const {setStep} = useSignupStep();
 
   return (
     <SignupContext.Provider value={{
