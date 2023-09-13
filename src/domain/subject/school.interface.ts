@@ -1,5 +1,5 @@
 import type { GradeEnum } from "../../policy/score";
-import type { SubjectCategoryCode } from "../../policy/subject";
+import type { SubjectCategoryCode } from "../../policy/subjectCategory";
 
 /**
 @startuml

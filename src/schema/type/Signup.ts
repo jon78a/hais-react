@@ -1,4 +1,5 @@
 import type { AuthType } from "../../policy/auth";
+import type { SubjectCategoryCode } from "../../policy/subjectCategory";
 
 export type Agreement = {
   isAgreeMarketing: boolean;
@@ -9,6 +10,7 @@ export type Agreement = {
 export type StudentProfile = {
   name: string;
   schoolYear: number;
+  subjectCategory: SubjectCategoryCode;
   targetMajor: number[];
 }
 
@@ -18,10 +20,7 @@ export type UserCredential = {
   passwordConfirm: string;
 }
 
-export type OAuth = {
-  code: string;
-  authType: AuthType;
-}
+export type SelectedAuth = AuthType;
 
 export type AuthPayload = {
   email?: string;

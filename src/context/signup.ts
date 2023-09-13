@@ -3,15 +3,16 @@ import { createContext, useContext } from "react";
 import type {
   Agreement,
   StudentProfile,
-  UserCredential
+  UserCredential,
+  SelectedAuth
 } from "../schema/type/Signup";
-import type { AuthType } from "../policy/auth";
 
 interface SignupService {
   acceptAgreement: (form: Agreement) => void;
-  submitBaseInfo: (form: StudentProfile) => void;
-  selectVerification: (authType: AuthType) => void;
+  submitStudentInfo: (form: StudentProfile) => void;
+  selectVerification: (authType: SelectedAuth) => void;
   submitCredential: (form: UserCredential) => void;
+  signupComplete: () => void;
   redirect: () => void;
 }
 
