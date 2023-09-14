@@ -8,7 +8,8 @@ export type PaginationOption = {
 export type DataStateType<T> = {
   data: T,
   loading: boolean,
-  error?: ErrorDetail | null | undefined
+  error?: ErrorDetail | null | undefined,
+  init?: boolean
 }
 
 export type InfoType = {

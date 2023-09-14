@@ -7,6 +7,7 @@ import { useSignupStep } from "../../recoil-hooks/useSignupStep";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
 import { studentState } from "../../domain/subject/school.impl";
+import { AuthRepository } from "../../domain/account/auth.interface";
 
 export default function SignupContainer({
   children,
@@ -14,10 +15,14 @@ export default function SignupContainer({
 }: {
   children: React.ReactNode,
   repositories: {
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    authRepository: AuthRepository
   }
 }) {
-  const { userRepository } = repositories;
+  const {
+    userRepository,
+    authRepository
+  } = repositories;
 
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
   const [studentSnapshot, setStudentSnapshot] = useRecoilState(studentState);
@@ -153,7 +158,20 @@ export default function SignupContainer({
       @enduml
       */
       submitCredential(form) {
-        
+        authRepository.register({
+          email: form.email,
+          password: form.password
+        })
+          .then(({ userId }) => setUserSnapshot({
+            data: {
+              ...userSnapshot.data,
+              id: userId,
+              email: form.email,
+              password: form.password
+            },
+            loading: false
+          }))
+          .catch((e) => console.error(e));
       },
       /**
       @startuml signupComplete
