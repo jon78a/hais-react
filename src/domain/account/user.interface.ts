@@ -1,5 +1,5 @@
 import type { AuthType } from "../../policy/auth";
-import type { ErrorDetail, YN } from "../../types"
+import type { ErrorDetail, YN } from "../../types";
 
 /**
 @startuml
@@ -37,7 +37,6 @@ export interface UserErrorMap {
 
 // Repositories
 export interface UserRepository {
-  findMe: () => Promise<User>;
+  findByUserId: (userId: string) => Promise<User>;
   save: (user: User) => Promise<void>;
-  delete: (userId: string) => Promise<void>;
 }

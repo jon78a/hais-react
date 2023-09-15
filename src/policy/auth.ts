@@ -1,7 +1,5 @@
 export type AuthType = "KAKAO" | "NAVER" | "NORMAL";
 
-export type AuthSessionStatusType = "GRANT" | "REGISTER";
-
 export enum OAuthEnum {
   KAKAO = "kakao",
   NAVER = "naver"
@@ -22,3 +20,5 @@ export function generateOAuthPassword(length: number): string {
 export function generateOAuthEmail(oAuthProviderName: OAuthEnum): string {
   return `${oAuthProviderName}_${Math.floor(Date.now())}@${oAuthProviderName}.com`;
 }
+
+export const AUTH_SESSION_TTL = 1800;

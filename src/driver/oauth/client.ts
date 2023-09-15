@@ -2,7 +2,7 @@ import qs from "qs";
 import { capitalize } from "lodash";
 
 import { OAuthEnum } from "../../policy/auth";
-import { routes } from "../../routes/path";
+import { routes } from "../../policy/routes";
 
 interface TokenResult {
   accessToken: string;
