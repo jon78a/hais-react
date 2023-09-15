@@ -2,13 +2,19 @@ import './App.css';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { routes } from './routes/path';
+import { routes } from './policy/routes';
+
+import Layout from './pages/Layout';
+import OAuthPage from './pages/OAuth';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={routes.home.path} element={<></>}/>
+        <Route path="/" element={<Layout/>}>
+          <Route path={routes.home.path} element={<></>}/>
+          <Route path={`${routes.oauth.path}/:slug`} element={<OAuthPage/>}/>
+        </Route>
         <Route path={"/*"} element={<></>}/>
       </Routes>
     </BrowserRouter>

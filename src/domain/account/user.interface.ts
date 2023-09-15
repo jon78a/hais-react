@@ -1,5 +1,5 @@
 import type { AuthType } from "../../policy/auth";
-import type { ErrorDetail, YN } from "../../types"
+import type { ErrorDetail, YN } from "../../types";
 
 /**
 @startuml
@@ -8,6 +8,7 @@ class User {
   String email
   String password
   Boolean activated
+  Boolean verified
   Enum<"Y", "N"> marketingAgreement
   Enum<"Y", "N"> serviceAgreement
   Enum<"Y", "N"> privacyAgreement
@@ -20,6 +21,7 @@ export interface User {
   password: string;
   authType: AuthType | null;
   activated: boolean;
+  verified: boolean;
   serviceAgreement: YN;
   marketingAgreement: YN;
   privacyAgreement: YN;
@@ -35,7 +37,6 @@ export interface UserErrorMap {
 
 // Repositories
 export interface UserRepository {
-  findMe: () => Promise<User>;
+  findByUserId: (userId: string) => Promise<User>;
   save: (user: User) => Promise<void>;
-  delete: (userId: string) => Promise<void>;
 }

@@ -1,7 +1,7 @@
 export interface RouteExp {
   path: string;
   re: RegExp;
-  detail?: (id: string) => string;
+  detail?: (key: string) => string;
 }
 
 interface PublicRoutesType {
@@ -10,6 +10,7 @@ interface PublicRoutesType {
   signup: RouteExp;
   findCredentialId: RouteExp;
   findCredentialPw: RouteExp;
+  oauth: RouteExp;
 }
 
 export const publicRoutes: PublicRoutesType = {
@@ -32,6 +33,11 @@ export const publicRoutes: PublicRoutesType = {
   findCredentialPw: {
     path: '/login?find=pw',
     re: new RegExp('^/login?find=pw')
+  },
+  oauth: {
+    path: '/oauth',
+    re: new RegExp('^/oauth'),
+    detail: (key: string) => `/oauth/${key.toLowerCase()}`
   }
 }
 

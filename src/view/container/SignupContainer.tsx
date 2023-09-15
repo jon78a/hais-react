@@ -7,6 +7,8 @@ import { useSignupStep } from "../../recoil-hooks/useSignupStep";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
 import { studentState } from "../../domain/subject/school.impl";
+import { AuthRepository } from "../../domain/account/auth.interface";
+import { OAuthEnum } from "../../policy/auth";
 
 export default function SignupContainer({
   children,
@@ -14,10 +16,14 @@ export default function SignupContainer({
 }: {
   children: React.ReactNode,
   repositories: {
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    authRepository: AuthRepository
   }
 }) {
-  const { userRepository } = repositories;
+  const {
+    userRepository,
+    authRepository
+  } = repositories;
 
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
   const [studentSnapshot, setStudentSnapshot] = useRecoilState(studentState);
@@ -130,12 +136,10 @@ export default function SignupContainer({
       Client -> Service: [Dispatch] 인증 유형 선택
       Service -> Model: 인증 유형 저장
       end
-
-      Service -> Service: step++
-
       @enduml
       */
       selectVerification(authType) {
+        if (authType !== "NORMAL") authRepository.oAuthAuthorize(OAuthEnum[authType])
         setUserSnapshot({
           data: {
             ...userSnapshot.data,
@@ -143,7 +147,6 @@ export default function SignupContainer({
           },
           loading: false
         });
-        setStep(4);
       },
       /**
       @startuml submitCredential
@@ -153,7 +156,20 @@ export default function SignupContainer({
       @enduml
       */
       submitCredential(form) {
-        
+        authRepository.register({
+          email: form.email,
+          password: form.password
+        })
+          .then(({ userId }) => setUserSnapshot({
+            data: {
+              ...userSnapshot.data,
+              id: userId,
+              email: form.email,
+              password: form.password
+            },
+            loading: false
+          }))
+          .catch((e) => console.error(e));
       },
       /**
       @startuml signupComplete
@@ -177,7 +193,11 @@ export default function SignupContainer({
       */
       signupComplete() {
         setUserSnapshot({
-          ...userSnapshot,
+          data: {
+            ...userSnapshot.data,
+            verified: true,
+            activated: true
+          },
           loading: true
         });
         userRepository.save(userSnapshot.data)

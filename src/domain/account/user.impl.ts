@@ -8,6 +8,7 @@ export const defaultUser: User = {
   password: "",
   authType: null,
   activated: false,
+  verified: false,
   serviceAgreement: "N",
   marketingAgreement: "N",
   privacyAgreement: "N"

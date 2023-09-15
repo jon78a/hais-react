@@ -1,20 +1,14 @@
-import type { AuthSessionStatusType } from "../../policy/auth";
+import type { OAuthEnum } from "../../policy/auth";
 
 /**
 @startuml
 class AuthSession {
-  String id
-  String userId
   number expiredAt
-  Enum<"REGISTER", "GRANT"> status
 }
 @enduml
  */
 export interface AuthSession {
-  id: string;
-  userId: string;
-  expiredAt: number;
-  status: AuthSessionStatusType
+  exp: number;
 }
 
 /**
@@ -33,4 +27,8 @@ export interface UserCredential {
 export interface AuthRepository {
   register: (credential: UserCredential) => Promise<{userId: string}>;
   sendEmail: (email: string) => Promise<void>;
+  oAuthAuthorize: (oAuthProviderName: OAuthEnum) => void;
+  unregister: (userId: string) => Promise<void>;
+  login: (credential: UserCredential) => Promise<void>;
+  logout: () => Promise<void>;
 }
