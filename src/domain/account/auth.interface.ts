@@ -1,4 +1,4 @@
-import type { AuthSessionStatusType } from "../../policy/auth";
+import type { AuthSessionStatusType, AuthType, OAuthEnum } from "../../policy/auth";
 
 /**
 @startuml
@@ -33,4 +33,5 @@ export interface UserCredential {
 export interface AuthRepository {
   register: (credential: UserCredential) => Promise<{userId: string}>;
   sendEmail: (email: string) => Promise<void>;
+  oAuthLogin: (oAuthProviderName: OAuthEnum) => void;
 }

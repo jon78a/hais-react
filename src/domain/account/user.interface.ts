@@ -8,6 +8,7 @@ class User {
   String email
   String password
   Boolean activated
+  Boolean verified
   Enum<"Y", "N"> marketingAgreement
   Enum<"Y", "N"> serviceAgreement
   Enum<"Y", "N"> privacyAgreement
@@ -20,6 +21,7 @@ export interface User {
   password: string;
   authType: AuthType | null;
   activated: boolean;
+  verified: boolean;
   serviceAgreement: YN;
   marketingAgreement: YN;
   privacyAgreement: YN;
