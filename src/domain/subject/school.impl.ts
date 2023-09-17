@@ -8,11 +8,12 @@ export const defaultStudent: Student = {
   id: "",
   category: null,
   name: "",
-  schoolYear: 0
+  schoolYear: 0,
+  targetMajor: []
 }
 
 export const studentState = atom<DataStateType<Student>>({
-  key: "subject/school/Student",
+  key: "subject/school/studentResponse",
   default: {
     data: defaultStudent,
     loading: false

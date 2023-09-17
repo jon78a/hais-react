@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+
 import { User, UserErrorMap } from "./user.interface";
 import type { DataStateType } from "../../types";
 
@@ -15,7 +16,7 @@ export const defaultUser: User = {
 }
 
 export const userState = atom<DataStateType<User>>({
-  key: "account/user/User",
+  key: "account/user/userState",
   default: {
     data: defaultUser,
     loading: false

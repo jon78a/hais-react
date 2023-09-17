@@ -1,5 +1,6 @@
 export class CollectionName {
-  static USER = "users";
+  static User = "users";
+  static Student = "students";
 }
 
 export class ErrorStatus {

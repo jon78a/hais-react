@@ -11,7 +11,7 @@ export type StudentProfile = {
   name: string;
   schoolYear: number;
   subjectCategory: SubjectCategoryCode;
-  targetMajor: number[];
+  targetMajor: string[];
 }
 
 export type UserCredential = {
