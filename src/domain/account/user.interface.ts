@@ -1,5 +1,5 @@
 import type { AuthType } from "../../policy/auth";
-import type { ErrorDetail, YN } from "../../types";
+import type { ErrorDetail, ExceptionDetail, YN } from "../../types";
 
 /**
 @startuml
@@ -33,6 +33,12 @@ export interface UserErrorMap {
   NO_NAME: ErrorDetail;
   NO_SCHOOL_YEAR: ErrorDetail;
   NO_SUBJECT_CATEGORY: ErrorDetail;
+}
+
+export interface UserExceptionMap {
+  INVALID_EMAIL: ExceptionDetail;
+  INVALID_PASSWORD: ExceptionDetail;
+  INVALID_PASSWORD_CONFIRM: ExceptionDetail;
 }
 
 // Repositories

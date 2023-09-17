@@ -6,6 +6,7 @@ import { routes } from './policy/routes';
 
 import Layout from './pages/Layout';
 import OAuthPage from './pages/OAuth';
+import SignupPage from './pages/Signup';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout/>}>
           <Route path={routes.home.path} element={<></>}/>
+          <Route path={routes.signup.path} element={<SignupPage/>}/>
           <Route path={`${routes.oauth.path}/:slug`} element={<OAuthPage/>}/>
         </Route>
         <Route path={"/*"} element={<></>}/>

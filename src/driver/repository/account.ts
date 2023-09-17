@@ -61,7 +61,9 @@ export const authRepository: AuthRepository = {
     if (user) {
       if (user.emailVerified) throw new Error(ErrorStatus.VERIFIED_USER);
       if (user.email !== email) throw new Error(ErrorStatus.DIFFERENT_EMAIL);
-      return sendEmailVerification(auth.currentUser);
+      return sendEmailVerification(auth.currentUser).then(
+        () => alert("이메일을 인증하면 다음 단계로 이동합니다.")
+      );
     }
     throw new Error(ErrorStatus.UNSUBMIT_CREDENTIAL);
   },

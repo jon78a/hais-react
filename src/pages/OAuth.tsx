@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { OAuthEnum } from "../policy/auth";
 import { generateOAuthEmail, generateOAuthPassword } from "../policy/auth";
@@ -7,13 +7,17 @@ import { PASSWORD_MAX_LENGTH } from "../policy/account";
 import { useRecoilState } from "recoil";
 import { userState } from "../domain/account/user.impl";
 import { OAuthClient } from "../driver/oauth/client";
-import { authRepository } from "../driver/repository/account";
+import { useSignupStep } from "../recoil-hooks/useSignupStep";
+import { routes } from "../policy/routes";
 
 const OAuthPage = () => {
+  const navigate = useNavigate();
+
   const [searchParams, __setSearchParams] = useSearchParams();
   const { slug } = useParams();
 
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
+  const {setStep} = useSignupStep();
 
   useEffect(() => {
     if (!searchParams.has("code")) new Error("code가 반드시 필요합니다.");
@@ -32,22 +36,21 @@ const OAuthPage = () => {
         .then(({accessToken}) => {
           oAuthClient.provider.getOAuthUserId(accessToken)
             .then(({userId}) => {
-              authRepository.register({
-                email,
-                password
-              })
-                .then(({ userId }) => setUserSnapshot({
-                  data: {
-                    ...userSnapshot.data,
-                    id: userId,
-                    email,
-                    password
-                  },
-                  loading: false
-                }))
-                .catch((e) => console.error(e));
-            })
+              setUserSnapshot({
+                data: {
+                  ...userSnapshot.data,
+                  id: userId,
+                  email,
+                  password
+                },
+                loading: false
+              });
+            });
+          
+          setStep(3);
+          navigate(routes.signup.path);
         })
+        .catch((e) => console.error(e));
     }
   }, [slug, searchParams]);
   return (
