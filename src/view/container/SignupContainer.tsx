@@ -6,9 +6,10 @@ import { hasCheckedEssentialAgreement } from "../../policy/account";
 import { useSignupStep } from "../../recoil-hooks/useSignupStep";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
-import { studentState } from "../../domain/subject/school.impl";
+import { defaultStudent, studentState } from "../../domain/subject/school.impl";
 import { AuthRepository } from "../../domain/account/auth.interface";
 import { OAuthEnum } from "../../policy/auth";
+import { StudentRepository } from "../../domain/subject/school.interface";
 
 export default function SignupContainer({
   children,
@@ -17,12 +18,14 @@ export default function SignupContainer({
   children: React.ReactNode,
   repositories: {
     userRepository: UserRepository,
-    authRepository: AuthRepository
+    authRepository: AuthRepository,
+    studentRepository: StudentRepository
   }
 }) {
   const {
     userRepository,
-    authRepository
+    authRepository,
+    studentRepository
   } = repositories;
 
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
@@ -114,7 +117,10 @@ export default function SignupContainer({
         setStudentSnapshot({
           data: {
             ...studentSnapshot.data,
-            name: ""
+            name: form.name,
+            category: form.subjectCategory,
+            schoolYear: form.schoolYear,
+            targetMajor: form.targetMajor
           },
           loading: false
         });
@@ -160,15 +166,24 @@ export default function SignupContainer({
           email: form.email,
           password: form.password
         })
-          .then(({ userId }) => setUserSnapshot({
-            data: {
-              ...userSnapshot.data,
-              id: userId,
-              email: form.email,
-              password: form.password
-            },
-            loading: false
-          }))
+          .then(({ userId }) => {
+            setUserSnapshot({
+              data: {
+                ...userSnapshot.data,
+                id: userId,
+                email: form.email,
+                password: form.password
+              },
+              loading: false
+            });
+            setStudentSnapshot({
+              data: {
+                ...studentSnapshot.data,
+                userId
+              },
+              loading: false
+            })
+          })
           .catch((e) => console.error(e));
       },
       /**
@@ -200,19 +215,36 @@ export default function SignupContainer({
           },
           loading: true
         });
-        userRepository.save(userSnapshot.data)
-          .then(() => setUserSnapshot({
+        setStudentSnapshot({
+          ...studentSnapshot,
+          loading: true
+        });
+
+        Promise.all([
+          userRepository.save(userSnapshot.data),
+          studentRepository.save(studentSnapshot.data)
+        ]).then(() => {
+          setUserSnapshot({
             data: defaultUser,
             loading: false
-          }))
-          .catch((e) => {
-            setUserSnapshot({
-              data: defaultUser,
-              loading: false,
-              error: userErrorMap.SIGNUP_FAILED
-            });
-            console.error(e);
           });
+          setStudentSnapshot({
+            data: defaultStudent,
+            loading: false
+          })
+        }).catch((e) => {
+          setUserSnapshot({
+            data: defaultUser,
+            loading: false,
+            error: userErrorMap.SIGNUP_FAILED
+          });
+          setStudentSnapshot({
+            data: defaultStudent,
+            loading: false,
+            error: userErrorMap.SIGNUP_FAILED
+          });
+          console.error(e);
+        });
       }
     }}>
       {children}

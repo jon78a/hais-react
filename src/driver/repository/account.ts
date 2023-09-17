@@ -28,7 +28,7 @@ export const userRepository: UserRepository = {
           throw new Error(ErrorStatus.NOT_VERIFIED_USER);
         }
       }
-      const docRef = doc(firebaseDb, CollectionName.USER, user.id);
+      const docRef = doc(firebaseDb, CollectionName.User, user.id);
       setDoc(docRef, user);
       createAuthSession();
     } catch(e) {
@@ -38,7 +38,7 @@ export const userRepository: UserRepository = {
   async findByUserId(userId) {
     authorizeRequired();
 
-    const docRef = doc(firebaseDb, CollectionName.USER, userId);
+    const docRef = doc(firebaseDb, CollectionName.User, userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -78,13 +78,13 @@ export const authRepository: AuthRepository = {
     if (!user || isAuthSessionExpired()) throw new Error(ErrorStatus.USER_SESSION_OUT);
     deleteUser(user).catch((e) => console.error(e));
     
-    const docRef = doc(firebaseDb, CollectionName.USER, user.uid);
+    const docRef = doc(firebaseDb, CollectionName.User, user.uid);
     updateDoc(docRef, {
       activated: false
     });
   },
   async login(credential) {
-    const q = query(collection(firebaseDb, CollectionName.USER),
+    const q = query(collection(firebaseDb, CollectionName.User),
       where("email", "==", credential.email)
     );
     const querySnapshot = await getDocs(q);

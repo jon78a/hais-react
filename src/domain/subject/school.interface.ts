@@ -52,6 +52,7 @@ export interface Student {
   category: SubjectCategoryCode | null;
   name: string;
   schoolYear: number;
+  targetMajor: string[];
 }
 
 // Repositories
@@ -65,6 +66,7 @@ export interface ProfileScoreRepository {
 }
 
 export interface StudentRepository {
-  getByUser: (userId: string) => Promise<Student>;
-  findAll: () => Promise<Student[]>;
+  // getByUser: (userId: string) => Promise<Student>;
+  // findAll: () => Promise<Student[]>;
+  save: (student: Student) => Promise<void>;
 }
