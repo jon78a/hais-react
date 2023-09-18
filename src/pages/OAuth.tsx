@@ -4,11 +4,11 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { OAuthEnum } from "../policy/auth";
 import { generateOAuthEmail, generateOAuthPassword } from "../policy/auth";
 import { PASSWORD_MAX_LENGTH } from "../policy/account";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { userState } from "../domain/account/user.impl";
 import { OAuthClient } from "../driver/oauth/client";
-import { useSignupStep } from "../recoil-hooks/useSignupStep";
 import { routes } from "../policy/routes";
+import { userRepository } from "../driver/repository/account";
 
 const OAuthPage = () => {
   const navigate = useNavigate();
@@ -16,8 +16,7 @@ const OAuthPage = () => {
   const [searchParams, __setSearchParams] = useSearchParams();
   const { slug } = useParams();
 
-  const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
-  const {setStep} = useSignupStep();
+  const userSnapshot = useRecoilValue(userState);
 
   useEffect(() => {
     if (!searchParams.has("code")) new Error("code가 반드시 필요합니다.");
@@ -36,19 +35,14 @@ const OAuthPage = () => {
         .then(({accessToken}) => {
           oAuthClient.provider.getOAuthUserId(accessToken)
             .then(({userId}) => {
-              setUserSnapshot({
-                data: {
-                  ...userSnapshot.data,
-                  id: userId,
-                  email,
-                  password
-                },
-                loading: false
+              userRepository.saveUserOnClient({
+                ...userSnapshot.data,
+                verified: true,
+                id: userId
               });
             });
           
-          setStep(3);
-          navigate(routes.signup.path);
+          navigate(routes.signup.path + "?step=2");
         })
         .catch((e) => console.error(e));
     }

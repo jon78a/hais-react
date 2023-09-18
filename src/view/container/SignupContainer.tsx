@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { SignupContext } from "../../context/signup";
 import { UserRepository } from "../../domain/account/user.interface";
-import { useSignupStep } from "../../recoil-hooks/useSignupStep";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
 import { defaultStudent, studentState } from "../../domain/subject/school.impl";
@@ -11,6 +11,7 @@ import { AuthRepository } from "../../domain/account/auth.interface";
 import { OAuthEnum } from "../../policy/auth";
 import { StudentRepository } from "../../domain/subject/school.interface";
 import { firebaseAuth } from "../../driver/firebase/firebase";
+import { routes } from "../../policy/routes";
 
 export default function SignupContainer({
   children,
@@ -32,18 +33,35 @@ export default function SignupContainer({
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
   const [studentSnapshot, setStudentSnapshot] = useRecoilState(studentState);
 
-  const {setStep} = useSignupStep();
+  // const {step, setStep} = useSignupStep();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+    if (searchParams.get("step") === "2") return;
+
+    const unsubscribe = firebaseAuth.onIdTokenChanged((user) => {
+      const tmpUser = userRepository.getUserOnClient();
       if (user) {
-        if (user.emailVerified) setStep(2);
+        (async () => {
+          await user.reload();
+          if (user.emailVerified && tmpUser) {
+            userRepository.saveUserOnClient({
+              ...tmpUser,
+              verified: true
+            });
+            searchParams.set("step", "2");
+            setSearchParams(searchParams);
+          };
+        })();
       }
     });
+
     return () => {
       unsubscribe();
     }
-  }, [setStep]);
+  }, [navigate, routes, searchParams, setSearchParams]);
 
   useEffect(() => {
     const cleanError = () => {
@@ -67,8 +85,8 @@ export default function SignupContainer({
       return;
     }
   }, [
-    userSnapshot.error,
-    studentSnapshot.error
+    userSnapshot,
+    studentSnapshot
   ]);
 
   return (
@@ -123,7 +141,7 @@ export default function SignupContainer({
             schoolYear: form.schoolYear,
             targetMajor: form.targetMajor
           },
-          loading: false
+          loading: true
         });
       },
       /**
@@ -147,21 +165,14 @@ export default function SignupContainer({
       @enduml
       */
       signupComplete() {
-        setUserSnapshot({
-          data: {
-            ...userSnapshot.data,
-            verified: true,
-            activated: true
-          },
-          loading: true
-        });
-        setStudentSnapshot({
-          ...studentSnapshot,
-          loading: true
-        });
+        const tmpUser = userRepository.getUserOnClient();
+        if (!tmpUser) throw Error("유저 세션이 존재하지 않습니다.");
 
         Promise.all([
-          userRepository.save(userSnapshot.data),
+          userRepository.save({
+            ...tmpUser,
+            activated: true
+          }),
           studentRepository.save(studentSnapshot.data)
         ]).then(() => {
           setUserSnapshot({
@@ -171,7 +182,12 @@ export default function SignupContainer({
           setStudentSnapshot({
             data: defaultStudent,
             loading: false
-          })
+          });
+          // 회원가입 시 자동 로그인
+          authRepository.login({
+            email: tmpUser.email,
+            password: tmpUser.password
+          });
         }).catch((e) => {
           setUserSnapshot({
             data: defaultUser,
@@ -185,29 +201,40 @@ export default function SignupContainer({
           });
           console.error(e);
         });
+
+        userRepository.removeUserOnClient();
       },
-      requestSignup(form) {
+      async requestSignup(form) {
         if (form.authType === "NORMAL") {
+          const payload = await userRepository.findByCredential(form.email, form.password);
+          if (!!payload) return setUserSnapshot({
+            data: defaultUser,
+            loading: false,
+            error: userErrorMap.EXISTED_USER
+          });
+
+          let data: typeof userSnapshot.data = {
+            ...userSnapshot.data,
+            authType: form.authType,
+            email: form.email,
+            password: form.password,
+            marketingAgreement: form.isAgreeMarketing ? "Y" : "N"
+          }
           setUserSnapshot({
-            ...userSnapshot,
-            data: {
-              ...userSnapshot.data,
-              authType: form.authType,
-              email: form.email,
-              password: form.password,
-              marketingAgreement: form.isAgreeMarketing ? "Y" : "N"
-            }
+            data,
+            loading: true
           });
           authRepository.register({
             email: form.email,
             password: form.password
           })
             .then(({ userId }) => {
+              data = {
+                ...data,
+                id: userId
+              }
               setUserSnapshot({
-                data: {
-                  ...userSnapshot.data,
-                  id: userId,
-                },
+                data,
                 loading: false
               });
               setStudentSnapshot({
@@ -218,19 +245,35 @@ export default function SignupContainer({
                 loading: false
               });
               authRepository.sendEmail(form.email);
+              userRepository.saveUserOnClient(data);
             })
-            .catch((e) => console.error(e));
+            .catch((e) => {
+              setUserSnapshot({
+                ...userSnapshot,
+                error: e,
+                loading: false
+              });
+              console.error(e);
+            });
           return;
         }
 
+        let data = {
+          ...userSnapshot.data,
+          authType: form.authType
+        }
         setUserSnapshot({
           ...userSnapshot,
-          data: {
-            ...userSnapshot.data,
-            authType: form.authType
-          }
+          data
         });
+        userRepository.saveUserOnClient(data);
         authRepository.oAuthAuthorize(OAuthEnum[form.authType]);
+      },
+      resetRequest() {
+        // 추후에 adminRepository 만들어 강제 삭제 시키기
+        userRepository.removeUserOnClient();
+        searchParams.set("step", "1");
+        setSearchParams(searchParams);
       },
       checkEmail(value) {
         if (!accountPolicy.EMAIL_REGEX.test(value)) {
@@ -254,6 +297,15 @@ export default function SignupContainer({
         if (password !== passwordConfirm) return {
           name: "INVALID_PASSWORD_CONFIRM",
           message: "비밀번호가 일치하지 않습니다."
+        }
+        return null;
+      },
+      checkName(value) {
+        if (!accountPolicy.NAME_REGEX.test(value)) {
+          return {
+            name: "INVALID_NAME",
+            message: "이름을 올바르게 입력해 주세요."
+          }
         }
         return null;
       },

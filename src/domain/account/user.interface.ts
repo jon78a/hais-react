@@ -33,6 +33,7 @@ export interface UserErrorMap {
   NO_NAME: ErrorDetail;
   NO_SCHOOL_YEAR: ErrorDetail;
   NO_SUBJECT_CATEGORY: ErrorDetail;
+  EXISTED_USER: ErrorDetail;
 }
 
 export interface UserExceptionMap {
@@ -45,4 +46,8 @@ export interface UserExceptionMap {
 export interface UserRepository {
   findByUserId: (userId: string) => Promise<User>;
   save: (user: User) => Promise<void>;
+  saveUserOnClient: (user: User) => void;
+  removeUserOnClient: () => void;
+  getUserOnClient: () => User | null;
+  findByCredential: (email: string, password: string) => Promise<User | null>;
 }

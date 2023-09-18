@@ -43,6 +43,10 @@ export const userErrorMap: UserErrorMap = {
   NO_SUBJECT_CATEGORY: {
     name: "NO_SUBJECT_CATEGORY",
     message: "계열을 선택해주세요"
+  },
+  EXISTED_USER: {
+    name: "EXISTED_USER",
+    message: "이미 존재하는 유저입니다."
   }
 }
 

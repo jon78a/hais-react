@@ -1,16 +1,4 @@
 import type { OAuthEnum } from "../../policy/auth";
-
-/**
-@startuml
-class AuthSession {
-  number expiredAt
-}
-@enduml
- */
-export interface AuthSession {
-  exp: number;
-}
-
 /**
 @startuml
 class UserCredential {

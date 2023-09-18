@@ -11,12 +11,22 @@ import {
 
 import { User, UserRepository } from "../../domain/account/user.interface";
 import { AuthRepository } from "../../domain/account/auth.interface";
-import { createUserWithEmailAndPassword, deleteUser, getAuth, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendEmailVerification,
+} from "firebase/auth";
 import { OAuthClient } from "../oauth/client";
 import { firebaseDb } from "../firebase";
 import { CollectionName, ErrorStatus } from "../firebase/constants";
-import { firebaseAuth } from "../firebase/firebase";
-import { createAuthSession, isAuthSessionExpired, removeAuthSession } from "../sessionStorage/auth";
+import {
+  setAuthSession,
+  removeAuthSession,
+  removeUserSession,
+  getValidUserId,
+  setUserSession,
+  getUserSession
+} from "../sessionStorage/auth";
 import { authorizeRequired } from "../handler";
 
 export const userRepository: UserRepository = {
@@ -30,7 +40,7 @@ export const userRepository: UserRepository = {
       }
       const docRef = doc(firebaseDb, CollectionName.User, user.id);
       setDoc(docRef, user);
-      createAuthSession();
+      setAuthSession(user.id, "GRANT");
     } catch(e) {
       console.error(e);
     }
@@ -47,19 +57,48 @@ export const userRepository: UserRepository = {
       throw new Error(ErrorStatus.USER_NOT_FOUND);
     }
   },
+  // admin으로 옮겨줄 것
+  async findByCredential(email: string, password: string) {
+    const q = query(collection(firebaseDb, CollectionName.User),
+      where("email", "==", email),
+      where("password", "==", password)
+    );
+    const querySnapshot = await getDocs(q);
+    let user: User | null = null;
+    querySnapshot.forEach((doc) => {
+      user = doc.data() as User;
+    });
+    return user;
+  },
+  saveUserOnClient(user) {
+    setUserSession(user);
+  },
+  removeUserOnClient() {
+    removeUserSession();
+  },
+  getUserOnClient() {
+    return getUserSession();
+  },
 }
 
 export const authRepository: AuthRepository = {
   async register(credential) {
     const auth = getAuth();
-    const userCredential = await createUserWithEmailAndPassword(auth, credential.email, credential.password);
-    return {userId: userCredential.user.uid}
+    if (auth.currentUser) {
+      return {userId: auth.currentUser.uid}
+    }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, credential.email, credential.password);
+      return {userId: userCredential.user.uid}
+    } catch(e: any) {
+      throw new Error(ErrorStatus.NOT_VERIFIED_USER);
+    }
   },
   async sendEmail(email) {
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
-      if (user.emailVerified) throw new Error(ErrorStatus.VERIFIED_USER);
+      if (user.emailVerified) return;
       if (user.email !== email) throw new Error(ErrorStatus.DIFFERENT_EMAIL);
       return sendEmailVerification(auth.currentUser).then(
         () => alert("이메일을 인증하면 다음 단계로 이동합니다.")
@@ -74,16 +113,15 @@ export const authRepository: AuthRepository = {
   async unregister() {
     removeAuthSession();
 
-    const auth = firebaseAuth;
-    const user = auth.currentUser;
-
-    if (!user || isAuthSessionExpired()) throw new Error(ErrorStatus.USER_SESSION_OUT);
-    deleteUser(user).catch((e) => console.error(e));
-    
-    const docRef = doc(firebaseDb, CollectionName.User, user.uid);
-    updateDoc(docRef, {
-      activated: false
-    });
+    const userId = getValidUserId();
+    if (!userId) throw new Error(ErrorStatus.USER_SESSION_OUT);
+    const docRef = doc(firebaseDb, CollectionName.User, userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      updateDoc(docRef, {
+        activated: false
+      });
+    }
   },
   async login(credential) {
     const q = query(collection(firebaseDb, CollectionName.User),
@@ -95,20 +133,11 @@ export const authRepository: AuthRepository = {
       userExists = true;
       const user = doc.data();
       if (user.password !== credential.password) throw new Error(ErrorStatus.INVALID_USER_PASSWORD);
+      setAuthSession(user.id, "GRANT");
     });
     if (!userExists) throw new Error(ErrorStatus.INVALID_USER_EMAIL);
-
-    const auth = getAuth();
-    await createUserWithEmailAndPassword(auth, credential.email, credential.password);
-    createAuthSession();
   },
   async logout() {
     removeAuthSession();
-
-    const auth = firebaseAuth;
-    const user = auth.currentUser;
-
-    if (!user) throw new Error(ErrorStatus.USER_SESSION_OUT);
-    deleteUser(user).catch((e) => console.error(e));
   },
 }

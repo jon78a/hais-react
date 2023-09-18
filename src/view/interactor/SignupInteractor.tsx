@@ -1,18 +1,31 @@
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 import { useSignupService } from "../../context/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
-import { useSignupStep } from "../../recoil-hooks/useSignupStep";
-import { signupRequestState } from "../../schema/atom/Signup";
+import { signupRequestState, studentProfileState } from "../../schema/atom/Signup";
+import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
+import type { SubjectCategoryCode } from "../../policy/subjectCategory";
+import { studentState } from "../../domain/subject/school.impl";
 
 const SignupInteractor: React.FC = () => {
   const service = useSignupService();
-  const { step } = useSignupStep();
+  const [searchParams, __setSearchParams] = useSearchParams();
 
   const [signupRequest, setSignupRequest] = useRecoilState(signupRequestState);
+  const [studentProfile, setStudentProfile] = useRecoilState(studentProfileState);
 
-  switch(step) {
-    case 1:
+  const studentSnapshot = useRecoilValue(studentState);
+
+  useEffect(() => {
+    if (studentSnapshot.loading) {
+      service.signupComplete();
+    }
+  }, [studentSnapshot]);
+
+  switch(searchParams.get("step") || "1") {
+    case "1":
       return (
         <SignupMain
           clickMarketingAgreementToggle={() => {
@@ -51,6 +64,37 @@ const SignupInteractor: React.FC = () => {
           }}
         />
       );
+    case "2":
+      return (
+        <StudentProfileStep
+          inputName={(value) => {
+            setStudentProfile({
+              ...studentProfile,
+              name: value
+            });
+            return service.checkName(value);
+          }}
+          selectSchoolYear={(value) => {
+            setStudentProfile({
+              ...studentProfile,
+              schoolYear: value
+            });
+          }}
+          selectSubjectCategory={(value) => {
+            setStudentProfile({
+              ...studentProfile,
+              subjectCategory: value as SubjectCategoryCode
+            })
+          }}
+          inputTargetMajors={(values) => {
+
+          }}
+          clickSignupDone={() => { service.submitStudentInfo(studentProfile) }}
+          back={() => {
+            service.resetRequest();
+          }}
+        />
+      )
     default:
       throw new Error("step invalid");
   }

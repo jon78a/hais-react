@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { SignupMainUx } from "../signup.ux/SignupMain";
 import { signupRequestState } from "../../../schema/atom/Signup";
@@ -13,6 +13,8 @@ import Stack from '@mui/material/Stack';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
+import InputLabel from "@mui/material/InputLabel";
+import Paper from '@mui/material/Paper';
 
 export const SignupMain: React.FC<SignupMainUx> = (ux) => {
   const signupRequest = useRecoilValue(signupRequestState);
@@ -21,8 +23,37 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
   const [passwordException, setPasswordException] = useState<ExceptionDetail | null>(null);
   const [passwordConfirmException, setPasswordConfirmException] = useState<ExceptionDetail | null>(null);
 
+  const [clickedNormal, setClickedNormal] = useState<boolean>(false);
+
+  const isDisabled = useMemo(() => {
+    const hasException = (
+      !!emailException ||
+      !!passwordException ||
+      !!passwordConfirmException
+    );
+    const hasBlank = (
+      !signupRequest.email ||
+      !signupRequest.password ||
+      !signupRequest.passwordConfirm
+    );
+    return (
+      hasException
+    ) || (
+      !hasException && hasBlank
+    )
+  }, [
+    emailException,
+    passwordException,
+    passwordConfirmException,
+    signupRequest
+  ]);
+
   return (
-    <div className="flex flex-col items-center w-[350px] h-full">
+    <Paper sx={{
+      width: 350,
+      py: 3,
+      px: 2
+    }} className="flex flex-col items-center">
       <Typography variant={"h5"} component={"h1"}>회원가입</Typography>
       <Box
         component={"form"}
@@ -31,9 +62,11 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
       >
         <Stack spacing={1}>
           <div className="flex flex-col">
-            <Typography variant={"overline"} component={"h2"}>
-              이메일
-            </Typography>
+            <InputLabel>
+              <Typography variant={"overline"} component={"h2"}>
+                이메일
+              </Typography>
+            </InputLabel>
             <TextField
               value={signupRequest.email}
               error={!!emailException}
@@ -48,9 +81,11 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
             />
           </div>
           <div className="flex flex-col">
-            <Typography variant={"overline"} component={"h2"}>
-              비밀번호
-            </Typography>
+            <InputLabel>
+              <Typography variant={"overline"} component={"h2"}>
+                비밀번호
+              </Typography>
+            </InputLabel>
             <TextField id="password"
               value={signupRequest.password}
               error={!!passwordException}
@@ -66,9 +101,11 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
             />
           </div>
           <div className="flex flex-col">
-            <Typography variant={"overline"} component={"h2"}>
-              비밀번호 확인
-            </Typography>
+            <InputLabel>
+              <Typography variant={"overline"} component={"h2"}>
+                비밀번호 확인
+              </Typography>
+            </InputLabel>
             <TextField id="passwordConfirm"
               value={signupRequest.passwordConfirm}
               error={!!passwordConfirmException}
@@ -84,10 +121,13 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
             />
           </div>
         </Stack>
-        <Button variant="contained" sx={{mt: 4}} onClick={() => ux.clickSignup("NORMAL")}>
-          <Typography variant={"button"}>
-            가입하기
-          </Typography>
+        <Button variant="contained" sx={{mt: 4}} onClick={() => {
+            setClickedNormal(true);
+            ux.clickSignup("NORMAL");
+          }}
+          disabled={isDisabled || clickedNormal}
+        >
+          가입하기
         </Button>
         <div className="flex flex-col items-center w-full">
           <Typography variant={"caption"} sx={{
@@ -114,6 +154,6 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
           <img alt="kakao" src={process.env.PUBLIC_URL + "/kakao-logo.svg"} className="w-[40px] h-[40px]"/>
         </button>
       </Stack>
-    </div>
+    </Paper>
   );
 }
