@@ -6,8 +6,8 @@ import { useSignupService } from "../../context/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
 import { signupRequestState, studentProfileState } from "../../schema/atom/Signup";
 import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
-import type { SubjectCategoryCode } from "../../policy/subjectCategory";
-import { studentState } from "../../domain/subject/school.impl";
+import type { SubjectCategoryCode } from "../../policy/subject-category";
+import { studentState } from "../../domain/subject-recommend/school.impl";
 
 const SignupInteractor: React.FC = () => {
   const service = useSignupService();

@@ -8,7 +8,7 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../domain/account/user.impl";
 import { OAuthClient } from "../driver/oauth/client";
 import { routes } from "../policy/routes";
-import { userRepository } from "../driver/repository/account";
+import userSessionRepository from "../driver/repository/userSessionRepository";
 
 const OAuthPage = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const OAuthPage = () => {
         .then(({accessToken}) => {
           oAuthClient.provider.getOAuthUserId(accessToken)
             .then(({userId}) => {
-              userRepository.saveUserOnClient({
+              userSessionRepository.save({
                 ...userSnapshot.data,
                 verified: true,
                 id: userId

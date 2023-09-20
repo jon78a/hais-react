@@ -1,4 +1,5 @@
 export type AuthType = "KAKAO" | "NAVER" | "NORMAL";
+export type AuthSessionStatus = "REGISTER" | "GRANT" | "BLACK";
 
 export enum OAuthEnum {
   KAKAO = "kakao",

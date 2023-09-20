@@ -1,5 +1,5 @@
 import type { AuthType } from "../../policy/auth";
-import type { SubjectCategoryCode } from "../../policy/subjectCategory";
+import type { SubjectCategoryCode } from "../../policy/subject-category";
 
 export type StudentProfile = {
   name: string;

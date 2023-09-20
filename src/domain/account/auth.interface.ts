@@ -1,4 +1,4 @@
-import type { OAuthEnum } from "../../policy/auth";
+import type { OAuthEnum, AuthSessionStatus } from "../../policy/auth";
 /**
 @startuml
 class UserCredential {
@@ -10,6 +10,12 @@ class UserCredential {
 export interface UserCredential {
   email: string;
   password: string;
+}
+
+export interface AuthSession {
+  exp: number;
+  userId: string;
+  status: AuthSessionStatus;
 }
 
 export interface AuthRepository {

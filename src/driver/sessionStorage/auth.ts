@@ -1,23 +1,10 @@
 import { AUTH_SESSION_KEY, USER_SESSION_KEY } from "./constants";
 import { AUTH_SESSION_TTL } from "../../policy/auth";
 import { User } from "../../domain/account/user.interface";
+import { AuthSessionStatus } from "../../policy/auth";
+import { AuthSession } from "../../domain/account/auth.interface";
 
-export type AuthTokenStatus = "REGISTER" | "GRANT" | "BLACK";
-
-/**
-@startuml
-class AuthSession {
-  number expiredAt
-}
-@enduml
- */
-export interface AuthSession {
-  exp: number;
-  userId: string;
-  status: AuthTokenStatus;
-}
-
-export const setAuthSession = (userId: string, status: AuthTokenStatus) => {
+export const setAuthSession = (userId: string, status: AuthSessionStatus) => {
   const session: AuthSession = {
     exp: Math.floor(Date.now() / 1000) + AUTH_SESSION_TTL,
     userId,
@@ -34,19 +21,19 @@ export const getValidUserId = () => {
   return session.userId;
 }
 
-export const getUserSession = (): User | null => {
-  const item = sessionStorage.getItem(USER_SESSION_KEY);
-  if (!item) return null;
-  return JSON.parse(item);
-}
+// export const getUserSession = (): User | null => {
+//   const item = sessionStorage.getItem(USER_SESSION_KEY);
+//   if (!item) return null;
+//   return JSON.parse(item);
+// }
 
-export const setUserSession = (user: User) => {
-  sessionStorage.setItem(USER_SESSION_KEY, JSON.stringify(user));
-}
+// export const setUserSession = (user: User) => {
+//   sessionStorage.setItem(USER_SESSION_KEY, JSON.stringify(user));
+// }
 
-export const removeUserSession = () => {
-  sessionStorage.removeItem(USER_SESSION_KEY);
-}
+// export const removeUserSession = () => {
+//   sessionStorage.removeItem(USER_SESSION_KEY);
+// }
 
 export const isVerifiedSignupSession = () => {
   const item = sessionStorage.getItem(USER_SESSION_KEY);

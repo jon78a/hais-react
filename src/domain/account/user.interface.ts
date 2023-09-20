@@ -46,8 +46,11 @@ export interface UserExceptionMap {
 export interface UserRepository {
   findByUserId: (userId: string) => Promise<User>;
   save: (user: User) => Promise<void>;
-  saveUserOnClient: (user: User) => void;
-  removeUserOnClient: () => void;
-  getUserOnClient: () => User | null;
   findByCredential: (email: string, password: string) => Promise<User | null>;
+}
+
+export interface UserSessionRepository {
+  save: (user: User) => void;
+  getUser: () => User | null;
+  delete: () => void;
 }

@@ -1,5 +1,6 @@
 import type { GradeEnum } from "../../policy/score";
-import type { SubjectCategoryCode } from "../../policy/subjectCategory";
+import type { SubjectCategoryCode } from "../../policy/subject-category";
+import type { ExceptionDetail } from "../../types";
 
 /**
 @startuml
@@ -53,6 +54,10 @@ export interface Student {
   name: string;
   schoolYear: number;
   targetMajor: string[];
+}
+
+export interface StudentExceptionMap {
+  INVALID_NAME: ExceptionDetail;
 }
 
 // Repositories
