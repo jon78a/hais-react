@@ -1,15 +1,19 @@
+import { useEffect } from "react";
 import { useRecoilState } from "recoil";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { SignupContext } from "../../context/signup";
-import { UserRepository } from "../../domain/account/user.interface";
-import { hasCheckedEssentialAgreement } from "../../policy/account";
-import { useSignupStep } from "../../recoil-hooks/useSignupStep";
+import { UserRepository, UserSessionRepository } from "../../domain/account/user.interface";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
-import { defaultStudent, studentState } from "../../domain/subject/school.impl";
+import { defaultStudent, studentState } from "../../domain/subject-recommend/school.impl";
 import { AuthRepository } from "../../domain/account/auth.interface";
 import { OAuthEnum } from "../../policy/auth";
-import { StudentRepository } from "../../domain/subject/school.interface";
+import { StudentRepository } from "../../domain/subject-recommend/school.interface";
+import { firebaseAuth } from "../../driver/firebase/firebase";
+import { routes } from "../../policy/routes";
+import { userExceptionMap } from "../../domain/account/user.impl";
+import { studentExceptionMap } from "../../domain/subject-recommend/school.impl";
 
 export default function SignupContainer({
   children,
@@ -19,101 +23,144 @@ export default function SignupContainer({
   repositories: {
     userRepository: UserRepository,
     authRepository: AuthRepository,
-    studentRepository: StudentRepository
+    studentRepository: StudentRepository,
+    userSessionRepository: UserSessionRepository
   }
 }) {
   const {
     userRepository,
     authRepository,
-    studentRepository
+    studentRepository,
+    userSessionRepository
   } = repositories;
 
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
   const [studentSnapshot, setStudentSnapshot] = useRecoilState(studentState);
 
-  const {setStep} = useSignupStep();
+  // const {step, setStep} = useSignupStep();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (searchParams.get("step") === "2") return;
+
+    const unsubscribe = firebaseAuth.onIdTokenChanged((fbUser) => {
+      const user = userSessionRepository.getUser();
+      if (fbUser) {
+        (async () => {
+          await fbUser.reload();
+          if (fbUser.emailVerified && user) {
+            userSessionRepository.save({
+              ...user,
+              verified: true
+            });
+            searchParams.set("step", "2");
+            setSearchParams(searchParams);
+          };
+        })();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    }
+  }, [navigate, routes, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    const cleanError = () => {
+      setUserSnapshot({
+        ...userSnapshot,
+        error: undefined
+      });
+      setStudentSnapshot({
+        ...studentSnapshot,
+        error: undefined
+      });
+    }
+    if (userSnapshot.error) {
+      alert(userSnapshot.error.message);
+      cleanError();
+      return;
+    }
+    if (studentSnapshot.error) {
+      alert(studentSnapshot.error.message);
+      cleanError();
+      return;
+    }
+  }, [
+    userSnapshot,
+    studentSnapshot
+  ]);
 
   return (
     <SignupContext.Provider value={{
-      /**
-      @startuml acceptAgreement
-      User -> Client: [Action] 다음 버튼 클릭
-      Client -> Service: [Dispatch] 약관 동의 형식 제출
-
-      activate Service
-      Service -> Service: 필수 항목 체크 검토
-      alt 실패
-        Service --> User: [Alert] 필수 항목을 체크해주세요
-      else Pass
-      end
-      Service -> Model: Agreement form 저장
-      Service -> Service: step++
-      deactivate Service
-      @enduml
-      */
-      acceptAgreement(form) {
-        const isValid = hasCheckedEssentialAgreement(form);
-        if (!isValid) {
-          setUserSnapshot({
+      async requestSignup(form) {
+        if (form.authType === "NORMAL") {
+          const payload = await userRepository.findByCredential(form.email, form.password);
+          if (!!payload) return setUserSnapshot({
             data: defaultUser,
-            error: userErrorMap.UNCHECKED_ESSENCIAL_AGREEMENT,
-            loading: false
+            loading: false,
+            error: userErrorMap.EXISTED_USER
           });
+
+          let data: typeof userSnapshot.data = {
+            ...userSnapshot.data,
+            authType: form.authType,
+            email: form.email,
+            password: form.password,
+            marketingAgreement: form.isAgreeMarketing ? "Y" : "N"
+          }
+          setUserSnapshot({
+            data,
+            loading: true
+          });
+          authRepository.register({
+            email: form.email,
+            password: form.password
+          })
+            .then(({ userId }) => {
+              data = {
+                ...data,
+                id: userId
+              }
+              setUserSnapshot({
+                data,
+                loading: false
+              });
+              setStudentSnapshot({
+                data: {
+                  ...studentSnapshot.data,
+                  userId
+                },
+                loading: false
+              });
+              authRepository.sendEmail(form.email);
+              userSessionRepository.save(data);
+            })
+            .catch((e) => {
+              setUserSnapshot({
+                ...userSnapshot,
+                error: e,
+                loading: false
+              });
+              console.error(e);
+            });
           return;
+        }
+
+        let data = {
+          ...userSnapshot.data,
+          authType: form.authType
         }
         setUserSnapshot({
-          data: {
-            ...userSnapshot.data,
-            serviceAgreement: form.isAgreeService ? "Y" : "N",
-            marketingAgreement: form.isAgreeMarketing ? "Y" : "N",
-            privacyAgreement: form.isAgreePrivacy ? "Y" : "N"
-          },
-          loading: false
+          ...userSnapshot,
+          data
         });
-        setStep(2);
+        userSessionRepository.save(data);
+        authRepository.oAuthAuthorize(OAuthEnum[form.authType]);
       },
-      /**
-      @startuml submitStudentInfo
-      User -> Client: [Action] 다음 버튼 클릭
-      Client -> Service: [Dispatch] 기본 학생 정보 제출
-
-      activate Service
-      Service -> Service: 필수 입력 사항 검토
-      alt 실패
-        Service --> User: [Alert] 필수 항목을 입력해주세요
-      else Pass
-      end
-
-      Service -> Model: StudentProfile form 저장
-      Service -> Service: step++
-      deactivate Service
-      @enduml
-      */
       submitStudentInfo(form) {
-        if (!accountPolicy.NAME_REGEX.test(form.name)) {
-          setUserSnapshot({
-            data: defaultUser,
-            error: userErrorMap.NO_NAME,
-            loading: false
-          });
-          return;
-        }
-        if (!form.schoolYear) {
-          setUserSnapshot({
-            data: defaultUser,
-            error: userErrorMap.NO_SCHOOL_YEAR,
-            loading: false
-          });
-          return;
-        }
-        if (!form.subjectCategory) {
-          setUserSnapshot({
-            data: defaultUser,
-            error: userErrorMap.NO_SUBJECT_CATEGORY,
-            loading: false
-          });
-          return;
-        }
         setStudentSnapshot({
           data: {
             ...studentSnapshot.data,
@@ -122,106 +169,18 @@ export default function SignupContainer({
             schoolYear: form.schoolYear,
             targetMajor: form.targetMajor
           },
-          loading: false
-        });
-        setStep(3);
-      },
-      /**
-      @startuml selectVerification
-
-      alt 일반 회원가입 선택
-      User -> Client: [Action] 일반 회원가입 선택 버튼 클릭
-      Client -> Service: [Dispatch] 인증 유형 선택
-      Service -> Model: 인증 유형 저장
-      else 카카오 회원가입 선택
-      User -> Client: [Action] 카카오 회원가입 선택 버튼 클릭
-      Client -> Service: [Dispatch] 인증 유형 선택
-      Service -> Model: 인증 유형 저장
-      else 네이버 회원가입 선택
-      User -> Client: [Action] 네이버 회원가입 선택 버튼 클릭
-      Client -> Service: [Dispatch] 인증 유형 선택
-      Service -> Model: 인증 유형 저장
-      end
-      @enduml
-      */
-      selectVerification(authType) {
-        if (authType !== "NORMAL") authRepository.oAuthAuthorize(OAuthEnum[authType])
-        setUserSnapshot({
-          data: {
-            ...userSnapshot.data,
-            authType: authType
-          },
-          loading: false
+          loading: true
         });
       },
-      /**
-      @startuml submitCredential
-      User -> Client: [Action] 제출 버튼 클릭
-      Client -> Service: [Dispatch] 권한 정보 제출 (아이디/비밀번호)
-      Service -> Model: 권한 정보 저장
-      @enduml
-      */
-      submitCredential(form) {
-        authRepository.register({
-          email: form.email,
-          password: form.password
-        })
-          .then(({ userId }) => {
-            setUserSnapshot({
-              data: {
-                ...userSnapshot.data,
-                id: userId,
-                email: form.email,
-                password: form.password
-              },
-              loading: false
-            });
-            setStudentSnapshot({
-              data: {
-                ...studentSnapshot.data,
-                userId
-              },
-              loading: false
-            })
-          })
-          .catch((e) => console.error(e));
-      },
-      /**
-      @startuml signupComplete
-      activate Service
-      Service -> Service: loading = true
-      Model -> DB: 유저 생성
-
-      alt 실패
-      Model --> Service: Error
-      Service -> Service: loading = false
-      Service -> Service: initialize
-      Service --> User: [Alert] "회원가입에 실패하였습니다."
-      else 성공
-      Model --> Service: Success
-      Service -> Service: loading = false
-      Service -> Service: initialize
-      end
-      deactivate Service
-      Service --> User: 홈 화면으로 이동
-      @enduml
-      */
       signupComplete() {
-        setUserSnapshot({
-          data: {
-            ...userSnapshot.data,
-            verified: true,
-            activated: true
-          },
-          loading: true
-        });
-        setStudentSnapshot({
-          ...studentSnapshot,
-          loading: true
-        });
+        const tmpUser = userSessionRepository.getUser();
+        if (!tmpUser) throw Error("유저 세션이 존재하지 않습니다.");
 
         Promise.all([
-          userRepository.save(userSnapshot.data),
+          userRepository.save({
+            ...tmpUser,
+            activated: true
+          }),
           studentRepository.save(studentSnapshot.data)
         ]).then(() => {
           setUserSnapshot({
@@ -231,7 +190,12 @@ export default function SignupContainer({
           setStudentSnapshot({
             data: defaultStudent,
             loading: false
-          })
+          });
+          // 회원가입 시 자동 로그인
+          authRepository.login({
+            email: tmpUser.email,
+            password: tmpUser.password
+          });
         }).catch((e) => {
           setUserSnapshot({
             data: defaultUser,
@@ -245,7 +209,39 @@ export default function SignupContainer({
           });
           console.error(e);
         });
-      }
+
+        userSessionRepository.delete();
+      },
+      resetRequest() {
+        // 추후에 adminRepository 만들어 강제 삭제 시키기
+        userSessionRepository.delete();
+        searchParams.set("step", "1");
+        setSearchParams(searchParams);
+      },
+      checkEmail(value) {
+        if (!accountPolicy.EMAIL_REGEX.test(value)) {
+          return userExceptionMap.INVALID_EMAIL;
+        }
+        return null;
+      },
+      checkPassword(value) {
+        if (!accountPolicy.PASSWORD_REGEX.test(value)) {
+          return userExceptionMap.INVALID_PASSWORD;
+        }
+        return null;
+      },
+      checkPasswordConfirm(password, passwordConfirm) {
+        if (password !== passwordConfirm) {
+          return userExceptionMap.INVALID_PASSWORD_CONFIRM;
+        }
+        return null;
+      },
+      checkName(value) {
+        if (!accountPolicy.NAME_REGEX.test(value)) {
+          return studentExceptionMap.INVALID_NAME;
+        }
+        return null;
+      },
     }}>
       {children}
     </SignupContext.Provider>

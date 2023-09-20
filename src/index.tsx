@@ -1,4 +1,7 @@
 import React from 'react';
+import { RecoilRoot } from 'recoil';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './theme';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -8,6 +11,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <RecoilRoot>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </RecoilRoot>
   </React.StrictMode>
 );

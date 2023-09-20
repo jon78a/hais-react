@@ -1,15 +1,17 @@
-import { userRepository } from "../driver/repository/account";
-import { authRepository } from "../driver/repository/account";
-import { studentRepository } from "../driver/repository/subject";
+import userRepository from "../driver/repository/userRepository";
+import authRepository from "../driver/repository/authRepository";
+import studentRepository from "../driver/repository/studentRepository";
 import SignupContainer from "../view/container/SignupContainer";
 import SignupInteractor from "../view/interactor/SignupInteractor";
+import userSessionRepository from "../driver/repository/userSessionRepository";
 
 const SignupPage = (): JSX.Element => {
   return (
     <SignupContainer repositories={{
       userRepository,
       authRepository,
-      studentRepository
+      studentRepository,
+      userSessionRepository
     }}>
       <SignupInteractor/>
     </SignupContainer>

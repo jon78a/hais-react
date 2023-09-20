@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-import { User, UserErrorMap } from "./user.interface";
+import { User, UserErrorMap, UserExceptionMap } from "./user.interface";
 import type { DataStateType } from "../../types";
 
 export const defaultUser: User = {
@@ -43,5 +43,24 @@ export const userErrorMap: UserErrorMap = {
   NO_SUBJECT_CATEGORY: {
     name: "NO_SUBJECT_CATEGORY",
     message: "계열을 선택해주세요"
+  },
+  EXISTED_USER: {
+    name: "EXISTED_USER",
+    message: "이미 존재하는 유저입니다."
+  }
+}
+
+export const userExceptionMap: UserExceptionMap = {
+  INVALID_EMAIL: {
+    name: "INVALID_EMAIL",
+    message: "이메일 형식이 올바르지 않습니다."
+  },
+  INVALID_PASSWORD: {
+    name: "INVALID_PASSWORD",
+    message: "영문/숫자/특수문자를 포함 8~32자로 입력해주세요."
+  },
+  INVALID_PASSWORD_CONFIRM: {
+    name: "INVALID_PASSWORD_CONFIRM",
+    message: "비밀번호가 일치하지 않습니다."
   }
 }

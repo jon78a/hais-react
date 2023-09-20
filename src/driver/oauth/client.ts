@@ -88,7 +88,7 @@ abstract class OAuthProvider {
   }
 
   authorize(): void {
-    fetch(this.apiConfigs.authorize.url, this.apiConfigs.authorize.getInit());
+    window.location.replace(this.apiConfigs.authorize.url);
   }
 
   async getOAuthToken(code: string): Promise<TokenResult> {
@@ -132,7 +132,7 @@ class KakaoOAuth extends OAuthProvider {
             body: qs.stringify({
               "grant_type": "authorization_code",
               "client_id": this.clientId,
-              "redirect_uri": encodeURIComponent(this.redirectUri),
+              "redirect_uri": this.redirectUri,
               "code": code
             })
           }
