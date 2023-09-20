@@ -7,13 +7,14 @@ import { routes } from './policy/routes';
 import Layout from './pages/Layout';
 import OAuthPage from './pages/OAuth';
 import SignupPage from './pages/Signup';
+import HomePage from './pages/Home';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout/>}>
-          <Route path={routes.home.path} element={<></>}/>
+          <Route path={routes.home.path} element={<HomePage/>}/>
           <Route path={routes.signup.path} element={<SignupPage/>}/>
           <Route path={`${routes.oauth.path}/:slug`} element={<OAuthPage/>}/>
         </Route>

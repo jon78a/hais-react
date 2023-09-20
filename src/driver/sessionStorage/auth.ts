@@ -42,13 +42,13 @@ export const isVerifiedSignupSession = () => {
   return verified;
 }
 
-export const isAuthSessionExpired = () => {
+export const isLogined = () => {
   const current = Math.floor(Date.now() / 1000);
   const item = sessionStorage.getItem(AUTH_SESSION_KEY);
-  if (!item) return true;
+  if (!item) return false;
   const session = JSON.parse(item);
-  if (session.status !== "GRANT") return true;
-  return session.exp < current;
+  if (session.status !== "GRANT") return false;
+  return session.exp > current;
 }
 
 export const removeAuthSession = () => {

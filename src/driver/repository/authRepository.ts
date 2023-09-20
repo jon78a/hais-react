@@ -21,6 +21,7 @@ import {
   setAuthSession,
   removeAuthSession,
   getValidUserId,
+  isLogined
 } from "../sessionStorage/auth";
 
 const authRepository: AuthRepository = {
@@ -81,6 +82,9 @@ const authRepository: AuthRepository = {
   },
   async logout() {
     removeAuthSession();
+  },
+  isLogined() {
+    return isLogined();
   },
 }
 

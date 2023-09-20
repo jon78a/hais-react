@@ -25,4 +25,5 @@ export interface AuthRepository {
   unregister: (userId: string) => Promise<void>;
   login: (credential: UserCredential) => Promise<void>;
   logout: () => Promise<void>;
+  isLogined: () => boolean;
 }
