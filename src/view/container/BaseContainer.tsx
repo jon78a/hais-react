@@ -70,7 +70,7 @@ export function TopNavBarXl(){
         borderColor: "primary.main",
         pb: 2
       }}>
-        <div className='w-1/2 flex flex-row justify-between items-center py-4 mx-auto'>
+        <div className='flex flex-row items-center justify-between w-1/2 py-4 mx-auto'>
           <Link to={"/"} className='w-[60px] h-[60px]'>
             <img src="/logo-main.png" alt="logo"/>
           </Link>
@@ -225,7 +225,7 @@ function MyTabs() {
       <Tab value={routes.subjectSearch.path} label="교과탐색"
         sx={{
           fontSize: "1.25rem",
-          color: "black"
+          color: "black",
         }}
       />
     </Tabs>
@@ -256,18 +256,6 @@ const StyledTab = styled(Tab)`
     outline-bottom: 2px solid primary.main;
   }
 `;
-
-const StyledTabsList = styled(TabsList)(
-  ({ theme }) => `  
-  min-width: 800px;
-  background-color: #fff;
-  margin-bottom: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-content: space-between;
-  `,
-);
 
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
