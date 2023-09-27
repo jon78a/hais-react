@@ -2,18 +2,18 @@ import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { SignupContext } from "../../context/signup";
+import { SignupContext } from "../../service/signup";
 import { UserRepository, UserSessionRepository } from "../../domain/account/user.interface";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
-import { defaultStudent, studentState } from "../../domain/subject-recommend/school.impl";
+import { defaultStudent, studentState } from "../../domain/subject/school.impl";
 import { AuthRepository } from "../../domain/account/auth.interface";
 import { OAuthEnum } from "../../policy/auth";
-import { StudentRepository } from "../../domain/subject-recommend/school.interface";
+import { StudentRepository } from "../../domain/subject/school.interface";
 import { firebaseAuth } from "../../driver/firebase/firebase";
-import { routes } from "../../policy/routes";
+import { routes } from "../../routes";
 import { userExceptionMap } from "../../domain/account/user.impl";
-import { studentExceptionMap } from "../../domain/subject-recommend/school.impl";
+import { studentExceptionMap } from "../../domain/subject/school.impl";
 
 export default function SignupContainer({
   children,

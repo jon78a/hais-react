@@ -1,8 +1,15 @@
-export type SearchBase = {
-  type: "Normal" | "Score";
+export type MajorId = string;
+
+export type UnivToMajorInput = {
+  univKeyword: string;
+  majorKeyword: string;
 }
 
-export type MajorId = string;
+export type GeneralMajorByClsfInput = {
+  generalMajorKeyword: string;
+  clsf: string | null;
+  generalMajorNames: string[];
+}
 
 export type MajorSearchResult = {
   majorId: MajorId;

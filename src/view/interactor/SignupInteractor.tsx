@@ -2,12 +2,12 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 
-import { useSignupService } from "../../context/signup";
+import { useSignupService } from "../../service/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
-import { signupRequestState, studentProfileState } from "../../schema/atom/Signup";
+import { signupRequestState, studentProfileState } from "../../schema/atoms/Signup";
 import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
 import type { SubjectCategoryCode } from "../../policy/subject-category";
-import { studentState } from "../../domain/subject-recommend/school.impl";
+import { studentState } from "../../domain/subject/school.impl";
 
 const SignupInteractor: React.FC = () => {
   const service = useSignupService();

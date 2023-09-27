@@ -11,6 +11,7 @@ interface PublicRoutesType {
   findCredentialId: RouteExp;
   findCredentialPw: RouteExp;
   oauth: RouteExp;
+  subjectSearch: RouteExp;
 }
 
 export const publicRoutes: PublicRoutesType = {
@@ -38,19 +39,18 @@ export const publicRoutes: PublicRoutesType = {
     path: '/oauth',
     re: new RegExp('^/oauth'),
     detail: (key: string) => `/oauth/${key.toLowerCase()}`
+  },
+  subjectSearch: {
+    path: '/subject/search',
+    re: new RegExp('^/subject/search'),
   }
 }
 
 interface AuthPermissionRoutesType {
-  subject: RouteExp;
   my: RouteExp;
 }
 
 export const authPermissionRoutes: AuthPermissionRoutesType = {
-  subject: {
-    path: '/subject',
-    re: new RegExp('^/subject'),
-  },
   my: {
     path: '/my',
     re: new RegExp('^/my')

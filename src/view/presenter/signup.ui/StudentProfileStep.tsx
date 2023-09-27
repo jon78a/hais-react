@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil";
 import { useState, useMemo } from "react";
 
-import { studentProfileState } from "../../../schema/atom/Signup";
+import { studentProfileState } from "../../../schema/atoms/Signup";
 import { StudentProfileStepUx } from "../signup.ux/StudentProfileStep";
 import type { ExceptionDetail } from "../../../types";
 

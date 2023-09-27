@@ -1,4 +1,4 @@
-import type { UserCredential, VerifyingEmail } from "../schema/type/Login";
+import type { UserCredential, VerifyingEmail } from "../schema/types/Login";
 
 export interface LoginService {
   login: (credential: UserCredential) => Promise<void>;
