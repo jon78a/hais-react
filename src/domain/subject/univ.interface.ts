@@ -1,37 +1,32 @@
-/**
-@startuml
-class Major {
-  Integer id
-  String name
-  String univ
-  String college
-  String investigationYear
-  String sidoCode
-  Boolean isActive
+export interface Univ {
+  id: number;
+  name: string;
+  sidoCode: string;
 }
-@enduml
- */
+
 export interface Major {
   id: number;
   name: string;
   univ: string;
-  college: string;
+  department: string;
   investigationYear: string;
   sidoCode: string;
-  isActive: boolean;
-  standardCategory: string;
+  status: "ACTIVE" | "DELETE";
+  stdLclsfName: string;
+  stdMclsfName: string;
+  stdSclsfName: string;
+  updatedAt?: number;
+  gnrMjrCode: string;
 }
 
-/**
-@startuml
-class TargetMajor {
-  Integer id
-  String studentId
-  Integer majorId
-  Boolean isActive
+// 일반학과 : 교과 N:N
+export interface GeneralMajor {
+  code: string;
+  clsfName: string;
+  name: string;
+  description: string;
 }
-@enduml
- */
+
 export interface TargetMajor {
   id: number;
   studentId: string;

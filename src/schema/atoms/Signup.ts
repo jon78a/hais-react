@@ -3,7 +3,7 @@ import { atom } from "recoil";
 import type {
   StudentProfile,
   SignupRequest
-} from "../type/Signup";
+} from "../types/Signup";
 
 export const defaultStudentProfile: StudentProfile = {
   name: "",
