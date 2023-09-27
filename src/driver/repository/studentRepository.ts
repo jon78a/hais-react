@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import {
   StudentRepository
-} from "../../domain/subject-recommend/school.interface";
+} from "../../domain/subject/school.interface";
 import { firebaseDb } from "../firebase";
 import { CollectionName } from "../firebase/constants";
 

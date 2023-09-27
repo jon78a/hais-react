@@ -7,7 +7,7 @@ import { PASSWORD_MAX_LENGTH } from "../policy/account";
 import { useRecoilValue } from "recoil";
 import { userState } from "../domain/account/user.impl";
 import { OAuthClient } from "../driver/oauth/client";
-import { routes } from "../policy/routes";
+import { routes } from "../routes";
 import userSessionRepository from "../driver/repository/userSessionRepository";
 
 const OAuthPage = () => {

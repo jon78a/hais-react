@@ -3,7 +3,7 @@ import { createContext, useContext } from "react";
 import type {
   StudentProfile,
   SignupRequest
-} from "../schema/type/Signup";
+} from "../schema/types/Signup";
 import type { ExceptionDetail } from "../types";
 
 interface SignupService {

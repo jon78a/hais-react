@@ -6,9 +6,9 @@ import {
   useNavigate
 } from 'react-router-dom';
 
-import { routes } from '../../policy/routes';
+import { routes } from '../../routes';
 import { AuthRepository } from '../../domain/account/auth.interface';
-import { AuthorizeContext, useAuthorizeService } from '../../context/authorize';
+import { AuthorizeContext, useAuthorizeService } from '../../service/authorize';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Stack from '@mui/material/Stack';
@@ -202,7 +202,7 @@ function MyTabs() {
   // Then the order should be ['users/add', 'users/edit', 'users'].
   const navigate = useNavigate();
   const routeMatch = useRouteMatch([
-    routes.subject.path,
+    routes.subjectSearch.path,
     routes.my.path
   ]);
   const currentTab = routeMatch?.pattern?.path;
@@ -214,15 +214,15 @@ function MyTabs() {
         top: 16
       }}
       onChange={(event, newValue) => {
-        if (newValue === routes.subject.path) {
-          navigate(routes.subject.path); return;
+        if (newValue === routes.subjectSearch.path) {
+          navigate(routes.subjectSearch.path); return;
         }
         if (newValue === routes.my.path) {
           navigate(routes.my.path); return;
         }
       }}
     >
-      <Tab value={routes.subject.path} label="교과탐색"
+      <Tab value={routes.subjectSearch.path} label="교과탐색"
         sx={{
           fontSize: "1.25rem",
           color: "black",
