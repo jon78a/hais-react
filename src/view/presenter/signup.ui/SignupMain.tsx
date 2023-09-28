@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil";
 import { useMemo, useState } from "react";
 
 import { SignupMainUx } from "../signup.ux/SignupMain";
-import { signupRequestState } from "../../../schema/atoms/Signup";
+import { signupRequestState } from "../../../schema/states/Signup";
 import type { ExceptionDetail } from "../../../types";
 
 import Box from '@mui/material/Box';

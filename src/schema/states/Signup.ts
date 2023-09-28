@@ -21,11 +21,11 @@ export const defaultSignupRequest: SignupRequest = {
 }
 
 export const studentProfileState = atom<StudentProfile>({
-  key: "schema/atom/Signup/StudentProfile",
+  key: "schema/states/Signup/StudentProfile",
   default: defaultStudentProfile
 });
 
 export const signupRequestState = atom<SignupRequest>({
-  key: "schema/atom/Singup/SignupRequest",
+  key: "schema/states/Singup/SignupRequest",
   default: defaultSignupRequest
 });

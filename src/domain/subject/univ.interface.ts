@@ -16,7 +16,7 @@ export interface Major {
   stdMclsfName: string;
   stdSclsfName: string;
   updatedAt?: number;
-  gnrMjrCode: string;
+  gnrMjrCode?: string;
 }
 
 // 일반학과 : 교과 N:N
@@ -36,11 +36,15 @@ export interface TargetMajor {
 
 // Repositories
 export interface MajorRepository {
-  findByName: (name: string, isActive?: boolean) => Major[];
-  findByUniv: (univ: string, isActive?: boolean) => Major[];
-  save: (data: Major) => void;
+  findByNameLikeWithUniv: (keyword: string, univ: string) => Promise<Major[]>;
+  // findByUniv: (univ: string, isActive?: boolean) => Major[];
+  // save: (data: Major) => void;
 }
 
 export interface TargetMajorRepository {
-  findByStudent: (studentId: string, isActive?: boolean) => TargetMajor[];
+  findByStudent: (studentId: string, isActive?: boolean) => Promise<TargetMajor[]>;
+}
+
+export interface UnivRepository {
+  findByNameLike: (keyword: string) => Promise<Univ[]>;
 }
