@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import { useSignupService } from "../../service/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
-import { signupRequestState, studentProfileState } from "../../schema/atoms/Signup";
+import { signupRequestState, studentProfileState } from "../../schema/states/Signup";
 import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
 import type { SubjectCategoryCode } from "../../policy/subject-category";
 import { studentState } from "../../domain/subject/school.impl";

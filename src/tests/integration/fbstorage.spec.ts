@@ -1,57 +1,17 @@
-import { StorageUrl } from "../../driver/firebase/constants";
+import { StorageSource } from "../../driver/firebase/constants";
 
-type GeneralMajorType = {
-  code: string;
-  clsf_name: string;
-  name: string;
-  description: string;
-}
-
-type MajorType = {
-  id: number;
-  univ: string;
-  sido_code: string;
-  name: string;
-  department: string;
-  std_lclsf_name: string;
-  std_mclsf_name: string;
-  std_sclsf_name: string;
-  _specification?: string;
-  investigation_year: string;
-  status: "DELETE" | "ACTIVE";
-}
-
-type MajorCategoryGroupType = {
-  id: number;
-  major_id: number;
-  general_code: string;
-}
-
-type OptionalSubjectType = {
-  code: string;
-  group: string;
-  category: string;
-  name: string;
-  description: string;
-  suneung_info: string;
-  etc_info: string;
-}
-
-type RecommendGroupType = {
-  id: number;
-  gnr_mjr_code: string;
-  opt_sbj_code: string;
-}
-
-type UnivType = {
-  id: number;
-  name: string;
-  sido_code: string;
-}
+import type {
+  GeneralMajorType,
+  MajorType,
+  MajorCategoryGroupType,
+  OptionalSubjectType,
+  RecommendGroupType,
+  UnivType
+} from "../../driver/firebase/types";
 
 describe("Firebase storage connection", () => {
   it("GeneralMajor(일반학과)", (done) => {
-    fetch(StorageUrl.GeneralMajor)
+    fetch(StorageSource.GeneralMajor)
       .then((res) => res.json())
       .then((data: GeneralMajorType[]) => {
         data.forEach((generalMajor) => {
@@ -65,7 +25,7 @@ describe("Firebase storage connection", () => {
   });
 
   it("MajorType(전체학과)", (done) => {
-    fetch(StorageUrl.Major)
+    fetch(StorageSource.Major)
       .then((res) => res.json())
       .then((data: MajorType[]) => {
         data.forEach((major) => {
@@ -86,7 +46,7 @@ describe("Firebase storage connection", () => {
   });
 
   it("MajorCategoryGroup(학과분류그룹)", (done) => {
-    fetch(StorageUrl.MajorCategoryGroup)
+    fetch(StorageSource.MajorCategoryGroup)
       .then((res) => res.json())
       .then((data: MajorCategoryGroupType[]) => {
         data.forEach((majorCategoryGroup) => {
@@ -99,7 +59,7 @@ describe("Firebase storage connection", () => {
   });
 
   it("OptionalSubject(선택과목)", (done) => {
-    fetch(StorageUrl.OptionalSubject)
+    fetch(StorageSource.OptionalSubject)
       .then((res) => res.json())
       .then((data: OptionalSubjectType[]) => {
         data.forEach((optionalSubject) => {
@@ -116,7 +76,7 @@ describe("Firebase storage connection", () => {
   });
 
   it("RecommendGroup(추천그룹)", (done) => {
-    fetch(StorageUrl.RecommendGroup)
+    fetch(StorageSource.RecommendGroup)
       .then((res) => res.json())
       .then((data: RecommendGroupType[]) => {
         data.forEach((recommendGroup) => {
@@ -129,7 +89,7 @@ describe("Firebase storage connection", () => {
   });
 
   it("Univ(대학교)", (done) => {
-    fetch(StorageUrl.Univ)
+    fetch(StorageSource.Univ)
       .then((res) => res.json())
       .then((data: UnivType[]) => {
         data.forEach((univ) => {

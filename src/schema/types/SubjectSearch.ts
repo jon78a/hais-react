@@ -1,14 +1,24 @@
 export type MajorId = string;
 
+export type UnivKeyword = string;
+export type MajorKeyword = string;
+
+export type UnivChoice = string;
+export type MajorChoice = string;
+
+export type UnivName = string;
+export type MajorName = string;
+
+// 대학, 학과 검색
 export type UnivToMajorInput = {
-  univKeyword: string;
-  majorKeyword: string;
+  univChoice: UnivChoice;
+  majorChoice: MajorChoice;
 }
 
 export type GeneralMajorByClsfInput = {
-  generalMajorKeyword: string;
-  clsf: string | null;
-  generalMajorNames: string[];
+  generalMajorChoice: string;
+  clsfChoice: string | null;
+  generalMajorNameChoices: string[];
 }
 
 export type MajorSearchResult = {
@@ -21,13 +31,15 @@ export type SearchFilter = {
   majorId: MajorId;
 }
 
-export type SearchSummaryData = {
-  sbjArea: string;
-  sbjName: string;
-  description: string;
+export type SearchSummary = {
+  sbjCode: string;
+  sbjArea: string;  // 국어, 수학, 과학
+  sbjName: string;  // 추천교과명
+  category: string;  // 선택과목 범주
+  description: string;  // 상세 설명
 }
 
-export type SearchDetailData = {
+export type SearchDetail = {
   sbjName: string;
   description: string;
   suneungInfo: string;
