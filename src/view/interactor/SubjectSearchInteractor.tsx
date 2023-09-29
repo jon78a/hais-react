@@ -1,4 +1,5 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
+import { useState } from "react";
 
 import MajorSearchFilter from "../presenter/subject-search.ui/MajorSearchFilter";
 import SearchTable from "../presenter/subject-search.ui/SearchTable";
@@ -23,6 +24,9 @@ const SubjectSearchInteractor = () => {
 
   const [univChoice, setUnivChoice] = useRecoilState(univChoiceState);
   const [majorChoice, setMajorChoice] = useRecoilState(majorChoiceState)
+
+  //추가한 부분!
+  const [showTable, setShowTable] = useState(false);
 
   return (
     <>
@@ -56,9 +60,17 @@ const SubjectSearchInteractor = () => {
         inputGeneralMajorKeyword={(value) => {}}
         clickClsfChoices={(choice) => {}}
         checkMajorNameChoices={(choices) => {}}
-        clickSearchButton={() => {}}
+        clickSearchButton={() => { 
+          setShowTable(true);
+          console.log(univChoice)
+        }}
       />
-      <SearchTable />
+      {showTable &&
+      <>
+        <p>검색된 대학(Univ): {univChoice}</p>
+        <p>검색된 학과(Major): {majorChoice}</p>
+        {/* <SearchTable /> */}
+      </>}
     </>
   );
 }
