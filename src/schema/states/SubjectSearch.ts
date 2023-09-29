@@ -41,9 +41,13 @@ export const majorKeywordState = atom<MajorKeyword>({
   default: ""
 });
 
+const searchSummaryListDefault: SearchSummary[] = [
+  
+];
+
 export const searchSummaryListState = atom<SearchSummary[]>({
   key: "schema/states/SubjectSearch/SearchSummaryList",
-  default: []
+  default: searchSummaryListDefault
 });
 
 export const searchDetailState = atom<SearchDetail | undefined>({
