@@ -1,5 +1,6 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useState } from "react";
+import { debounce } from "lodash";
 
 import MajorSearchFilter from "../presenter/subject-search.ui/MajorSearchFilter";
 import SearchTable from "../presenter/subject-search.ui/SearchTable";
@@ -31,20 +32,20 @@ const SubjectSearchInteractor = () => {
   return (
     <>
       <MajorSearchFilter
-        inputUnivKeyword={(value) => {
+        inputUnivKeyword={debounce((value) => {
           setUnivKeyword(value);
           service.showUnivs(value)
             .then((names) => {
               setUnivNames(names);
             });
-        }}
-        inputMajorKeyword={(value) => {
+        }, 1000)}
+        inputMajorKeyword={debounce((value) => {
           setMajorKeyword(value);
           service.showMajors(value, univChoice)
             .then((names) => {
               setMajorNames(names);
             })
-        }}
+        }, 1000)}
         selectUnivChoice={(value) => {
           setUnivChoice(value);
         }}
