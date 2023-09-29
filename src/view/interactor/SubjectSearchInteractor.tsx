@@ -8,10 +8,11 @@ import { useSubjectSearchService } from "../../service/subject-search";
 import {
   majorKeywordState,
   univKeywordState,
-  majorNamesState,
-  univNamesState,
   univChoiceState,
-  majorChoiceState
+  majorChoiceState,
+  univChoiceListState,
+  majorChoiceListState,
+  searchSummaryListState
 } from "../../schema/states/SubjectSearch";
 
 const SubjectSearchInteractor = () => {
@@ -20,11 +21,12 @@ const SubjectSearchInteractor = () => {
   const setUnivKeyword = useSetRecoilState(univKeywordState);
   const setMajorKeyword = useSetRecoilState(majorKeywordState);
 
-  const setUnivNames = useSetRecoilState(univNamesState);
-  const setMajorNames = useSetRecoilState(majorNamesState);
-
   const [univChoice, setUnivChoice] = useRecoilState(univChoiceState);
-  const [majorChoice, setMajorChoice] = useRecoilState(majorChoiceState)
+  const [majorChoice, setMajorChoice] = useRecoilState(majorChoiceState);
+
+  const setUnivChoiceList = useSetRecoilState(univChoiceListState);
+  const setMajorChoiceList = useSetRecoilState(majorChoiceListState);
+  const setSearchSummaryList = useSetRecoilState(searchSummaryListState);
 
   //추가한 부분!
   const [showTable, setShowTable] = useState(false);
@@ -35,42 +37,52 @@ const SubjectSearchInteractor = () => {
         inputUnivKeyword={debounce((value) => {
           setUnivKeyword(value);
           service.showUnivs(value)
-            .then((names) => {
-              setUnivNames(names);
+            .then((choices) => {
+              setUnivChoiceList(choices);
             });
         }, 1000)}
         inputMajorKeyword={debounce((value) => {
           setMajorKeyword(value);
-          service.showMajors(value, univChoice)
-            .then((names) => {
-              setMajorNames(names);
-            })
+          service.showMajors(value, univChoice.name)
+            .then((choices) => {
+              setMajorChoiceList(choices);
+            });
         }, 1000)}
         selectUnivChoice={(value) => {
           setUnivChoice(value);
+          service.showMajors("", value.name)
+            .then((choices) => {
+              setMajorChoiceList(choices);
+            });
         }}
         selectMajorChoice={(value) => {
           setMajorChoice(value);
         }}
         deleteUnivChoice={() => {
-          setUnivChoice("");
+          setUnivChoiceList([]);
+          setMajorChoiceList([]);
         }}
         deleteMajorChoice={() => {
-          setMajorChoice("");
+          setMajorChoiceList([]);
         }}
         inputGeneralMajorKeyword={(value) => {}}
         clickClsfChoices={(choice) => {}}
         checkMajorNameChoices={(choices) => {}}
         clickSearchButton={() => { 
           setShowTable(true);
-          console.log(univChoice)
+          service.search({
+            univToMajor: {
+              univChoice: univChoice,
+              majorChoice: majorChoice
+            }
+          }).then((data) => setSearchSummaryList(data));
         }}
       />
       {showTable &&
       <>
-        <p>검색된 대학(Univ): {univChoice}</p>
-        <p>검색된 학과(Major): {majorChoice}</p>
-        {/* <SearchTable /> */}
+        <p>검색된 대학(Univ): {univChoice.name}</p>
+        <p>검색된 학과(Major): {majorChoice.name}</p>
+        <SearchTable />
       </>}
     </>
   );

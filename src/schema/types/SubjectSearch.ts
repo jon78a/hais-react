@@ -3,11 +3,15 @@ export type MajorId = string;
 export type UnivKeyword = string;
 export type MajorKeyword = string;
 
-export type UnivChoice = string;
-export type MajorChoice = string;
+export type UnivChoice = {
+  name: string;
+  id: number;
+};
 
-export type UnivName = string;
-export type MajorName = string;
+export type MajorChoice = {
+  name: string;
+  id: number;
+};
 
 // 대학, 학과 검색
 export type UnivToMajorInput = {

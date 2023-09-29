@@ -50,7 +50,7 @@ export const MajorInfo = () => {
   ];
 }
 
-const SearchTable: React.FC<SearchTableUx> = (ux) => {
+const SearchTable: React.FC = () => {
   // const majorInfo = MajorInfo();
   // const sortedRows: TableDataInfo[] = OptionalSubjects
   //   .map((subject) => {
