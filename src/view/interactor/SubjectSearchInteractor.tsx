@@ -22,7 +22,7 @@ const SubjectSearchInteractor = () => {
   const setMajorNames = useSetRecoilState(majorNamesState);
 
   const [univChoice, setUnivChoice] = useRecoilState(univChoiceState);
-  const setMajorChoice = useSetRecoilState(majorChoiceState)
+  const [majorChoice, setMajorChoice] = useRecoilState(majorChoiceState)
 
   return (
     <>
@@ -46,6 +46,12 @@ const SubjectSearchInteractor = () => {
         }}
         selectMajorChoice={(value) => {
           setMajorChoice(value);
+        }}
+        deleteUnivChoice={() => {
+          setUnivChoice("");
+        }}
+        deleteMajorChoice={() => {
+          setMajorChoice("");
         }}
         inputGeneralMajorKeyword={(value) => {}}
         clickClsfChoices={(choice) => {}}
