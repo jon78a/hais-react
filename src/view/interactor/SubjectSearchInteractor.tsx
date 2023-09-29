@@ -61,7 +61,7 @@ const SubjectSearchInteractor = () => {
         clickClsfChoices={(choice) => {}}
         checkMajorNameChoices={(choices) => {}}
         clickSearchButton={() => { 
-          setShowTable(true);
+          majorChoice && setShowTable(true);
           console.log(univChoice)
         }}
       />
@@ -69,7 +69,7 @@ const SubjectSearchInteractor = () => {
       <>
         <p>검색된 대학(Univ): {univChoice}</p>
         <p>검색된 학과(Major): {majorChoice}</p>
-        {/* <SearchTable /> */}
+        <SearchTable />
       </>}
     </>
   );

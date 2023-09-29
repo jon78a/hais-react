@@ -41,9 +41,20 @@ export const majorKeywordState = atom<MajorKeyword>({
   default: ""
 });
 
-const searchSummaryListDefault: SearchSummary[] = [
-  
-];
+const searchSummaryListDefault: SearchSummary[] = [{
+  code : "001",
+  sbjName : "화법과 작문",
+  category : "일반선택",
+  group : "국어",
+  suneungOX: "O",
+},
+{
+  code : "002",
+  sbjName : "언어와 매체",
+  category : "일반선택",
+  group : "국어",
+  suneungOX: "O",
+}]
 
 export const searchSummaryListState = atom<SearchSummary[]>({
   key: "schema/states/SubjectSearch/SearchSummaryList",

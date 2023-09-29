@@ -50,7 +50,7 @@ export const MajorInfo = () => {
   ];
 }
 
-const SearchTable: React.FC<SearchTableUx> = (ux) => {
+const SearchTable= () => {
   // const majorInfo = MajorInfo();
   // const sortedRows: TableDataInfo[] = OptionalSubjects
   //   .map((subject) => {
@@ -85,11 +85,12 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
     
   //   const top10Rows = sortedRows.slice(0, 10);
 
-  function handleButtonClick(props: { description: string; etc_info: string }) {
-    alert(`상세 정보 : ${props.description} / ${props.etc_info} `);
-  }
+  // function handleButtonClick(props: { description: string; etc_info: string }) {
+  //   alert(`상세 정보 : ${props.description} / ${props.etc_info} `);
+  // }
 
   const searchSummaryList = useRecoilValue(searchSummaryListState);
+  
 
   return (
     <>
