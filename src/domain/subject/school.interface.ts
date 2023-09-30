@@ -11,7 +11,7 @@ export interface Subject {
 
 // 선택과목
 export interface OptionalSubject {
-  code: string;
+  code: number;
   group: string;
   category: string;
   name: string;

@@ -32,16 +32,17 @@ export type SearchFilter = {
 }
 
 export type SearchSummary = {
-  sbjCode: string;
-  sbjArea: string;  // 국어, 수학, 과학
+  code: string;
   sbjName: string;  // 추천교과명
-  category: string;  // 선택과목 범주
-  description: string;  // 상세 설명
+  category: string;  // 과목분류
+  group: string;
+  suneungOX: "O" | "X";
+  // sbjArea: string;  // 국어, 수학, 과학
+  // description: string;  // 상세 설명
 }
 
 export type SearchDetail = {
-  sbjName: string;
+  // sbjName: string;
   description: string;
-  suneungInfo: string;
   etcInfo: string;
 }
