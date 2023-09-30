@@ -17,7 +17,7 @@ export const defaultSignupRequest: SignupRequest = {
   password: "",
   passwordConfirm: "",
   isAgreeMarketing: false,
-  authType: "NORMAL"
+  authChoice: "NORMAL"
 }
 
 export const studentProfileState = atom<StudentProfile>({

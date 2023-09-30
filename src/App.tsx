@@ -9,6 +9,7 @@ import OAuthPage from './pages/OAuth';
 import SignupPage from './pages/Signup';
 import HomePage from './pages/Home';
 import SubjectSearchPage from './pages/SubjectSearch';
+import LoginPage from './pages/Login';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path={routes.signup.path} element={<SignupPage/>}/>
           <Route path={`${routes.oauth.path}/:slug`} element={<OAuthPage/>}/>
           <Route path={routes.subjectSearch.path} element={<SubjectSearchPage/>}/>
+          <Route path={routes.login.path} element={<LoginPage/>}/>
         </Route>
         <Route path={"/*"} element={<></>}/>
       </Routes>

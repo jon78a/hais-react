@@ -1,4 +1,4 @@
-import type { AuthType } from "../../policy/auth";
+import type { AuthChoiceType } from "../../policy/auth";
 import type { SubjectCategoryCode } from "../../policy/subject-category";
 
 export type StudentProfile = {
@@ -13,5 +13,5 @@ export type SignupRequest = {
   email: string;
   password: string;
   passwordConfirm: string;
-  authType: AuthType;
+  authChoice: AuthChoiceType;
 }

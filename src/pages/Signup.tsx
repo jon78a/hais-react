@@ -4,6 +4,7 @@ import studentRepository from "../driver/repository/studentRepository";
 import SignupContainer from "../view/container/SignupContainer";
 import SignupInteractor from "../view/interactor/SignupInteractor";
 import userSessionRepository from "../driver/repository/userSessionRepository";
+import oAuthSessionRepository from "../driver/repository/oAuthSessionRepository";
 
 const SignupPage = (): JSX.Element => {
   return (
@@ -11,7 +12,8 @@ const SignupPage = (): JSX.Element => {
       userRepository,
       authRepository,
       studentRepository,
-      userSessionRepository
+      userSessionRepository,
+      oAuthSessionRepository
     }}>
       <SignupInteractor/>
     </SignupContainer>
