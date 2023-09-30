@@ -27,3 +27,18 @@ export interface AuthRepository {
   logout: () => Promise<void>;
   isLogined: () => boolean;
 }
+
+export type OAuthSessionType = "LOGIN" | "SIGNUP"
+
+export interface OAuthSessionRepository {
+  find: () => OAuthSessionType | null;
+  save: (authType: OAuthSessionType) => void;
+  clear: () => void;
+}
+
+export interface AuthSessionRepository {
+  save: (userId: string, status: AuthSessionStatus) => void;
+  getValidUserId: () => string | null;
+  isLogined: () => boolean;
+  clear: () => void;
+}

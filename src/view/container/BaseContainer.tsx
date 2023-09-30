@@ -50,6 +50,7 @@ export const BaseContainer = ({
       },
       terminateSession() {
         authRepository.logout();
+        window.location.replace(routes.home.path);
       },
     }}>
       <TopNavBarXl />

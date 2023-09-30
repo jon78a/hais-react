@@ -1,4 +1,4 @@
-import type { AuthType } from "../../policy/auth";
+import type { AuthChoiceType } from "../../policy/auth";
 import type { ErrorDetail, ExceptionDetail, YN } from "../../types";
 
 /**
@@ -19,7 +19,7 @@ export interface User {
   id: string;
   email: string;
   password: string;
-  authType: AuthType | null;
+  authChoice: AuthChoiceType | null;
   activated: boolean;
   verified: boolean;
   serviceAgreement: YN;
@@ -44,7 +44,7 @@ export interface UserExceptionMap {
 
 // Repositories
 export interface UserRepository {
-  findByUserId: (userId: string) => Promise<User>;
+  findByUserId: (userId: string) => Promise<User | null>;
   save: (user: User) => Promise<void>;
   findByCredential: (email: string, password: string) => Promise<User | null>;
 }

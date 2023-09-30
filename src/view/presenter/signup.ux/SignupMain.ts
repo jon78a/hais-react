@@ -1,4 +1,4 @@
-import type { AuthType } from "../../../policy/auth";
+import type { AuthChoiceType } from "../../../policy/auth";
 import type { ExceptionDetail } from "../../../types";
 
 export interface SignupMainUx {
@@ -6,5 +6,5 @@ export interface SignupMainUx {
   inputEmail: (value: string) => ExceptionDetail | null;
   inputPassword: (value: string) => ExceptionDetail | null;
   inputPasswordConfirm: (value: string) => ExceptionDetail | null;
-  clickSignup: (authType: AuthType) => void;
+  clickSignup: (authChoice: AuthChoiceType) => void;
 }

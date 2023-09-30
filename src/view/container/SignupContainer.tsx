@@ -7,13 +7,14 @@ import { UserRepository, UserSessionRepository } from "../../domain/account/user
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
 import { defaultStudent, studentState } from "../../domain/subject/school.impl";
-import { AuthRepository } from "../../domain/account/auth.interface";
+import { AuthRepository, OAuthSessionRepository } from "../../domain/account/auth.interface";
 import { OAuthEnum } from "../../policy/auth";
 import { StudentRepository } from "../../domain/subject/school.interface";
 import { firebaseAuth } from "../../driver/firebase/firebase";
 import { routes } from "../../routes";
 import { userExceptionMap } from "../../domain/account/user.impl";
 import { studentExceptionMap } from "../../domain/subject/school.impl";
+import oAuthSessionRepository from "../../driver/repository/oAuthSessionRepository";
 
 export default function SignupContainer({
   children,
@@ -24,7 +25,8 @@ export default function SignupContainer({
     userRepository: UserRepository,
     authRepository: AuthRepository,
     studentRepository: StudentRepository,
-    userSessionRepository: UserSessionRepository
+    userSessionRepository: UserSessionRepository,
+    oAuthSessionRepository: OAuthSessionRepository
   }
 }) {
   const {
@@ -96,7 +98,7 @@ export default function SignupContainer({
   return (
     <SignupContext.Provider value={{
       async requestSignup(form) {
-        if (form.authType === "NORMAL") {
+        if (form.authChoice === "NORMAL") {
           const payload = await userRepository.findByCredential(form.email, form.password);
           if (!!payload) return setUserSnapshot({
             data: defaultUser,
@@ -106,7 +108,7 @@ export default function SignupContainer({
 
           let data: typeof userSnapshot.data = {
             ...userSnapshot.data,
-            authType: form.authType,
+            authChoice: form.authChoice,
             email: form.email,
             password: form.password,
             marketingAgreement: form.isAgreeMarketing ? "Y" : "N"
@@ -151,14 +153,15 @@ export default function SignupContainer({
 
         let data = {
           ...userSnapshot.data,
-          authType: form.authType
+          authChoice: form.authChoice
         }
         setUserSnapshot({
           ...userSnapshot,
           data
         });
         userSessionRepository.save(data);
-        authRepository.oAuthAuthorize(OAuthEnum[form.authType]);
+        oAuthSessionRepository.save("SIGNUP");
+        authRepository.oAuthAuthorize(OAuthEnum[form.authChoice]);
       },
       submitStudentInfo(form) {
         setStudentSnapshot({
@@ -196,6 +199,7 @@ export default function SignupContainer({
             email: tmpUser.email,
             password: tmpUser.password
           });
+          window.location.replace(routes.home.path);
         }).catch((e) => {
           setUserSnapshot({
             data: defaultUser,

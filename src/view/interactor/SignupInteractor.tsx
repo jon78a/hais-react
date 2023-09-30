@@ -55,10 +55,10 @@ const SignupInteractor: React.FC = () => {
             });
             return service.checkPasswordConfirm(signupRequest.password, value);
           }}
-          clickSignup={(authType) => {
+          clickSignup={(authChoice) => {
             setSignupRequest({
               ...signupRequest,
-              authType
+              authChoice: authChoice
             });
             service.requestSignup(signupRequest);
           }}

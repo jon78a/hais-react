@@ -22,7 +22,7 @@ import { authorizeRequired } from "../handler";
 const userRepository: UserRepository = {
   async save(user) {
     try {
-      if (user.authType === "NORMAL") {
+      if (user.authChoice === "NORMAL") {
         const auth = getAuth();
         if (!auth.currentUser?.emailVerified) {
           throw new Error(ErrorStatus.NOT_VERIFIED_USER);
@@ -36,15 +36,13 @@ const userRepository: UserRepository = {
     }
   },
   async findByUserId(userId) {
-    authorizeRequired();
-
     const docRef = doc(firebaseDb, CollectionName.User, userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       return docSnap.data() as User;
     } else {
-      throw new Error(ErrorStatus.USER_NOT_FOUND);
+      return null;
     }
   },
   // admin으로 옮겨줄 것
