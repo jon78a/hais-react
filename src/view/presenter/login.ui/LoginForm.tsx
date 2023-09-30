@@ -25,7 +25,7 @@ const LoginForm: React.FC<LoginFormUx> = (ux) => {
       <Box
         component={"form"}
         autoComplete="off"
-        className="flex flex-col"
+        className="flex flex-col w-full"
       >
         <Stack spacing={1}>
           <div className="flex flex-col">

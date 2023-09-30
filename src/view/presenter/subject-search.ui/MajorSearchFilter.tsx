@@ -2,8 +2,8 @@ import { useRecoilValue } from "recoil";
 
 import { MajorSearchFilterUx } from "../subject-search.ux/MajorSearchFilter";
 import {
-  univNamesState,
-  majorNamesState
+  univChoiceListState,
+  majorChoiceListState
 } from "../../../schema/states/SubjectSearch";
 
 import TextField from '@mui/material/TextField';
@@ -11,23 +11,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { styled } from '@mui/system';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-
-// const UnivList = [
-//   { Name: '한양대학교', year: 1994 },
-//   { Name: '서울대학교', year: 1972 },
-//   { Name: '연세대학교', year: 1974 },
-//   { Name: '고려대학교', year: 2003 },
-//   { Name: '성균관대학교', year: 2003 },
-//   { Name: '서강대학교', year: 2003 },
-// ];
-
-// const MajorList = [
-//   { Name: '기계공학과', year: 1994 },
-//   { Name: '정보시스템', year: 1994 },
-//   { Name: '행정학과', year: 1994 },
-//   { Name: '정책학과', year: 1994 },
-//   { Name: '생명과학과', year: 1994 },
-// ]
+import { Typography } from '@mui/material';
+import { theme } from "../../../theme";
 
 const GroupHeader = styled('div')(({ theme }) => ({
   position: 'sticky',
@@ -40,69 +25,52 @@ const GroupItems = styled('ul')({
 });
 
 const MajorSearchFilter: React.FC<MajorSearchFilterUx> = (ux) => {
-  // const UnivOptions = UnivList.map((option) => {
-  //   const firstLetter = option.Name[0].toUpperCase();
-  //   return {
-  //     firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
-  //     ...option,
-  //   };
-  // });
-
-  // const MajorOptions = MajorList.map((option) => {
-  //   const firstLetter = option.Name[0].toUpperCase();
-  //   return {
-  //     firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
-  //     ...option,
-  //   };
-  // });
-  
-  const univNames = useRecoilValue(univNamesState);
-  const majorNames = useRecoilValue(majorNamesState);
+  const univChoiceList = useRecoilValue(univChoiceListState);
+  const majorChoiceList = useRecoilValue(majorChoiceListState);
 
   return (
-    <>
-    <Box sx={{display:'flex', justifyContent:"space-around", padding:"5px"}}>
-    <Autocomplete
-      id="grouped-demo"
-      options={univNames}
-      // groupBy={(option) => option.firstLetter}
-      getOptionLabel={(option) => option}
-      sx={{ width: 300 }}
-      onChange={(event, newValue) => {
-        if (newValue !== null) {
-          ux.selectUnivChoice(newValue); 
-        }
-      }}
-      renderInput={(params) => <TextField {...params} label="대학검색" onChange={(e) => {ux.inputUnivKeyword(e.target.value)}}/>}
-      renderGroup={(params) => (
-        <li key={params.key}>
-          <GroupHeader>{params.group}</GroupHeader>
-          <GroupItems>{params.children}</GroupItems>
-        </li>
-      )}
-    />
-    <Autocomplete
-      id="grouped"
-      options={majorNames}
-      // groupBy={(option) => option.firstLetter}
-      getOptionLabel={(option) => option}
-      sx={{ width: 300 }}
-      onChange={(event, newValue) => {
-        if (newValue !== null) {
-          ux.selectMajorChoice(newValue);
-        }
-      }}
-      renderInput={(params) => <TextField {...params} label="학과검색" onChange={(e) => {ux.inputMajorKeyword(e.target.value)}}/>}
-      renderGroup={(params) => (
-        <li key={params.key}>
-          <GroupHeader>{params.group}</GroupHeader>
-          <GroupItems>{params.children}</GroupItems>
-        </li>
-      )}
-    />
-   <Button variant="contained" onClick={ux.clickSearchButton} >검색</Button>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: "5px" }}>
+       <Typography variant="h5" sx={{m:2, fontWeight: 'bold', textAlign: 'left', width:'90%' }} style={{ color: theme.palette.primary.main }}>
+        추천교과 탐색
+      </Typography>
+      <Autocomplete
+        id="grouped-demo"
+        options={univChoiceList}
+        getOptionLabel={(option) => option.name}
+        sx={{ width: '90%', m: 2 }}
+        onChange={(event, newValue) => {
+          if (newValue !== null) {
+            ux.selectUnivChoice(newValue);
+          } else ux.deleteUnivChoice();
+        }}
+        renderInput={(params) => <TextField {...params} label="대학검색" onChange={(e) => { ux.inputUnivKeyword(e.target.value) }} />}
+        renderGroup={(params) => (
+          <li key={params.key}>
+            <GroupHeader>{params.group}</GroupHeader>
+            <GroupItems>{params.children}</GroupItems>
+          </li>
+        )}
+      />
+      <Autocomplete
+        id="grouped"
+        options={majorChoiceList}
+        getOptionLabel={(option) => option.name}
+        sx={{ width: '90%' , m: 2  }}
+        onChange={(event, newValue) => {
+          if (newValue !== null) {
+            ux.selectMajorChoice(newValue);
+          } else ux.deleteMajorChoice();
+        }}
+        renderInput={(params) => <TextField {...params} label="학과검색" onChange={(e) => { ux.inputMajorKeyword(e.target.value) }} />}
+        renderGroup={(params) => (
+          <li key={params.key}>
+            <GroupHeader>{params.group}</GroupHeader>
+            <GroupItems>{params.children}</GroupItems>
+          </li>
+        )}
+      />
+      <Button variant="contained" onClick={ux.clickSearchButton} sx={{width:'90%', m:2}}>검색</Button>
     </Box>
-    </>
   );
 }
 

@@ -7,27 +7,31 @@ import {
   MajorKeyword,
   UnivChoice,
   MajorChoice,
-  UnivName,
-  MajorName
 } from "../types/SubjectSearch";
 
 export const univChoiceState = atom<UnivChoice>({
   key: "schema/states/SubjectSearch/UnivChoice",
-  default: ""
+  default: {
+    id: 0,
+    name: ""
+  }
 });
 
 export const majorChoiceState = atom<MajorChoice>({
   key: "schema/states/SubjectSearch/MajorChoice",
-  default: ""
+  default: {
+    id: 0,
+    name: ""
+  }
 });
 
-export const univNamesState = atom<UnivName[]>({
-  key: "schema/states/SubjectSearch/UnivNames",
+export const univChoiceListState = atom<UnivChoice[]>({
+  key: "schema/states/SubjectSearch/UnivChoiceList",
   default: []
 });
 
-export const majorNamesState = atom<MajorName[]>({
-  key: "schema/states/SubjectSearch/MajorNames",
+export const majorChoiceListState = atom<MajorChoice[]>({
+  key: "schema/states/SubjectSearch/MajorChoiceList",
   default: []
 });
 

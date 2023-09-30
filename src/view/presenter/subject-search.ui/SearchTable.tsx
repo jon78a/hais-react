@@ -10,9 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import { OptionalSubject } from '../../../domain/subject/school.interface';
-import OptionalSubjects from "./OptionalSubjects.json";
-import { recommendAlgorithm } from './RecommendAlgorithm';
-import { SearchTableUx } from '../subject-search.ux/SearchTable';
+import { searchSummaryListState } from '../../../schema/states/SubjectSearch';
 
 
 export interface TableDataInfo {
@@ -49,7 +47,7 @@ export const MajorInfo = () => {
   ];
 }
 
-const SearchTable: React.FC<SearchTableUx> = (ux) => {
+const SearchTable: React.FC = () => {
   // const majorInfo = MajorInfo();
   // const sortedRows: TableDataInfo[] = OptionalSubjects
   //   .map((subject) => {
@@ -84,40 +82,43 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
     
   //   const top10Rows = sortedRows.slice(0, 10);
 
-  function handleButtonClick(props: { description: string; etc_info: string }) {
-    alert(`상세 정보 : ${props.description} / ${props.etc_info} `);
-  }
+  // function handleButtonClick(props: { description: string; etc_info: string }) {
+  //   alert(`상세 정보 : ${props.description} / ${props.etc_info} `);
+  // }
+
+  const searchSummaryList = useRecoilValue(searchSummaryListState);
+  
 
   return (
     <>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 600 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>추천교과 명</TableCell>
-              <TableCell align="right">과목분류</TableCell>
-              <TableCell align="right">과목그룹</TableCell>
-              <TableCell align="right">수능과목여부</TableCell>
-              <TableCell align="right">과목추천점수</TableCell>
-              <TableCell align="right">상세정보</TableCell>
+              <TableCell sx={{fontWeight:'bold'}}>추천교과 명</TableCell>
+              <TableCell align="right" sx={{fontWeight:'bold'}}>과목분류</TableCell>
+              <TableCell align="right" sx={{fontWeight:'bold'}}>과목그룹</TableCell>
+              <TableCell align="right" sx={{fontWeight:'bold'}}>수능과목여부</TableCell>
+              {/* <TableCell align="right" sx={{fontWeight:'bold'}}>과목추천점수</TableCell> */}
+              <TableCell align="right" sx={{fontWeight:'bold'}}>상세정보</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* {top10Rows.map((row) => (
+            {searchSummaryList.map((row) => (
               <TableRow
-                key={row.optionalSubject.name}
+                key={row.sbjName}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.optionalSubject.name}
+                  {row.sbjName}
                 </TableCell>
-                <TableCell align="right">{row.optionalSubject.category}</TableCell>
-                <TableCell align="right">{row.optionalSubject.group}</TableCell>
-                <TableCell align="right">{row.optionalSubject.suneungInfo}</TableCell>
-                <TableCell align="right">{row.recommendPoint}/40</TableCell>
-                <TableCell align="right">{row.button}</TableCell>
+                <TableCell align="right">{row.category}</TableCell>
+                <TableCell align="right">{row.group}</TableCell>
+                <TableCell align="right">{row.suneungOX}</TableCell>
+                {/* <TableCell align="right">{row.recommendPoint}/40</TableCell> */}
+                <TableCell align="right">{}</TableCell>
               </TableRow>
-            ))} */}
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

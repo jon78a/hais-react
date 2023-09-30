@@ -50,3 +50,7 @@ export interface StudentRepository {
   // findAll: () => Promise<Student[]>;
   save: (student: Student) => Promise<void>;
 }
+
+export interface OptionalSubjectRepository {
+  findByMajorId: (majorId: number) => Promise<OptionalSubject[]>;
+}
