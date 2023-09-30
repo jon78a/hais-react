@@ -2,22 +2,19 @@ import { useContext, createContext } from "react";
 
 import {
   GeneralMajorByClsfInput,
-  SearchDetail,
   SearchSummary,
   UnivToMajorInput,
   UnivChoice,
-  MajorChoice,
-  UnivName,
-  MajorName
+  MajorChoice
 } from "../schema/types/SubjectSearch";
 
 interface SubjectSearchService {
-  showUnivs: (keyword: string) => Promise<UnivName[]>;
-  showMajors: (keyword: string, univName: string) => Promise<MajorName[]>;
-  // search: (filters: {
-  //   univToMajor?: UnivToMajorInput;
-  //   generalMajorByClsf?: GeneralMajorByClsfInput;
-  // }) => Promise<SearchSummary[]>;
+  showUnivs: (keyword: string) => Promise<UnivChoice[]>;
+  showMajors: (keyword: string, univName: string) => Promise<MajorChoice[]>;
+  search: (filters: {
+    univToMajor: UnivToMajorInput;
+    generalMajorByClsf?: GeneralMajorByClsfInput;
+  }) => Promise<SearchSummary[]>;
   // searchMore: (code: string) => Promise<SearchDetail>;
 }
 

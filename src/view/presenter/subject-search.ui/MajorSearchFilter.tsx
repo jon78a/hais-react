@@ -2,8 +2,8 @@ import { useRecoilValue } from "recoil";
 
 import { MajorSearchFilterUx } from "../subject-search.ux/MajorSearchFilter";
 import {
-  univNamesState,
-  majorNamesState
+  univChoiceListState,
+  majorChoiceListState
 } from "../../../schema/states/SubjectSearch";
 
 import TextField from '@mui/material/TextField';
@@ -25,8 +25,8 @@ const GroupItems = styled('ul')({
 });
 
 const MajorSearchFilter: React.FC<MajorSearchFilterUx> = (ux) => {
-  const univNames = useRecoilValue(univNamesState);
-  const majorNames = useRecoilValue(majorNamesState);
+  const univChoiceList = useRecoilValue(univChoiceListState);
+  const majorChoiceList = useRecoilValue(majorChoiceListState);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: "5px" }}>
@@ -35,13 +35,13 @@ const MajorSearchFilter: React.FC<MajorSearchFilterUx> = (ux) => {
       </Typography>
       <Autocomplete
         id="grouped-demo"
-        options={univNames}
-        getOptionLabel={(option) => option}
+        options={univChoiceList}
+        getOptionLabel={(option) => option.name}
         sx={{ width: '90%', m: 2 }}
         onChange={(event, newValue) => {
           if (newValue !== null) {
             ux.selectUnivChoice(newValue);
-          }
+          } else ux.deleteUnivChoice();
         }}
         renderInput={(params) => <TextField {...params} label="대학검색" onChange={(e) => { ux.inputUnivKeyword(e.target.value) }} />}
         renderGroup={(params) => (
@@ -53,13 +53,13 @@ const MajorSearchFilter: React.FC<MajorSearchFilterUx> = (ux) => {
       />
       <Autocomplete
         id="grouped"
-        options={majorNames}
-        getOptionLabel={(option) => option}
+        options={majorChoiceList}
+        getOptionLabel={(option) => option.name}
         sx={{ width: '90%' , m: 2  }}
         onChange={(event, newValue) => {
           if (newValue !== null) {
             ux.selectMajorChoice(newValue);
-          }
+          } else ux.deleteMajorChoice();
         }}
         renderInput={(params) => <TextField {...params} label="학과검색" onChange={(e) => { ux.inputMajorKeyword(e.target.value) }} />}
         renderGroup={(params) => (

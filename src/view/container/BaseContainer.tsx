@@ -152,7 +152,7 @@ export function TemporaryDrawer() {
             onKeyDown={toggleDrawer(false)}
           >
             <List>
-              <Link to={"/subject"}>
+              <Link to={routes.subjectSearch.path}>
                 <ListItem key="교과탐색" disablePadding>
                   <ListItemButton>
                     <ListItemIcon>

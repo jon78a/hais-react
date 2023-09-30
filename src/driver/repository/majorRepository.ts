@@ -8,7 +8,11 @@ const majorRepository: MajorRepository = {
     const res = await fetch(source);
     const data: MajorType[] = await res.json();
     return data
-      .filter((v) => v["univ"] === univ && v["name"].startsWith(keyword))
+      .filter((v) => {
+        if (v["univ"] !== univ) return false;
+        if (v["name"] === "") return true;
+        return v["name"].startsWith(keyword);
+      })
       .map((v) => {
         return {
           id: v["id"],

@@ -11,7 +11,7 @@ export interface Subject {
 
 // 선택과목
 export interface OptionalSubject {
-  code: number;
+  code: string;
   group: string;
   category: string;
   name: string;
@@ -49,4 +49,8 @@ export interface StudentRepository {
   // getByUser: (userId: string) => Promise<Student>;
   // findAll: () => Promise<Student[]>;
   save: (student: Student) => Promise<void>;
+}
+
+export interface OptionalSubjectRepository {
+  findByMajorId: (majorId: number) => Promise<OptionalSubject[]>;
 }

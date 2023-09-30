@@ -47,6 +47,7 @@ const OAuthPage = () => {
       .then(({accessToken}) => {
         oAuthClient.provider.getOAuthUserId(accessToken)
           .then(({userId}) => {
+            if (!userId) return;
             if (oAuthSessionType === "LOGIN") {
               userRepository.findByUserId(userId).then((user) => {
                 if (!user) {

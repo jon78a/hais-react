@@ -10,9 +10,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import { OptionalSubject } from '../../../domain/subject/school.interface';
-import OptionalSubjects from "./OptionalSubjects.json";
-import { recommendAlgorithm } from './RecommendAlgorithm';
-import { SearchTableUx } from '../subject-search.ux/SearchTable';
 import { searchSummaryListState } from '../../../schema/states/SubjectSearch';
 
 
@@ -50,7 +47,7 @@ export const MajorInfo = () => {
   ];
 }
 
-const SearchTable= () => {
+const SearchTable: React.FC = () => {
   // const majorInfo = MajorInfo();
   // const sortedRows: TableDataInfo[] = OptionalSubjects
   //   .map((subject) => {

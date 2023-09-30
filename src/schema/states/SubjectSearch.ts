@@ -7,27 +7,31 @@ import {
   MajorKeyword,
   UnivChoice,
   MajorChoice,
-  UnivName,
-  MajorName
 } from "../types/SubjectSearch";
 
 export const univChoiceState = atom<UnivChoice>({
   key: "schema/states/SubjectSearch/UnivChoice",
-  default: ""
+  default: {
+    id: 0,
+    name: ""
+  }
 });
 
 export const majorChoiceState = atom<MajorChoice>({
   key: "schema/states/SubjectSearch/MajorChoice",
-  default: ""
+  default: {
+    id: 0,
+    name: ""
+  }
 });
 
-export const univNamesState = atom<UnivName[]>({
-  key: "schema/states/SubjectSearch/UnivNames",
+export const univChoiceListState = atom<UnivChoice[]>({
+  key: "schema/states/SubjectSearch/UnivChoiceList",
   default: []
 });
 
-export const majorNamesState = atom<MajorName[]>({
-  key: "schema/states/SubjectSearch/MajorNames",
+export const majorChoiceListState = atom<MajorChoice[]>({
+  key: "schema/states/SubjectSearch/MajorChoiceList",
   default: []
 });
 
@@ -41,24 +45,9 @@ export const majorKeywordState = atom<MajorKeyword>({
   default: ""
 });
 
-const searchSummaryListDefault: SearchSummary[] = [{
-  code : "001",
-  sbjName : "화법과 작문",
-  category : "일반선택",
-  group : "국어",
-  suneungOX: "O",
-},
-{
-  code : "002",
-  sbjName : "언어와 매체",
-  category : "일반선택",
-  group : "국어",
-  suneungOX: "O",
-}]
-
 export const searchSummaryListState = atom<SearchSummary[]>({
   key: "schema/states/SubjectSearch/SearchSummaryList",
-  default: searchSummaryListDefault
+  default: []
 });
 
 export const searchDetailState = atom<SearchDetail | undefined>({
