@@ -162,14 +162,16 @@ export function TemporaryDrawer() {
                   </ListItemButton>
                 </ListItem>
               </Link>
-              <ListItem key="커뮤니티" disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="커뮤니티" />
-                </ListItemButton>
-              </ListItem>
+              <Link to={routes.subjectRecommend.path}>
+                <ListItem key="교과추천" disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="교과추천" />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
             </List>
             <Divider />
             <List>
@@ -216,14 +218,23 @@ function MyTabs() {
       }}
       onChange={(event, newValue) => {
         if (newValue === routes.subjectSearch.path) {
-          navigate(routes.subjectSearch.path); return;
+          navigate(newValue); return;
         }
         if (newValue === routes.my.path) {
-          navigate(routes.my.path); return;
+          navigate(newValue); return;
+        }
+        if (newValue === routes.subjectRecommend.path) {
+          navigate(newValue); return;
         }
       }}
     >
       <Tab value={routes.subjectSearch.path} label="교과탐색"
+        sx={{
+          fontSize: "1.25rem",
+          color: "black",
+        }}
+      />
+      <Tab value={routes.subjectRecommend.path} label="교과추천"
         sx={{
           fontSize: "1.25rem",
           color: "black",

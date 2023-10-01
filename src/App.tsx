@@ -10,6 +10,8 @@ import SignupPage from './pages/Signup';
 import HomePage from './pages/Home';
 import SubjectSearchPage from './pages/SubjectSearch';
 import LoginPage from './pages/Login';
+import SubjectRecommendPage from './pages/SubjectRecommend';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -21,8 +23,9 @@ function App() {
           <Route path={`${routes.oauth.path}/:slug`} element={<OAuthPage/>}/>
           <Route path={routes.subjectSearch.path} element={<SubjectSearchPage/>}/>
           <Route path={routes.login.path} element={<LoginPage/>}/>
+          <Route path={routes.subjectRecommend.path} element={<SubjectRecommendPage/>}/>
         </Route>
-        <Route path={"/*"} element={<></>}/>
+        <Route path={"/*"} element={<NotFound/>}/>
       </Routes>
     </BrowserRouter>
   );

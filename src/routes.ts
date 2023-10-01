@@ -43,17 +43,22 @@ export const publicRoutes: PublicRoutesType = {
   subjectSearch: {
     path: '/subject/search',
     re: new RegExp('^/subject/search'),
-  }
+  },
 }
 
 interface AuthPermissionRoutesType {
   my: RouteExp;
+  subjectRecommend: RouteExp;
 }
 
 export const authPermissionRoutes: AuthPermissionRoutesType = {
   my: {
     path: '/my',
     re: new RegExp('^/my')
+  },
+  subjectRecommend: {
+    path: '/subject/recommend',
+    re: new RegExp('^/subject/recommend'),
   }
 }
 
