@@ -71,7 +71,7 @@ export function TopNavBarXl(){
         borderColor: "primary.main",
         pb: 2
       }}>
-        <div className='flex flex-row items-center justify-between w-1/2 py-4 mx-auto'>
+        <div className='flex flex-row items-center justify-between w-[876px] py-4 mx-auto'>
           <Link to={"/"} className='w-[60px] h-[60px]'>
             <img src="/logo-main.png" alt="logo"/>
           </Link>

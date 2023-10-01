@@ -9,7 +9,9 @@ const LoginPage = (): JSX.Element => {
       authRepository,
       oAuthSessionRepository
     }}>
-      <LoginInteractor/>
+      <div className="w-full mt-20 flex justify-center">
+        <LoginInteractor/>
+      </div>
     </LoginContainer>
   );
 }

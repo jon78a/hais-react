@@ -21,7 +21,6 @@ const LoginInteractor: React.FC = () => {
   const service = useLoginService();
 
   return (
-    <>
     <LoginForm
       inputEmail={(value) => {
         setLoginRequest({
@@ -42,7 +41,6 @@ const LoginInteractor: React.FC = () => {
         service.socialLogin(socialType);
       }}
     />
-    </>
   );
 }
 

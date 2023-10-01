@@ -15,7 +15,9 @@ const SignupPage = (): JSX.Element => {
       userSessionRepository,
       oAuthSessionRepository
     }}>
-      <SignupInteractor/>
+      <div className="w-full my-20 flex justify-center">
+        <SignupInteractor/>
+      </div>
     </SignupContainer>
   );
 }
