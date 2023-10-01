@@ -21,7 +21,7 @@ const LoginForm: React.FC<LoginFormUx> = (ux) => {
       py: 3,
       px: 2
     }} className="flex flex-col items-center">
-      <Typography variant={"h5"} component={"h1"}>회원가입</Typography>
+      <Typography variant={"h5"} component={"h1"}>로그인</Typography>
       <Box
         component={"form"}
         autoComplete="off"
