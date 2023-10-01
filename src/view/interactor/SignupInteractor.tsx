@@ -22,7 +22,7 @@ const SignupInteractor: React.FC = () => {
     if (studentSnapshot.loading) {
       service.signupComplete();
     }
-  }, [studentSnapshot]);
+  }, [studentSnapshot, service]);
 
   switch(searchParams.get("step") || "1") {
     case "1":
