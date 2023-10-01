@@ -1,5 +1,5 @@
-import type { AuthType } from "../../policy/auth";
-import type { ErrorDetail, YN } from "../../types";
+import type { AuthChoiceType } from "../../policy/auth";
+import type { ErrorDetail, ExceptionDetail, YN } from "../../types";
 
 /**
 @startuml
@@ -19,7 +19,7 @@ export interface User {
   id: string;
   email: string;
   password: string;
-  authType: AuthType | null;
+  authChoice: AuthChoiceType | null;
   activated: boolean;
   verified: boolean;
   serviceAgreement: YN;
@@ -33,10 +33,24 @@ export interface UserErrorMap {
   NO_NAME: ErrorDetail;
   NO_SCHOOL_YEAR: ErrorDetail;
   NO_SUBJECT_CATEGORY: ErrorDetail;
+  EXISTED_USER: ErrorDetail;
+}
+
+export interface UserExceptionMap {
+  INVALID_EMAIL: ExceptionDetail;
+  INVALID_PASSWORD: ExceptionDetail;
+  INVALID_PASSWORD_CONFIRM: ExceptionDetail;
 }
 
 // Repositories
 export interface UserRepository {
-  findByUserId: (userId: string) => Promise<User>;
+  findByUserId: (userId: string) => Promise<User | null>;
   save: (user: User) => Promise<void>;
+  findByCredential: (email: string, password: string) => Promise<User | null>;
+}
+
+export interface UserSessionRepository {
+  save: (user: User) => void;
+  getUser: () => User | null;
+  delete: () => void;
 }

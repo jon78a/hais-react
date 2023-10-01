@@ -1,16 +1,4 @@
-import type { OAuthEnum } from "../../policy/auth";
-
-/**
-@startuml
-class AuthSession {
-  number expiredAt
-}
-@enduml
- */
-export interface AuthSession {
-  exp: number;
-}
-
+import type { OAuthEnum, AuthSessionStatus } from "../../policy/auth";
 /**
 @startuml
 class UserCredential {
@@ -24,6 +12,12 @@ export interface UserCredential {
   password: string;
 }
 
+export interface AuthSession {
+  exp: number;
+  userId: string;
+  status: AuthSessionStatus;
+}
+
 export interface AuthRepository {
   register: (credential: UserCredential) => Promise<{userId: string}>;
   sendEmail: (email: string) => Promise<void>;
@@ -31,4 +25,20 @@ export interface AuthRepository {
   unregister: (userId: string) => Promise<void>;
   login: (credential: UserCredential) => Promise<void>;
   logout: () => Promise<void>;
+  isLogined: () => boolean;
+}
+
+export type OAuthSessionType = "LOGIN" | "SIGNUP"
+
+export interface OAuthSessionRepository {
+  find: () => OAuthSessionType | null;
+  save: (authType: OAuthSessionType) => void;
+  clear: () => void;
+}
+
+export interface AuthSessionRepository {
+  save: (userId: string, status: AuthSessionStatus) => void;
+  getValidUserId: () => string | null;
+  isLogined: () => boolean;
+  clear: () => void;
 }
