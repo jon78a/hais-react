@@ -1,7 +1,4 @@
 import {
-  doc,
-  getDoc,
-  updateDoc,
   query,
   collection,
   where,
@@ -16,7 +13,8 @@ import {
 } from "firebase/auth";
 import { OAuthClient } from "../oauth/client";
 import { firebaseDb } from "../firebase";
-import { CollectionName, ErrorStatus } from "../firebase/constants";
+import { CollectionName } from "../firebase/constants";
+import { ErrorStatus } from "../../policy/errors";
 
 const authRepository: AuthRepository = {
   async register(credential) {
@@ -46,6 +44,10 @@ const authRepository: AuthRepository = {
   oAuthAuthorize(oAuthProviderName) {
     const client = new OAuthClient(oAuthProviderName);
     client.provider.authorize();
+  },
+  oAuthLogout(oAuthProviderName) {
+    const client = new OAuthClient(oAuthProviderName);
+    client.provider.logout();
   },
   async validateUserByCredential(credential) {
     const q = query(collection(firebaseDb, CollectionName.User),

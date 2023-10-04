@@ -7,8 +7,10 @@ import {
 } from 'react-router-dom';
 
 import { routes } from '../../routes';
-import { AuthSessionRepository } from '../../domain/account/auth.interface';
+import { AuthRepository, AuthSessionRepository } from '../../domain/account/auth.interface';
 import { AuthorizeContext, useAuthorizeService } from '../../service/authorize';
+import { UserRepository } from '../../domain/account/user.interface';
+import { OAuthEnum } from '../../policy/auth';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Stack from '@mui/material/Stack';
@@ -37,10 +39,18 @@ export const BaseContainer = ({
 }: {
   children: React.ReactNode;
   repositories: {
-    authSessionRepository: AuthSessionRepository
+    authSessionRepository: AuthSessionRepository,
+    authRepository: AuthRepository,
+    userRepository: UserRepository
   }
 }): JSX.Element => {
-  const {authSessionRepository} = repositories;
+  const navigate = useNavigate();
+
+  const {
+    authSessionRepository,
+    authRepository,
+    userRepository
+  } = repositories;
   return (
     <AuthorizeContext.Provider value={{
       async isLogined() {
@@ -50,8 +60,17 @@ export const BaseContainer = ({
         return false;
       },
       async terminateSession() {
-        await authSessionRepository.clear();
-        window.location.replace(routes.home.path);
+        const session = await authSessionRepository.find();
+        if (session) {
+          const user = await userRepository.findByUserId(session.userId);
+          if (user?.authChoice && user.authChoice !== "NORMAL") {
+            authRepository.oAuthLogout(OAuthEnum[user.authChoice]);
+            return;
+          }
+          await authSessionRepository.clear();
+        };
+        navigate(routes.home.path, {replace: true});
+        alert("로그아웃 되었습니다.");
       },
     }}>
       <TopNavBarXl />
@@ -274,6 +293,7 @@ const StyledTab = styled(Tab)`
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
   const [breadcrumbs, setBreadcrumbs] = useState<React.ReactNode[]>([]);
+  const {pathname} = useLocation();
 
   useEffect(() => {
     authService.isLogined().then((login) => login ? setBreadcrumbs([
@@ -291,7 +311,7 @@ export function SubNavSeparator() {
         회원가입
       </Link>
     ]));
-  }, [authService]);
+  }, [authService, pathname]);
 
   return (
     <Stack spacing={2} sx={{

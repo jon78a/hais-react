@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { OAuthEnum } from "../policy/auth";
+import { AuthChoiceType, OAuthEnum } from "../policy/auth";
 import { generateOAuthEmail, generateOAuthPassword } from "../policy/auth";
 import { PASSWORD_MAX_LENGTH } from "../policy/account";
 import { useRecoilValue } from "recoil";
@@ -50,20 +50,23 @@ const OAuthPage = () => {
             if (!userId) return;
             if (oAuthSessionType === "LOGIN") {
               userRepository.findByUserId(userId).then((user) => {
-                if (!user) {
+                if (!userId && !user) {
                   alert("회원가입을 먼저 해주세요");
-                  navigate(routes.signup.path);
-                } else {
-                  authSessionRepository.save(userId, "GRANT");
-                  navigate(routes.home.path);
+                  navigate(routes.signup.path, {replace: true});
+                  return;
                 }
+                authSessionRepository.save(userId, "GRANT");
+                navigate(routes.home.path, {replace: true});
               });
             }
             else if (oAuthSessionType === "SIGNUP") {
               unsignedUserRepository.save({
                 ...userSnapshot.data,
                 verified: true,
-                id: userId
+                id: userId,
+                authChoice: oAuthType.toUpperCase() as AuthChoiceType,
+                email,
+                password
               });
               navigate(routes.signup.path + "?step=2"); 
             } else {}

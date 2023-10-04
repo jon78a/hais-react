@@ -11,6 +11,7 @@ import HomePage from './pages/Home';
 import SubjectSearchPage from './pages/SubjectSearch';
 import LoginPage from './pages/Login';
 import SubjectRecommendPage from './pages/SubjectRecommend';
+import OAuthLogout from './pages/OAuthLogout';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path={routes.subjectSearch.path} element={<SubjectSearchPage/>}/>
           <Route path={routes.login.path} element={<LoginPage/>}/>
           <Route path={routes.subjectRecommend.path} element={<SubjectRecommendPage/>}/>
+          <Route path={`/oauth/logout/:slug`} element={<OAuthLogout/>}/>
         </Route>
         <Route path={"/*"} element={<NotFound/>}/>
       </Routes>

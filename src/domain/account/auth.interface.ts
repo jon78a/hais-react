@@ -13,7 +13,7 @@ export interface UserCredential {
 }
 
 export interface AuthSession {
-  id?: string;
+  id: string;
   exp: number;
   userId: string;
   status: AuthSessionStatus;
@@ -24,6 +24,7 @@ export interface AuthRepository {
   register: (credential: UserCredential) => Promise<{userId: string}>;
   sendEmail: (email: string) => Promise<void>;
   oAuthAuthorize: (oAuthProviderName: OAuthEnum) => void;
+  oAuthLogout: (oAuthProviderName: OAuthEnum) => void;
   validateUserByCredential: (credential: UserCredential) => Promise<void>;
 }
 

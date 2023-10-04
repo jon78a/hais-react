@@ -202,7 +202,7 @@ export default function SignupContainer({
             password: tmpUser.password
           }).then(() => {
             authSessionRepository.save(tmpUser.id, "GRANT")
-              .then(() => window.location.replace(routes.home.path));
+              .then(() => navigate(routes.home.path, {replace: true}));
           });
         }).catch((e) => {
           setUserSnapshot({

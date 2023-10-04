@@ -14,7 +14,8 @@ import {
   getAuth,
 } from "firebase/auth";
 import { firebaseDb } from "../firebase";
-import { CollectionName, ErrorStatus } from "../firebase/constants";
+import { CollectionName } from "../firebase/constants";
+import { ErrorStatus } from "../../policy/errors";
 
 const userRepository: UserRepository = {
   async save(user) {

@@ -1,4 +1,5 @@
 import { useSetRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 
 import { AuthRepository, AuthSessionRepository, OAuthStatusRepository } from "../../domain/account/auth.interface";
 import {
@@ -8,6 +9,7 @@ import { defaultUserCredential, userCredentialState } from "../../domain/account
 import { OAuthEnum } from "../../policy/auth";
 import { routes } from "../../routes";
 import { UserRepository } from "../../domain/account/user.interface";
+import { ErrorStatus } from "../../policy/errors";
 
 const LoginContainer = ({
   children,
@@ -21,6 +23,8 @@ const LoginContainer = ({
     authSessionRepository: AuthSessionRepository
   };
 }): JSX.Element => {
+  const navigate = useNavigate();
+
   const setUserCredentialSnapshot = useSetRecoilState(userCredentialState);
 
   const {
@@ -44,7 +48,7 @@ const LoginContainer = ({
         try {
           const user = await userRepository.findByCredential(email, password);
           if (!user ||
-            !user.activated || !user.verified) throw new Error("USER_NOTFOUND");
+            !user.activated || !user.verified) throw new Error(ErrorStatus.USER_NOT_FOUND);
 
           authSessionRepository.save(
             user.id,
@@ -54,7 +58,7 @@ const LoginContainer = ({
               data: defaultUserCredential,
               loading: false
             });
-            window.location.replace(routes.home.path);
+            navigate(routes.home.path, {replace: true});
           });
         } catch(e) {
           if (e instanceof Error) {
