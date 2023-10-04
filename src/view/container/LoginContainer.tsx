@@ -78,7 +78,7 @@ const LoginContainer = ({
       },
       async socialLogin(socialType) {
         oAuthStatusRepository.save("LOGIN");
-        authRepository.oAuthAuthorize(OAuthEnum[socialType]);
+        await authRepository.oAuthAuthorize(OAuthEnum[socialType]);
       }
       // findPassword(verifyingEmail) {
         

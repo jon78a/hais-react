@@ -100,62 +100,60 @@ export default function SignupContainer({
   return (
     <SignupContext.Provider value={{
       async requestSignup(form) {
-        if (form.authChoice === "NORMAL") {
-          const payload = await userRepository.findByCredential(form.email, form.password);
-          if (!!payload) return setUserSnapshot({
-            data: defaultUser,
-            loading: false,
-            error: userErrorMap.EXISTED_USER
-          });
+        const payload = await userRepository.findByCredential(form.email, form.password);
+        if (!!payload) return setUserSnapshot({
+          data: defaultUser,
+          loading: false,
+          error: userErrorMap.EXISTED_USER
+        });
 
-          let data: typeof userSnapshot.data = {
-            ...userSnapshot.data,
-            authChoice: form.authChoice,
-            email: form.email,
-            password: form.password,
-            marketingAgreement: form.isAgreeMarketing ? "Y" : "N"
-          }
-          setUserSnapshot({
-            data,
-            loading: true
-          });
-          authRepository.register({
-            email: form.email,
-            password: form.password
-          })
-            .then(({ userId }) => {
-              data = {
-                ...data,
-                id: userId
-              }
-              setUserSnapshot({
-                data,
-                loading: false
-              });
-              setStudentSnapshot({
-                data: {
-                  ...studentSnapshot.data,
-                  userId
-                },
-                loading: false
-              });
-              authRepository.sendEmail(form.email);
-              unsignedUserRepository.save(data);
-            })
-            .catch((e) => {
-              setUserSnapshot({
-                ...userSnapshot,
-                error: e,
-                loading: false
-              });
-              console.error(e);
-            });
-          return;
+        let data: typeof userSnapshot.data = {
+          ...userSnapshot.data,
+          authChoice: "NORMAL",
+          email: form.email,
+          password: form.password,
+          marketingAgreement: form.isAgreeMarketing ? "Y" : "N",
         }
-
+        setUserSnapshot({
+          data,
+          loading: true
+        });
+        authRepository.register({
+          email: form.email,
+          password: form.password
+        })
+          .then(({ userId }) => {
+            data = {
+              ...data,
+              id: userId
+            }
+            setUserSnapshot({
+              data,
+              loading: false
+            });
+            setStudentSnapshot({
+              data: {
+                ...studentSnapshot.data,
+                userId
+              },
+              loading: false
+            });
+            authRepository.sendEmail(form.email);
+            unsignedUserRepository.save(data);
+          })
+          .catch((e) => {
+            setUserSnapshot({
+              ...userSnapshot,
+              error: e,
+              loading: false
+            });
+            console.error(e);
+          });
+      },
+      async requestSocialSignup(type) {
         let data = {
           ...userSnapshot.data,
-          authChoice: form.authChoice
+          authChoice: type
         }
         setUserSnapshot({
           ...userSnapshot,
@@ -163,7 +161,7 @@ export default function SignupContainer({
         });
         unsignedUserRepository.save(data);
         oAuthStatusRepository.save("SIGNUP");
-        authRepository.oAuthAuthorize(OAuthEnum[form.authChoice]);
+        authRepository.oAuthAuthorize(OAuthEnum[type]);
       },
       submitStudentInfo(form) {
         setStudentSnapshot({

@@ -5,6 +5,7 @@ import {
   useLocation,
   useNavigate
 } from 'react-router-dom';
+import _ from 'lodash';
 
 import { routes } from '../../routes';
 import { AuthRepository, AuthSessionRepository } from '../../domain/account/auth.interface';
@@ -292,26 +293,13 @@ const StyledTab = styled(Tab)`
 
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
-  const [breadcrumbs, setBreadcrumbs] = useState<React.ReactNode[]>([]);
+  const [login, setLogin] = useState<boolean>();
   const {pathname} = useLocation();
 
-  useEffect(() => {
-    authService.isLogined().then((login) => login ? setBreadcrumbs([
-      <Link key={0} to={routes.my.path} className='text-base text-black'>
-        마이페이지
-      </Link>,
-      <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
-        로그아웃
-      </Button>
-    ]) : setBreadcrumbs([
-      <Link key={0} to={routes.login.path} className='text-base text-black'>
-        로그인
-      </Link>,
-      <Link key={1} to={routes.signup.path} className='text-base text-black '>
-        회원가입
-      </Link>
-    ]));
-  }, [authService, pathname]);
+  useEffect(_.debounce(() => {
+    authService.isLogined().then((value) => setLogin(value));
+  }, 500), [pathname]);
+  console.log(login);
 
   return (
     <Stack spacing={2} sx={{
@@ -319,7 +307,25 @@ export function SubNavSeparator() {
       top: 16
     }}>
       <Breadcrumbs separator="|" aria-label="breadcrumb">
-        {breadcrumbs}
+        {
+          typeof login !== "undefined" && (
+            login ? [
+              <Link key={0} to={routes.my.path} className='text-base text-black'>
+                마이페이지
+              </Link>,
+              <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
+                로그아웃
+              </Button>
+            ] : [
+              <Link key={0} to={routes.login.path} className='text-base text-black'>
+                로그인
+              </Link>,
+              <Link key={1} to={routes.signup.path} className='text-base text-black '>
+                회원가입
+              </Link>
+            ]
+          )
+        }
       </Breadcrumbs>
     </Stack>
   );

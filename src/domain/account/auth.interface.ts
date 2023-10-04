@@ -23,8 +23,8 @@ export interface AuthSession {
 export interface AuthRepository {
   register: (credential: UserCredential) => Promise<{userId: string}>;
   sendEmail: (email: string) => Promise<void>;
-  oAuthAuthorize: (oAuthProviderName: OAuthEnum) => void;
-  oAuthLogout: (oAuthProviderName: OAuthEnum) => void;
+  oAuthAuthorize: (oAuthProviderName: OAuthEnum) => Promise<void>;
+  oAuthLogout: (oAuthProviderName: OAuthEnum) => Promise<void>;
   validateUserByCredential: (credential: UserCredential) => Promise<void>;
 }
 

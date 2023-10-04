@@ -55,12 +55,11 @@ const SignupInteractor: React.FC = () => {
             });
             return service.checkPasswordConfirm(signupRequest.password, value);
           }}
-          clickSignup={(authChoice) => {
-            setSignupRequest({
-              ...signupRequest,
-              authChoice: authChoice
-            });
+          clickSignup={() => {
             service.requestSignup(signupRequest);
+          }}
+          clickSocialSignup={(type) => {
+            service.requestSocialSignup(type);
           }}
         />
       );

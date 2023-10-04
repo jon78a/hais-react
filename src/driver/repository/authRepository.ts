@@ -41,11 +41,11 @@ const authRepository: AuthRepository = {
     }
     throw new Error(ErrorStatus.UNSUBMIT_CREDENTIAL);
   },
-  oAuthAuthorize(oAuthProviderName) {
+  async oAuthAuthorize(oAuthProviderName) {
     const client = new OAuthClient(oAuthProviderName);
     client.provider.authorize();
   },
-  oAuthLogout(oAuthProviderName) {
+  async oAuthLogout(oAuthProviderName) {
     const client = new OAuthClient(oAuthProviderName);
     client.provider.logout();
   },

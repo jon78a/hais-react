@@ -123,7 +123,7 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
         </Stack>
         <Button variant="contained" sx={{mt: 4}} onClick={() => {
             setClickedNormal(true);
-            ux.clickSignup("NORMAL");
+            ux.clickSignup();
           }}
           disabled={isDisabled || clickedNormal}
         >
@@ -150,7 +150,7 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
         </Typography>
       </Divider>
       <Stack direction={"row"} spacing={2} sx={{mt: 2}}>
-        <button onClick={() => ux.clickSignup("KAKAO")}>
+        <button onClick={() => ux.clickSocialSignup("KAKAO")}>
           <img alt="kakao" src={process.env.PUBLIC_URL + "/kakao-logo.svg"} className="w-[40px] h-[40px]"/>
         </button>
       </Stack>

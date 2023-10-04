@@ -37,9 +37,9 @@ const authSessionRepository: AuthSessionRepository = {
       const current = Math.floor(Date.now() / 1000);
       if (session.exp > current && session.status === "GRANT") return session;
       return null;
-    } else {
-      return null;
     }
+
+    return null;
   },
   async clear() {
     sessionStorage.removeItem(AUTH_SESSION_KEY);

@@ -5,11 +5,13 @@ import type {
   SignupRequest
 } from "../schema/types/Signup";
 import type { ExceptionDetail } from "../types";
+import { SocialType } from "../policy/auth";
 
 interface SignupService {
   submitStudentInfo: (form: StudentProfile) => void;
   signupComplete: () => void;
   requestSignup: (form: SignupRequest) => Promise<void>;
+  requestSocialSignup: (type: SocialType) => Promise<void>;
   resetRequest: () => void;
   checkEmail: (value: string) => ExceptionDetail | null;
   checkPassword: (value: string) => ExceptionDetail | null;
