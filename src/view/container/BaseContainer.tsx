@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Link,
   matchPath,
@@ -7,14 +7,15 @@ import {
 } from 'react-router-dom';
 
 import { routes } from '../../routes';
-import { AuthRepository } from '../../domain/account/auth.interface';
+import { AuthRepository, AuthSessionRepository } from '../../domain/account/auth.interface';
 import { AuthorizeContext, useAuthorizeService } from '../../service/authorize';
+import { UserRepository } from '../../domain/account/user.interface';
+import { OAuthEnum } from '../../policy/auth';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Stack from '@mui/material/Stack';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { TabsList } from '@mui/base/TabsList';
 import { styled } from '@mui/system';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AppBar from '@mui/material/AppBar';
@@ -32,25 +33,44 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 
-
 export const BaseContainer = ({
   children,
   repositories
 }: {
   children: React.ReactNode;
   repositories: {
-    authRepository: AuthRepository
+    authSessionRepository: AuthSessionRepository,
+    authRepository: AuthRepository,
+    userRepository: UserRepository
   }
 }): JSX.Element => {
-  const {authRepository} = repositories;
+  const navigate = useNavigate();
+
+  const {
+    authSessionRepository,
+    authRepository,
+    userRepository
+  } = repositories;
   return (
     <AuthorizeContext.Provider value={{
-      isLogined() {
-        return authRepository.isLogined();
+      async isLogined() {
+        const session = await authSessionRepository.find();
+        const current = Math.floor(Date.now() / 1000);
+        if (!!session && session.exp > current && session.status === "GRANT") return true;
+        return false;
       },
-      terminateSession() {
-        authRepository.logout();
-        window.location.replace(routes.home.path);
+      async terminateSession() {
+        const session = await authSessionRepository.find();
+        if (session) {
+          const user = await userRepository.findByUserId(session.userId);
+          if (user?.authChoice && user.authChoice !== "NORMAL") {
+            authRepository.oAuthLogout(OAuthEnum[user.authChoice]);
+            return;
+          }
+          await authSessionRepository.clear();
+        };
+        navigate(routes.home.path, {replace: true});
+        alert("로그아웃 되었습니다.");
       },
     }}>
       <TopNavBarXl />
@@ -206,7 +226,8 @@ function MyTabs() {
   const navigate = useNavigate();
   const routeMatch = useRouteMatch([
     routes.subjectSearch.path,
-    routes.my.path
+    routes.my.path,
+    routes.subjectRecommend.path
   ]);
   const currentTab = routeMatch?.pattern?.path;
 
@@ -271,22 +292,26 @@ const StyledTab = styled(Tab)`
 
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
+  const [breadcrumbs, setBreadcrumbs] = useState<React.ReactNode[]>([]);
+  const {pathname} = useLocation();
 
-  const breadcrumbs = authService.isLogined() ? [
-    <Link key={0} to={routes.my.path} className='text-base text-black'>
-      마이페이지
-    </Link>,
-    <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
-      로그아웃
-    </Button>
-  ] : [
-    <Link key={0} to={routes.login.path} className='text-base text-black'>
-      로그인
-    </Link>,
-    <Link key={1} to={routes.signup.path} className='text-base text-black '>
-      회원가입
-    </Link>
-  ];
+  useEffect(() => {
+    authService.isLogined().then((login) => login ? setBreadcrumbs([
+      <Link key={0} to={routes.my.path} className='text-base text-black'>
+        마이페이지
+      </Link>,
+      <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
+        로그아웃
+      </Button>
+    ]) : setBreadcrumbs([
+      <Link key={0} to={routes.login.path} className='text-base text-black'>
+        로그인
+      </Link>,
+      <Link key={1} to={routes.signup.path} className='text-base text-black '>
+        회원가입
+      </Link>
+    ]));
+  }, [authService, pathname]);
 
   return (
     <Stack spacing={2} sx={{

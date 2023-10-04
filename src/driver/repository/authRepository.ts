@@ -1,7 +1,4 @@
 import {
-  doc,
-  getDoc,
-  updateDoc,
   query,
   collection,
   where,
@@ -16,13 +13,8 @@ import {
 } from "firebase/auth";
 import { OAuthClient } from "../oauth/client";
 import { firebaseDb } from "../firebase";
-import { CollectionName, ErrorStatus } from "../firebase/constants";
-import {
-  setAuthSession,
-  removeAuthSession,
-  getValidUserId,
-  isLogined
-} from "../sessionStorage/auth";
+import { CollectionName } from "../firebase/constants";
+import { ErrorStatus } from "../../policy/errors";
 
 const authRepository: AuthRepository = {
   async register(credential) {
@@ -53,20 +45,11 @@ const authRepository: AuthRepository = {
     const client = new OAuthClient(oAuthProviderName);
     client.provider.authorize();
   },
-  async unregister() {
-    removeAuthSession();
-
-    const userId = getValidUserId();
-    if (!userId) throw new Error(ErrorStatus.USER_SESSION_OUT);
-    const docRef = doc(firebaseDb, CollectionName.User, userId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      updateDoc(docRef, {
-        activated: false
-      });
-    }
+  oAuthLogout(oAuthProviderName) {
+    const client = new OAuthClient(oAuthProviderName);
+    client.provider.logout();
   },
-  async login(credential) {
+  async validateUserByCredential(credential) {
     const q = query(collection(firebaseDb, CollectionName.User),
       where("email", "==", credential.email)
     );
@@ -76,15 +59,10 @@ const authRepository: AuthRepository = {
       userExists = true;
       const user = doc.data();
       if (user.password !== credential.password) throw new Error(ErrorStatus.INVALID_USER_PASSWORD);
-      setAuthSession(user.id, "GRANT");
+      if (!user.activated) throw new Error(ErrorStatus.USER_INACTIVE);
+      if (!user.verified) throw new Error(ErrorStatus.NOT_VERIFIED_USER);
     });
     if (!userExists) throw new Error(ErrorStatus.INVALID_USER_EMAIL);
-  },
-  async logout() {
-    removeAuthSession();
-  },
-  isLogined() {
-    return isLogined();
   },
 }
 

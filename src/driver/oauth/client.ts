@@ -23,6 +23,7 @@ interface OAuthApiConfigs {
   authorize: FetchApiConfig;
   token: FetchApiConfig;
   profile: FetchApiConfig;
+  logout?: FetchApiConfig;
 }
 
 abstract class OAuthProvider {
@@ -51,6 +52,11 @@ abstract class OAuthProvider {
           userId: ""
         }
       }
+    },
+    logout: {
+      url: "",
+      getInit: () => undefined,
+      getResult: (data: any) => undefined
     }
   };
   protected redirectUri: string;
@@ -89,6 +95,10 @@ abstract class OAuthProvider {
 
   authorize(): void {
     window.location.replace(this.apiConfigs.authorize.url);
+  }
+
+  logout(): void {
+    window.location.replace(this.apiConfigs.logout?.url || "");
   }
 
   async getOAuthToken(code: string): Promise<TokenResult> {
@@ -159,6 +169,18 @@ class KakaoOAuth extends OAuthProvider {
           return {
             userId: String(data["id"])
           }
+        },
+      },
+      logout: {
+        url: "https://kauth.kakao.com/oauth/logout?" + qs.stringify({
+          "client_id": this.clientId,
+          "logout_redirect_uri": process.env.REACT_APP_HOST_URL + '/oauth/logout/kakao'
+        }),
+        getInit(...args) {
+          return undefined;
+        },
+        getResult(data) {
+          return undefined;
         },
       }
     }

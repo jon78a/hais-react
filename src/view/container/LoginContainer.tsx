@@ -1,12 +1,15 @@
 import { useSetRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 
-import { AuthRepository, OAuthSessionRepository } from "../../domain/account/auth.interface";
+import { AuthRepository, AuthSessionRepository, OAuthStatusRepository } from "../../domain/account/auth.interface";
 import {
   LoginContext
 } from "../../service/login"
 import { defaultUserCredential, userCredentialState } from "../../domain/account/auth.impl";
 import { OAuthEnum } from "../../policy/auth";
 import { routes } from "../../routes";
+import { UserRepository } from "../../domain/account/user.interface";
+import { ErrorStatus } from "../../policy/errors";
 
 const LoginContainer = ({
   children,
@@ -15,12 +18,21 @@ const LoginContainer = ({
   children: React.ReactNode;
   repositories: {
     authRepository: AuthRepository,
-    oAuthSessionRepository: OAuthSessionRepository
+    userRepository: UserRepository,
+    oAuthStatusRepository: OAuthStatusRepository,
+    authSessionRepository: AuthSessionRepository
   };
 }): JSX.Element => {
+  const navigate = useNavigate();
+
   const setUserCredentialSnapshot = useSetRecoilState(userCredentialState);
 
-  const {authRepository, oAuthSessionRepository} = repositories;
+  const {
+    authRepository,
+    oAuthStatusRepository,
+    authSessionRepository,
+    userRepository
+  } = repositories;
 
   return (
     <LoginContext.Provider value={{
@@ -34,12 +46,20 @@ const LoginContainer = ({
           loading: true
         });
         try {
-          await authRepository.login({email, password});
-          setUserCredentialSnapshot({
-            data: defaultUserCredential,
-            loading: false
+          const user = await userRepository.findByCredential(email, password);
+          if (!user ||
+            !user.activated || !user.verified) throw new Error(ErrorStatus.USER_NOT_FOUND);
+
+          authSessionRepository.save(
+            user.id,
+            "GRANT"
+          ).then(() => {
+            setUserCredentialSnapshot({
+              data: defaultUserCredential,
+              loading: false
+            });
+            navigate(routes.home.path, {replace: true});
           });
-          window.location.replace(routes.home.path);
         } catch(e) {
           if (e instanceof Error) {
             setUserCredentialSnapshot({
@@ -57,7 +77,7 @@ const LoginContainer = ({
         }
       },
       async socialLogin(socialType) {
-        oAuthSessionRepository.save("LOGIN");
+        oAuthStatusRepository.save("LOGIN");
         authRepository.oAuthAuthorize(OAuthEnum[socialType]);
       }
       // findPassword(verifyingEmail) {
