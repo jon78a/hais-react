@@ -8,8 +8,8 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../domain/account/user.impl";
 import { OAuthClient } from "../driver/oauth/client";
 import { routes } from "../routes";
-import userSessionRepository from "../driver/repository/userSessionRepository";
-import oAuthSessionRepository from "../driver/repository/oAuthSessionRepository";
+import unsignedUserRepository from "../driver/repository/unsignedUserRepository";
+import oAuthStatusRepository from "../driver/repository/oAuthStatusRepository";
 import userRepository from "../driver/repository/userRepository";
 import authSessionRepository from "../driver/repository/authSessionRepository";
 
@@ -28,7 +28,7 @@ const OAuthPage = () => {
     const code = searchParams.get("code")!;
 
     const oAuthType = slug as OAuthEnum;
-    const oAuthSessionType = oAuthSessionRepository.find()
+    const oAuthSessionType = oAuthStatusRepository.find()
 
     if (!oAuthSessionType) {
       alert("비정상적인 접근입니다");
@@ -52,22 +52,22 @@ const OAuthPage = () => {
               userRepository.findByUserId(userId).then((user) => {
                 if (!user) {
                   alert("회원가입을 먼저 해주세요");
-                  window.location.replace(routes.signup.path);
+                  navigate(routes.signup.path);
                 } else {
                   authSessionRepository.save(userId, "GRANT");
-                  window.location.replace(routes.home.path);
+                  navigate(routes.home.path);
                 }
               });
             }
             else if (oAuthSessionType === "SIGNUP") {
-              userSessionRepository.save({
+              unsignedUserRepository.save({
                 ...userSnapshot.data,
                 verified: true,
                 id: userId
               });
               navigate(routes.signup.path + "?step=2"); 
             } else {}
-            oAuthSessionRepository.clear();
+            oAuthStatusRepository.clear();
           });
       })
       .catch((e) => console.error(e));

@@ -26,6 +26,10 @@ const LoginForm: React.FC<LoginFormUx> = (ux) => {
         component={"form"}
         autoComplete="off"
         className="flex flex-col w-full"
+        onSubmit={(e) => {
+          e.preventDefault();
+          ux.clickLoginButton();
+        }}
       >
         <Stack spacing={1}>
           <div className="flex flex-col">
@@ -60,10 +64,7 @@ const LoginForm: React.FC<LoginFormUx> = (ux) => {
             />
           </div>
         </Stack>
-        <Button variant="contained" sx={{mt: 4}} onClick={() => {
-            ux.clickLoginButton();
-          }}
-        >
+        <Button variant="contained" sx={{mt: 4}} type={"submit"}>
           가입하기
         </Button>
       </Box>

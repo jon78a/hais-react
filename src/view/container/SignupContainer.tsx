@@ -3,18 +3,17 @@ import { useRecoilState } from "recoil";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { SignupContext } from "../../service/signup";
-import { UserRepository, UserSessionRepository } from "../../domain/account/user.interface";
+import { UserRepository, UnsignedUserRepository } from "../../domain/account/user.interface";
 import { defaultUser, userErrorMap, userState } from "../../domain/account/user.impl";
 import * as accountPolicy from "../../policy/account";
 import { defaultStudent, studentState } from "../../domain/subject/school.impl";
-import { AuthRepository, OAuthSessionRepository } from "../../domain/account/auth.interface";
+import { AuthRepository, AuthSessionRepository, OAuthStatusRepository } from "../../domain/account/auth.interface";
 import { OAuthEnum } from "../../policy/auth";
 import { StudentRepository } from "../../domain/subject/school.interface";
 import { firebaseAuth } from "../../driver/firebase/firebase";
 import { routes } from "../../routes";
 import { userExceptionMap } from "../../domain/account/user.impl";
 import { studentExceptionMap } from "../../domain/subject/school.impl";
-import oAuthSessionRepository from "../../driver/repository/oAuthSessionRepository";
 
 export default function SignupContainer({
   children,
@@ -25,15 +24,18 @@ export default function SignupContainer({
     userRepository: UserRepository,
     authRepository: AuthRepository,
     studentRepository: StudentRepository,
-    userSessionRepository: UserSessionRepository,
-    oAuthSessionRepository: OAuthSessionRepository
+    unsignedUserRepository: UnsignedUserRepository,
+    oAuthStatusRepository: OAuthStatusRepository,
+    authSessionRepository: AuthSessionRepository
   }
 }) {
   const {
     userRepository,
     authRepository,
     studentRepository,
-    userSessionRepository
+    unsignedUserRepository,
+    authSessionRepository,
+    oAuthStatusRepository
   } = repositories;
 
   const [userSnapshot, setUserSnapshot] = useRecoilState(userState);
@@ -48,12 +50,12 @@ export default function SignupContainer({
     if (searchParams.get("step") === "2") return;
 
     const unsubscribe = firebaseAuth.onIdTokenChanged((fbUser) => {
-      const user = userSessionRepository.getUser();
+      const user = unsignedUserRepository.getUser();
       if (fbUser) {
         (async () => {
           await fbUser.reload();
           if (fbUser.emailVerified && user) {
-            userSessionRepository.save({
+            unsignedUserRepository.save({
               ...user,
               verified: true
             });
@@ -138,7 +140,7 @@ export default function SignupContainer({
                 loading: false
               });
               authRepository.sendEmail(form.email);
-              userSessionRepository.save(data);
+              unsignedUserRepository.save(data);
             })
             .catch((e) => {
               setUserSnapshot({
@@ -159,8 +161,8 @@ export default function SignupContainer({
           ...userSnapshot,
           data
         });
-        userSessionRepository.save(data);
-        oAuthSessionRepository.save("SIGNUP");
+        unsignedUserRepository.save(data);
+        oAuthStatusRepository.save("SIGNUP");
         authRepository.oAuthAuthorize(OAuthEnum[form.authChoice]);
       },
       submitStudentInfo(form) {
@@ -176,7 +178,7 @@ export default function SignupContainer({
         });
       },
       signupComplete() {
-        const tmpUser = userSessionRepository.getUser();
+        const tmpUser = unsignedUserRepository.getUser();
         if (!tmpUser) throw Error("유저 세션이 존재하지 않습니다.");
 
         Promise.all([
@@ -195,11 +197,13 @@ export default function SignupContainer({
             loading: false
           });
           // 회원가입 시 자동 로그인
-          authRepository.login({
+          authRepository.validateUserByCredential({
             email: tmpUser.email,
             password: tmpUser.password
+          }).then(() => {
+            authSessionRepository.save(tmpUser.id, "GRANT")
+              .then(() => window.location.replace(routes.home.path));
           });
-          window.location.replace(routes.home.path);
         }).catch((e) => {
           setUserSnapshot({
             data: defaultUser,
@@ -214,11 +218,11 @@ export default function SignupContainer({
           console.error(e);
         });
 
-        userSessionRepository.delete();
+        unsignedUserRepository.delete();
       },
       resetRequest() {
         // 추후에 adminRepository 만들어 강제 삭제 시키기
-        userSessionRepository.delete();
+        unsignedUserRepository.delete();
         searchParams.set("step", "1");
         setSearchParams(searchParams);
       },

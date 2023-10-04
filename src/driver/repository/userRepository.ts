@@ -2,6 +2,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
   query,
   collection,
   where,
@@ -14,10 +15,6 @@ import {
 } from "firebase/auth";
 import { firebaseDb } from "../firebase";
 import { CollectionName, ErrorStatus } from "../firebase/constants";
-import {
-  setAuthSession,
-} from "../sessionStorage/auth";
-import { authorizeRequired } from "../handler";
 
 const userRepository: UserRepository = {
   async save(user) {
@@ -30,7 +27,6 @@ const userRepository: UserRepository = {
       }
       const docRef = doc(firebaseDb, CollectionName.User, user.id);
       setDoc(docRef, user);
-      setAuthSession(user.id, "GRANT");
     } catch (e) {
       console.error(e);
     }
@@ -57,6 +53,13 @@ const userRepository: UserRepository = {
       user = doc.data() as User;
     });
     return user;
+  },
+  async update(userId, req) {
+    const docRef = doc(firebaseDb, CollectionName.User, userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      await updateDoc(docRef, req);
+    }
   },
 }
 

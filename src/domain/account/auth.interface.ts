@@ -13,32 +13,30 @@ export interface UserCredential {
 }
 
 export interface AuthSession {
+  id?: string;
   exp: number;
   userId: string;
   status: AuthSessionStatus;
+  createdAt?: number;
 }
 
 export interface AuthRepository {
   register: (credential: UserCredential) => Promise<{userId: string}>;
   sendEmail: (email: string) => Promise<void>;
   oAuthAuthorize: (oAuthProviderName: OAuthEnum) => void;
-  unregister: (userId: string) => Promise<void>;
-  login: (credential: UserCredential) => Promise<void>;
-  logout: () => Promise<void>;
-  isLogined: () => boolean;
+  validateUserByCredential: (credential: UserCredential) => Promise<void>;
 }
 
-export type OAuthSessionType = "LOGIN" | "SIGNUP"
+export type OAuthStatusType = "LOGIN" | "SIGNUP"
 
-export interface OAuthSessionRepository {
-  find: () => OAuthSessionType | null;
-  save: (authType: OAuthSessionType) => void;
+export interface OAuthStatusRepository {
+  find: () => OAuthStatusType | null;
+  save: (status: OAuthStatusType) => void;
   clear: () => void;
 }
 
 export interface AuthSessionRepository {
-  save: (userId: string, status: AuthSessionStatus) => void;
-  getValidUserId: () => string | null;
-  isLogined: () => boolean;
-  clear: () => void;
+  save: (userId: string, status: AuthSessionStatus) => Promise<void>;
+  find: () => Promise<AuthSession | null>;
+  clear: () => Promise<void>;
 }
