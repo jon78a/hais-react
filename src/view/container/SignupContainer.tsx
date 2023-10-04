@@ -161,7 +161,7 @@ export default function SignupContainer({
         });
         unsignedUserRepository.save(data);
         oAuthStatusRepository.save("SIGNUP");
-        authRepository.oAuthAuthorize(OAuthEnum[type]);
+        await authRepository.oAuthAuthorize(OAuthEnum[type]);
       },
       submitStudentInfo(form) {
         setStudentSnapshot({
