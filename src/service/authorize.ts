@@ -1,8 +1,8 @@
 import { createContext, useContext } from "react";
 
 interface AuthorizeService {
-  isLogined: () => boolean;
-  terminateSession: () => void;
+  isLogined: () => Promise<boolean>;
+  terminateSession: () => Promise<void>;
 }
 
 export const AuthorizeContext = createContext<AuthorizeService | undefined>(undefined);

@@ -46,10 +46,15 @@ export interface UserExceptionMap {
 export interface UserRepository {
   findByUserId: (userId: string) => Promise<User | null>;
   save: (user: User) => Promise<void>;
+  update: (userId: string, req: {
+    activated?: boolean;
+    password?: string;
+    verified?: boolean;
+  }) => Promise<void>;
   findByCredential: (email: string, password: string) => Promise<User | null>;
 }
 
-export interface UserSessionRepository {
+export interface UnsignedUserRepository {
   save: (user: User) => void;
   getUser: () => User | null;
   delete: () => void;
