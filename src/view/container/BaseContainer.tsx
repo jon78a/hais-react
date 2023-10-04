@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import {
   Link,
   matchPath,
@@ -12,6 +12,7 @@ import { AuthRepository, AuthSessionRepository } from '../../domain/account/auth
 import { AuthorizeContext, useAuthorizeService } from '../../service/authorize';
 import { UserRepository } from '../../domain/account/user.interface';
 import { OAuthEnum } from '../../policy/auth';
+import { AUTH_SESSION_KEY } from '../../driver/sessionStorage/constants';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Stack from '@mui/material/Stack';
@@ -293,13 +294,14 @@ const StyledTab = styled(Tab)`
 
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
-  const [login, setLogin] = useState<boolean>();
+  const [login, setLogin] = useState<boolean>(false);
   const {pathname} = useLocation();
 
-  useEffect(_.debounce(() => {
-    authService.isLogined().then((value) => setLogin(value));
-  }, 500), [pathname]);
-  console.log(login);
+  useLayoutEffect(() => {
+    const item = sessionStorage.getItem(AUTH_SESSION_KEY);
+    if (!item) setLogin(false);
+    else setLogin(true);
+  }, [pathname]);
 
   return (
     <Stack spacing={2} sx={{
@@ -308,23 +310,21 @@ export function SubNavSeparator() {
     }}>
       <Breadcrumbs separator="|" aria-label="breadcrumb">
         {
-          typeof login !== "undefined" && (
-            login ? [
-              <Link key={0} to={routes.my.path} className='text-base text-black'>
-                마이페이지
-              </Link>,
-              <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
-                로그아웃
-              </Button>
-            ] : [
-              <Link key={0} to={routes.login.path} className='text-base text-black'>
-                로그인
-              </Link>,
-              <Link key={1} to={routes.signup.path} className='text-base text-black '>
-                회원가입
-              </Link>
-            ]
-          )
+          login ? [
+            <Link key={0} to={routes.my.path} className='text-base text-black'>
+              마이페이지
+            </Link>,
+            <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
+              로그아웃
+            </Button>
+          ] : [
+            <Link key={0} to={routes.login.path} className='text-base text-black'>
+              로그인
+            </Link>,
+            <Link key={1} to={routes.signup.path} className='text-base text-black '>
+              회원가입
+            </Link>
+          ]
         }
       </Breadcrumbs>
     </Stack>
