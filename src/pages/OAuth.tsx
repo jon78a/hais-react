@@ -50,7 +50,7 @@ const OAuthPage = () => {
             if (!userId) return;
             if (oAuthSessionType === "LOGIN") {
               userRepository.findByUserId(userId).then((user) => {
-                if (!userId && !user) {
+                if (userId && !user) {
                   alert("회원가입을 먼저 해주세요");
                   navigate(routes.signup.path, {replace: true});
                   return;
