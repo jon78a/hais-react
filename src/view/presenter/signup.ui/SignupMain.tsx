@@ -153,6 +153,9 @@ export const SignupMain: React.FC<SignupMainUx> = (ux) => {
         <button onClick={() => ux.clickSocialSignup("KAKAO")}>
           <img alt="kakao" src={process.env.PUBLIC_URL + "/kakao-logo.svg"} className="w-[40px] h-[40px]"/>
         </button>
+        <button onClick={() => ux.clickSocialSignup("NAVER")}>
+          <img alt="naver" src={process.env.PUBLIC_URL + "/naver-logo.svg"} className="w-[40px] h-[40px]"/>
+        </button>
       </Stack>
     </Paper>
   );

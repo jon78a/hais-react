@@ -1,10 +1,11 @@
-export type AuthChoiceType = "KAKAO" | "NAVER" | "NORMAL";
+export type AuthChoiceType = "KAKAO" | "NAVER" | "GOOGLE" | "NORMAL";
 export type AuthSessionStatus = "REGISTER" | "GRANT" | "BLACK";
-export type SocialType = "KAKAO" | "NAVER";
+export type SocialType = "KAKAO" | "NAVER" | "GOOGLE";
 
 export enum OAuthEnum {
   KAKAO = "kakao",
-  NAVER = "naver"
+  NAVER = "naver",
+  GOOGLE = "google"
 }
 
 export function generateOAuthPassword(length: number): string {

@@ -47,7 +47,10 @@ const authRepository: AuthRepository = {
   },
   async oAuthLogout(oAuthProviderName) {
     const client = new OAuthClient(oAuthProviderName);
-    client.provider.logout();
+    const result = client.provider.logout();
+    if (!result) {
+      window.location.replace(`/oauth/logout/${oAuthProviderName}`);
+    }
   },
   async validateUserByCredential(credential) {
     const q = query(collection(firebaseDb, CollectionName.User),
