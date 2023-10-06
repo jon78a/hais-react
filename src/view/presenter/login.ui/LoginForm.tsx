@@ -77,6 +77,9 @@ const LoginForm: React.FC<LoginFormUx> = (ux) => {
         <button onClick={() => ux.clickSocial("KAKAO")}>
           <img alt="kakao" src={process.env.PUBLIC_URL + "/kakao-logo.svg"} className="w-[40px] h-[40px]"/>
         </button>
+        <button onClick={() => ux.clickSocial("NAVER")}>
+          <img alt="naver" src={process.env.PUBLIC_URL + "/naver-logo.svg"} className="w-[40px] h-[40px]"/>
+        </button>
       </Stack>
     </Paper>
   );

@@ -5,7 +5,6 @@ import {
   useLocation,
   useNavigate
 } from 'react-router-dom';
-import _ from 'lodash';
 
 import { routes } from '../../routes';
 import { AuthRepository, AuthSessionRepository } from '../../domain/account/auth.interface';
