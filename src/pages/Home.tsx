@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 
 import Slider from "react-slick";
@@ -17,27 +17,59 @@ export const Carousel = () => {
     slidesToScroll: 1,
   };
 
-  const matchesDesktopXl = useMediaQuery('(min-width: 900px)');
-
+  const matchesDesktopXl = useMediaQuery("(min-width:450px)");
+  
+  
   return (
-    <div className={`w-[70%]` } >
+    <div className={`w-full ${matchesDesktopXl ? "" : "hidden"}`}>
       <Slider {...settings}>
         <div className="relative">
           <img src="/Hais_Banner1.png" alt="banner1" />
           <Link to="/subject/search">
-            <button className="z-50 p-2 absolute text-white bg-[#4E9E65] font-black left-[10%] top-[80%] w-[200px] rounded-2xl ">
+            <button className="z-50 p-1 absolute text-white bg-[#4E9E65] font-black left-[20%] top-[80%] w-[15%] h-[20%] rounded-2xl ">
               <p>교과탐색</p>
             </button>
           </Link>
         </div>
         <div className="relative">
           <img src="/Hais_Banner2.png" alt="banner2" />
-          <div className="'z-50 p-3 absolute left-[10%] top-[75%]">
+          <div className="'z-50 absolute left-[20%] top-[65%] w-[23%] h-full">
             <FreeSoloCreateOption />
           </div>
         </div>
         <div>
-          <h3>3</h3>
+            <img src="/Hais_Banner3.png" alt="banner3" />
+        </div>
+        <div>
+          <h3>4</h3>
+        </div>
+      </Slider>
+    </div>
+  );
+};
+
+export const CarouselSM = () => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
+  const matchesMobile = useMediaQuery("(max-width:449px)")
+
+  return (
+    <div className={` px-12 ${matchesMobile ? "w-full" : "hidden"}`} >
+      <Slider {...settings}>
+        <div className="relative">
+          <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl" />
+        </div>
+        <div className="relative">
+          <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl"/>
+        </div>
+        <div>
+        <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl"/>
         </div>
         <div>
           <h3>4</h3>
@@ -51,7 +83,6 @@ const filter = createFilterOptions<UnivOptionType>();
 
 export function FreeSoloCreateOption() {
   const [value, setValue] = React.useState<UnivOptionType | null>(null);
-
   return (
     <Autocomplete
       value={value}
@@ -61,7 +92,6 @@ export function FreeSoloCreateOption() {
             univName: newValue,
           });
         } else if (newValue && newValue.inputValue) {
-          // Create a new value from the user input
           setValue({
             univName: newValue.inputValue,
           });
@@ -73,6 +103,11 @@ export function FreeSoloCreateOption() {
         const filtered = filter(options, params);
         return filtered;
       }}
+      sx={{
+        fontSize: 20,
+        py:2,
+      }}
+      size="small"
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
@@ -86,20 +121,6 @@ export function FreeSoloCreateOption() {
           return option.inputValue;
         }
         return option.univName;
-      }}
-      sx={{
-        width: "150px", // 초기 크기
-        maxHeight: "25px",
-
-        '@media (min-width: 768px)': {
-          width: "240px", // 화면 너비가 768px 이상일 때 크기 조정
-          maxHeight: "40px",
-        },
-        '@media (min-width: 1024px)': {
-          width: "300px",
-          maxHeight: "50px", // 화면 너비가 1024px 이상일 때 크기 조정
-        },
-       
       }}
       renderOption={(props, option) => <li {...props}>{option.univName}</li>}
       freeSolo
@@ -124,6 +145,7 @@ const HomePage = (): JSX.Element => {
   return (
     <div className="flex justify-center w-[100%]">
       <Carousel />
+      <CarouselSM />
     </div>
   );
 };

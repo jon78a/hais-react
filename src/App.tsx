@@ -16,7 +16,9 @@ import NotFound from './pages/NotFound';
 import MyPage from './pages/My';
 
 function App() {
+  const screenWidth= window.screen.availWidth;
   return (
+    <div className={`w-[${screenWidth}px]`}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout/>}>
@@ -32,6 +34,7 @@ function App() {
         <Route path={"/*"} element={<NotFound/>}/>
       </Routes>
     </BrowserRouter>
+    </div>
   );
 }
 
