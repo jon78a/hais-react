@@ -19,34 +19,6 @@ export interface TableDataInfo {
   button: JSX.Element;
 }
 
-//성적 외부에서 불러올 예정
-export const Grade = () => {
-  return [
-    { subjectGroup: "국어", grade: 3 },
-    { subjectGroup: "수학", grade: 1 },
-    { subjectGroup: "과학", grade: 2 },
-    { subjectGroup: "체육", grade: 4 }
-  ];
-};
-
-export const MajorInfo = () => {
-  return [
-    {
-      majorname: "정보시스템",
-      subjects: ["화법과 작문", "물리학Ⅰ", "고급 화학"]
-    },
-    {
-      majorname: "기계공학과",
-      subjects: ["미적분", "물리학Ⅰ", "고급 물리학"]
-    },
-    {
-      majorname: "생명과학과",
-      subjects: ["수학Ⅰ", "생명과학Ⅰ", "고급 물리학"]
-    },
-    
-  ];
-}
-
 const SearchTable: React.FC = () => {
   // const majorInfo = MajorInfo();
   // const sortedRows: TableDataInfo[] = OptionalSubjects
