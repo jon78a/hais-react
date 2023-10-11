@@ -74,6 +74,7 @@ export const BaseContainer = ({
         alert("로그아웃 되었습니다.");
       },
     }}>
+      
       <TopNavBarXl />
       <TopNavBarSm />
       {children}
@@ -82,10 +83,10 @@ export const BaseContainer = ({
 }
 
 export function TopNavBarXl(){
-  const matchesDesktopXl = useMediaQuery('(min-width: 1100px)'); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
+  const matchesDesktopXl = useMediaQuery('(min-width: 900px)'); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
 
   return (
-    <div className={`flex justify-center ${matchesDesktopXl ? 'min-w-[1100px]' : 'hidden'} ` }>
+    <div className={`flex justify-center ${matchesDesktopXl ? 'min-w-[900px]' : 'hidden'} ` }>
       <AppBar position={"static"} color={"inherit"} sx={{
         boxShadow: "none",
         borderBottomWidth: "2px",
@@ -105,7 +106,7 @@ export function TopNavBarXl(){
 }
 
 export function TopNavBarSm() {
-  const matchesDesktopSm = useMediaQuery('(max-width: 1099px)');
+  const matchesDesktopSm = useMediaQuery('(max-width: 899px)');
 
   const StyledToolbar = styled(Toolbar)`
   display: flex;
@@ -114,8 +115,12 @@ export function TopNavBarSm() {
   `
 
   return (
-    <div className={`${matchesDesktopSm ? 'min-w-[1099px]' : 'hidden'}`}>
-      <AppBar position="static" color={"inherit"}>
+    <div className={`${matchesDesktopSm ? 'min-w-[899px]' : 'hidden'} h-full`}>
+      <AppBar position="static" color={"inherit"} sx={{boxShadow: "none",
+        borderBottomWidth: "2px",
+        borderColor: "primary.main",
+        pb: 2
+      }}>
         <StyledToolbar>
           <TemporaryDrawer />
           <Link to={"/"}>
