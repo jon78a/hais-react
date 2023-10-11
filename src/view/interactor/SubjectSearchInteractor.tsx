@@ -16,6 +16,7 @@ import {
 } from "../../schema/states/SubjectSearch";
 import { Box, Typography } from "@mui/material";
 import { theme } from "../../theme";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const SubjectSearchInteractor = () => {
   const service = useSubjectSearchService();
@@ -32,9 +33,9 @@ const SubjectSearchInteractor = () => {
 
   //추가한 부분!
   const [showTable, setShowTable] = useState(false);
-
+  const matchesDesktopSm = useMediaQuery('(max-width: 900px)');
   return (
-    <Box sx={{px:"15%"}}>
+    <Box sx={{ px: matchesDesktopSm ? "2%" : "15%" }}>
       <MajorSearchFilter
         inputUnivKeyword={debounce((value) => {
           setUnivKeyword(value);
@@ -82,12 +83,11 @@ const SubjectSearchInteractor = () => {
       />
       {showTable && (
         <>
-          <p>검색된 대학(Univ): {univChoice.name}</p>
-          <p>검색된 학과(Major): {majorChoice.name}</p>
-          <Typography variant="h6" sx={{m:2, fontWeight: 'bold', textAlign: 'left', width:'90%' }} style={{ color: theme.palette.primary.main }}>
+          <Typography variant="h6" sx={{m:2, fontWeight: 'bold', textAlign: 'left', width:'100%' }} style={{ color: theme.palette.primary.main }}>
             추천교과 목록
           </Typography>
           <SearchTable />
+  
         </>
       )}
     </Box>
