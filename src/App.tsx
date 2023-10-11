@@ -13,6 +13,7 @@ import LoginPage from './pages/Login';
 import SubjectRecommendPage from './pages/SubjectRecommend';
 import OAuthLogout from './pages/OAuthLogout';
 import NotFound from './pages/NotFound';
+import MyPage from './pages/My';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path={routes.login.path} element={<LoginPage/>}/>
           <Route path={routes.subjectRecommend.path} element={<SubjectRecommendPage/>}/>
           <Route path={`/oauth/logout/:slug`} element={<OAuthLogout/>}/>
+          <Route path={routes.my.path} element={<MyPage/>}/>
         </Route>
         <Route path={"/*"} element={<NotFound/>}/>
       </Routes>
