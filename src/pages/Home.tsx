@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export const Carousel = () => {
   const settings = {
@@ -15,13 +16,16 @@ export const Carousel = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
+  const matchesDesktopXl = useMediaQuery('(min-width: 900px)');
+
   return (
-    <div className="w-[70%] min-w-[1099px]">
+    <div className={`w-[70%]` } >
       <Slider {...settings}>
         <div className="relative">
           <img src="/Hais_Banner1.png" alt="banner1" />
           <Link to="/subject/search">
-            <button className="z-50 p-3 absolute text-white bg-[#4E9E65] font-bold left-[10%] top-[80%] rounded-2xl">
+            <button className="z-50 p-2 absolute text-white bg-[#4E9E65] font-black left-[10%] top-[80%] w-[200px] rounded-2xl ">
               <p>교과탐색</p>
             </button>
           </Link>
@@ -83,8 +87,21 @@ export function FreeSoloCreateOption() {
         }
         return option.univName;
       }}
+      sx={{
+        width: "150px", // 초기 크기
+        maxHeight: "25px",
+
+        '@media (min-width: 768px)': {
+          width: "240px", // 화면 너비가 768px 이상일 때 크기 조정
+          maxHeight: "40px",
+        },
+        '@media (min-width: 1024px)': {
+          width: "300px",
+          maxHeight: "50px", // 화면 너비가 1024px 이상일 때 크기 조정
+        },
+       
+      }}
       renderOption={(props, option) => <li {...props}>{option.univName}</li>}
-      sx={{ width: 300 }}
       freeSolo
       renderInput={(params) => <TextField {...params} label="대학검색" />}
     />
