@@ -66,7 +66,7 @@ export const CarouselSM = () => {
           <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl" />
         </div>
         <div className="relative">
-          <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl"/>
+          <img src="/Hais_Banner2_SM.png" alt="banner1" className="rounded-2xl"/>
         </div>
         <div>
         <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl"/>
