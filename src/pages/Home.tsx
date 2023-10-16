@@ -19,7 +19,6 @@ export const Carousel = () => {
 
   const matchesDesktopXl = useMediaQuery("(min-width:450px)");
   
-  
   return (
     <div className={`w-full ${matchesDesktopXl ? "" : "hidden"}`}>
       <Slider {...settings}>

@@ -86,7 +86,7 @@ export const BaseContainer = ({
 export function TopNavBarXl(){
   const matchesDesktopXl = useMediaQuery('(min-width: 900px)'); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
   return (
-    <div className={`flex  justify-center w-full ${matchesDesktopXl ? `` : 'hidden'} ` }>
+    <div className={`flex w-full justify-center ${matchesDesktopXl ? `` : 'hidden'} ` }>
       <AppBar position={"static"} color={"inherit"} sx={{
         boxShadow: "none",
       }}>
@@ -110,7 +110,6 @@ export function TopNavBarSm() {
   align-items: center;
   height: 100%;
   `
-
   return (
     <div className={`pb-[100px] w-[${pageWidth}px] ${matchesDesktopSm ? `max-w-[${pageWidth}px]` : "hidden"} w-full`}>
       <AppBar position="fixed" color={"inherit"} sx={{boxShadow: "none",
