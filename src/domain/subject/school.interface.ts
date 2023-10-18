@@ -1,11 +1,11 @@
 import type { GradeEnum } from "../../policy/score";
-import type { SubjectCategoryCode } from "../../policy/subject-category";
+import type { StudentCategoryCode, OptionalSubjectCategoryEnum } from "../../policy/school";
 import type { ExceptionDetail } from "../../types";
 
-export interface Subject {
+export interface CommonSubject {
   id: string;
   code: string;
-  category: SubjectCategoryCode;
+  category: StudentCategoryCode;
   name: string;
 }
 
@@ -13,7 +13,7 @@ export interface Subject {
 export interface OptionalSubject {
   code: string;
   group: string;
-  category: string;
+  category: OptionalSubjectCategoryEnum;
   name: string;
   description: string;
   suneungInfo: string;
@@ -30,7 +30,7 @@ export interface ProfileScore {
 export interface Student {
   userId: string;
   id: string;
-  category: SubjectCategoryCode | null;
+  category: StudentCategoryCode | null;
   name: string;
   schoolYear: number;
   targetMajor: string[];

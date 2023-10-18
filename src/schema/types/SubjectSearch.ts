@@ -38,11 +38,11 @@ export type SearchFilter = {
 export type SearchSummary = {
   code: string;
   sbjName: string;  // 추천교과명
-  category: string;  // 과목분류
+  category: string;  // 과목분류 일반선택/진로선택/융합선택
   group: string;
   suneungOX: "O" | "X";
   // sbjArea: string;  // 국어, 수학, 과학
-  // description: string;  // 상세 설명
+  //description: string;  // 상세 설명
 }
 
 export type SearchDetail = {

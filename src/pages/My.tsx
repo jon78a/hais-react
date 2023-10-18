@@ -134,15 +134,15 @@ export function FullFeaturedCrudGrid() {
   };
 
   const columns: GridColDef[] = [
-    { field: 'subjectSelect',
-      headerName: '교과분류',
+    { field: 'subjectCategory',
+      headerName: '선택과목 유형',
       width: 180, 
       type:'singleSelect',
       editable: true,
       valueOptions: ["일반선택", "진로선택", "융합선택"],
      },
-     { field: 'subjectCategory',
-      headerName: '교과카테고리',
+     { field: 'subjectArea',
+      headerName: '과목영역',
       width: 180, 
       type:'singleSelect',
       editable: true,

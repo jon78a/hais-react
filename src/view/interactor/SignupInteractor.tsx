@@ -6,7 +6,7 @@ import { useSignupService } from "../../service/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
 import { signupRequestState, studentProfileState } from "../../schema/states/Signup";
 import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
-import type { SubjectCategoryCode } from "../../policy/subject-category";
+import type { StudentCategoryCode } from "../../policy/school";
 import { studentState } from "../../domain/subject/school.impl";
 
 const SignupInteractor: React.FC = () => {
@@ -82,7 +82,7 @@ const SignupInteractor: React.FC = () => {
           selectSubjectCategory={(value) => {
             setStudentProfile({
               ...studentProfile,
-              subjectCategory: value as SubjectCategoryCode
+              subjectCategory: value as StudentCategoryCode
             })
           }}
           inputTargetMajors={(values) => {
