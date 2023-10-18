@@ -30,7 +30,7 @@ function randomGenerator() {
   return String(Math.floor(Math.random() * 10) * 12);
 }
 
-abstract class OAuthProvider {
+class OAuthProvider {
   protected stateToken = "";
   protected tokenType = "bearer";
   protected apiConfigs: OAuthApiConfigs = {

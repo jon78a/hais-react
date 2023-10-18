@@ -1,7 +1,7 @@
 import { atom, useRecoilState } from "recoil";
 
 const signupStepState = atom<number>({
-  key: "recoil-hooks/useSignupStep",
+  key: "hooks/useSignupStep",
   default: 1
 });
 
