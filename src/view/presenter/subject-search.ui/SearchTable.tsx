@@ -8,10 +8,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import SearchIcon from '@mui/icons-material/Search';
 
 import { OptionalSubject } from '../../../domain/subject/school.interface';
 import { searchDetailState, searchSummaryListState } from '../../../schema/states/SubjectSearch';
 import { SearchTableUx } from '../subject-search.ux/SearchTable';
+import { SearchDetail } from '../../../schema/types/SubjectSearch';
 
 
 export interface TableDataInfo {
@@ -61,6 +67,21 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
 
   const searchSummaryList = useRecoilValue(searchSummaryListState);
   const searchDetail = useRecoilValue(searchDetailState);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 600,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
   return (
     <>
@@ -81,7 +102,6 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
               <TableRow
                 key={row.sbjName}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                onClick={()=>{ux.clickMore(row.code)}}
               >
                 <TableCell component="th" scope="row">
                   {row.sbjName}
@@ -90,7 +110,31 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
                 <TableCell align="right">{row.group}</TableCell>
                 <TableCell align="right">{row.suneungOX}</TableCell>
                 {/* <TableCell align="right">{row.recommendPoint}/40</TableCell> */}
-                <TableCell align="right">{}</TableCell>
+                <TableCell align="right">
+                  <div>
+                  <Button onClick={() => { handleOpen(); ux.clickMore(row.code); }}><SearchIcon /></Button>
+                    <Modal
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="modal-modal-title"
+                      aria-describedby="modal-modal-description"
+                    >
+                      <Box sx={style}>
+                        <Box className='flex justify-between'>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                          {row.sbjName}
+                        </Typography>
+                        <Button onClick={handleClose}>X</Button>
+                        </Box>
+                        {searchDetail !== undefined && (
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                          {searchDetail.description}
+                        </Typography>
+                        )}
+                      </Box>
+                    </Modal>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -101,3 +145,7 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
 };
 
 export default SearchTable;
+
+
+
+
