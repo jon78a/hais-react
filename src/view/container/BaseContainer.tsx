@@ -73,10 +73,11 @@ export const BaseContainer = ({
         navigate(routes.home.path, {replace: true});
         alert("로그아웃 되었습니다.");
       },
-    }}>
-      
-      <TopNavBarXl />
-      <TopNavBarSm />
+    }}> 
+    <TopNavBarXl />
+    <div>
+    <TopNavBarSm />
+    </div>
       {children}
     </AuthorizeContext.Provider>
   );
@@ -84,14 +85,10 @@ export const BaseContainer = ({
 
 export function TopNavBarXl(){
   const matchesDesktopXl = useMediaQuery('(min-width: 900px)'); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
-
   return (
-    <div className={`flex justify-center ${matchesDesktopXl ? 'min-w-[900px]' : 'hidden'} ` }>
+    <div className={`flex w-full justify-center ${matchesDesktopXl ? `` : 'hidden'} ` }>
       <AppBar position={"static"} color={"inherit"} sx={{
         boxShadow: "none",
-        borderBottomWidth: "2px",
-        borderColor: "primary.main",
-        pb: 2
       }}>
         <div className='flex flex-row items-center justify-between w-[876px] py-4 mx-auto'>
           <Link to={"/"} className='w-[60px] h-[60px]'>
@@ -107,18 +104,15 @@ export function TopNavBarXl(){
 
 export function TopNavBarSm() {
   const matchesDesktopSm = useMediaQuery('(max-width: 899px)');
-
+  const pageWidth = document.documentElement.scrollWidth;
   const StyledToolbar = styled(Toolbar)`
   display: flex;
   align-items: center;
   height: 100%;
   `
-
   return (
-    <div className={`${matchesDesktopSm ? 'min-w-[899px]' : 'hidden'} h-full`}>
-      <AppBar position="static" color={"inherit"} sx={{boxShadow: "none",
-        borderBottomWidth: "2px",
-        borderColor: "primary.main",
+    <div className={`pb-[100px] w-[${pageWidth}px] ${matchesDesktopSm ? `max-w-[${pageWidth}px]` : "hidden"} w-full`}>
+      <AppBar position="fixed" color={"inherit"} sx={{boxShadow: "none",
         pb: 2
       }}>
         <StyledToolbar>

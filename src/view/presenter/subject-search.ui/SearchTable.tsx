@@ -10,7 +10,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import { OptionalSubject } from '../../../domain/subject/school.interface';
-import { searchSummaryListState } from '../../../schema/states/SubjectSearch';
+import { searchDetailState, searchSummaryListState } from '../../../schema/states/SubjectSearch';
+import { SearchTableUx } from '../subject-search.ux/SearchTable';
 
 
 export interface TableDataInfo {
@@ -19,7 +20,7 @@ export interface TableDataInfo {
   button: JSX.Element;
 }
 
-const SearchTable: React.FC = () => {
+const SearchTable: React.FC<SearchTableUx> = (ux) => {
   // const majorInfo = MajorInfo();
   // const sortedRows: TableDataInfo[] = OptionalSubjects
   //   .map((subject) => {
@@ -59,7 +60,7 @@ const SearchTable: React.FC = () => {
   // }
 
   const searchSummaryList = useRecoilValue(searchSummaryListState);
-  
+  const searchDetail = useRecoilValue(searchDetailState);
 
   return (
     <>
@@ -80,6 +81,7 @@ const SearchTable: React.FC = () => {
               <TableRow
                 key={row.sbjName}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                onClick={()=>{ux.clickMore(row.code)}}
               >
                 <TableCell component="th" scope="row">
                   {row.sbjName}

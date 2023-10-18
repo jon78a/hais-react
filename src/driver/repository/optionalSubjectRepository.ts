@@ -1,4 +1,5 @@
 import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
+import { OptionalSubjectCategoryEnum } from "../../policy/school";
 import { StorageSource } from "../firebase/constants";
 import { MajorCategoryGroupType, OptionalSubjectType, RecommendGroupType } from "../firebase/types";
 
@@ -25,7 +26,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         return {
           code: v.code,
           group: v.group,
-          category: v.category,
+          category: v.category as OptionalSubjectCategoryEnum,
           name: v.name,
           description: v.description,
           suneungInfo: v.suneung_info,

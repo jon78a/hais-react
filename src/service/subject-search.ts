@@ -3,6 +3,7 @@ import { useContext, createContext } from "react";
 import {
   GeneralMajorByClsfInput,
   SearchSummary,
+  SearchDetail,
   UnivToMajorInput,
   UnivChoice,
   MajorChoice
@@ -15,7 +16,7 @@ interface SubjectSearchService {
     univToMajor: UnivToMajorInput;
     generalMajorByClsf?: GeneralMajorByClsfInput;
   }) => Promise<SearchSummary[]>;
-  // searchMore: (code: string) => Promise<SearchDetail>;
+  searchMore: (code: string) => Promise<SearchDetail>;
 }
 
 export const SubjectSearchContext = createContext<SubjectSearchService | undefined>(undefined);

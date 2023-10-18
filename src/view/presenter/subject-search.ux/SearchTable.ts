@@ -1,4 +1,6 @@
-export interface SearchTableUx {}
+export interface SearchTableUx {
+    clickMore: (code: string) => void;
+}
 
 
 /*
