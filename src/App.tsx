@@ -2,7 +2,7 @@ import './App.css';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { routes } from './routes';
+import { routes, adminRoutes } from './routes';
 import {useEffect, useState} from 'react';
 
 import Layout from './pages/Layout';
@@ -15,6 +15,9 @@ import SubjectRecommendPage from './pages/SubjectRecommend';
 import OAuthLogout from './pages/OAuthLogout';
 import NotFound from './pages/NotFound';
 import MyPage from './pages/My';
+// admin page
+import { AdminLayout } from './pages/Layout';
+import AdminSubjectPage from './pages/admin/Subject';
 
 function App() {
   const [screenWidth, setScreenWidth] = useState(0)
@@ -35,6 +38,10 @@ function App() {
             <Route path={routes.subjectRecommend.path} element={<SubjectRecommendPage/>}/>
             <Route path={`/oauth/logout/:slug`} element={<OAuthLogout/>}/>
             <Route path={routes.my.path} element={<MyPage/>}/>
+          </Route>
+          <Route path="/" element={<AdminLayout/>}>
+            <Route path={'/admin'} element={<AdminSubjectPage/>} />
+            <Route path={adminRoutes.adminSubject.namespace + adminRoutes.adminSubject.path} element={<AdminSubjectPage/>} />
           </Route>
           <Route path={"/*"} element={<NotFound/>}/>
         </Routes>

@@ -1,7 +1,20 @@
 export interface RouteExp {
+  namespace?: string;
   path: string;
   re: RegExp;
   detail?: (key: string) => string;
+}
+
+interface AdminRoutesType {
+  adminSubject: RouteExp;
+}
+
+export const adminRoutes: AdminRoutesType = {
+  adminSubject: {
+    namespace: 'admin',
+    path: '/subject',
+    re: new RegExp('^/admin/subject')
+  }
 }
 
 interface PublicRoutesType {
@@ -62,9 +75,10 @@ export const authPermissionRoutes: AuthPermissionRoutesType = {
   }
 }
 
-interface RoutesType extends PublicRoutesType, AuthPermissionRoutesType {};
+interface RoutesType extends PublicRoutesType, AuthPermissionRoutesType, AdminRoutesType {};
 
 export const routes: RoutesType = {
   ...publicRoutes,
-  ...authPermissionRoutes
+  ...authPermissionRoutes,
+  ...adminRoutes
 }

@@ -59,7 +59,7 @@ export const CarouselSM = () => {
   const matchesMobile = useMediaQuery("(max-width:449px)")
 
   return (
-    <div className={` px-12 ${matchesMobile ? "w-full" : "hidden"}`} >
+    <div className={`px-12 ${matchesMobile ? "w-full" : "hidden"}`} >
       <Slider {...settings}>
         <div className="relative">
           <img src="/Hais_Banner1_SM.png" alt="banner1" className="rounded-2xl" />
