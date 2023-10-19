@@ -1,9 +1,9 @@
 import { createContext, useState, useMemo, useContext, useEffect } from "react";
 import { matchPath, useLocation, useNavigate } from "react-router-dom";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { routes } from "../../../routes";
 
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -17,6 +17,7 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
 
 const Context = createContext<{
   openState: [boolean, (value: boolean) => void];
@@ -129,7 +130,7 @@ const AdminBaseContainer = ({
       openState,
       pathname
     }}>
-      <div className="w-screen h-screen flex flex-row">
+      <div className="w-screen h-screen flex flex-row bg-gray-100">
         <SideNavBar/>
         <Box width={"100%"}>
           <AppBar position={"static"} color={"inherit"} elevation={1}>
@@ -150,7 +151,11 @@ const AdminBaseContainer = ({
               }
             </Toolbar>
           </AppBar>
-          {children}
+          <Container maxWidth="lg">
+            <Box height="100vh">
+              {children}
+            </Box>
+          </Container>
         </Box>
       </div>
     </Context.Provider>
