@@ -6,10 +6,16 @@ export interface RouteExp {
 }
 
 interface AdminRoutesType {
+  adminHome: RouteExp;
   adminSubject: RouteExp;
 }
 
 export const adminRoutes: AdminRoutesType = {
+  adminHome: {
+    namespace: 'admin',
+    path: '/',
+    re: new RegExp('^/admin')
+  },
   adminSubject: {
     namespace: 'admin',
     path: '/subject',
