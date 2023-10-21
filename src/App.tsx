@@ -40,8 +40,8 @@ function App() {
             <Route path={routes.my.path} element={<MyPage/>}/>
           </Route>
           <Route path="/" element={<AdminLayout/>}>
-            <Route path={'/admin'} element={<AdminSubjectPage/>} />
-            <Route path={adminRoutes.adminSubject.namespace + adminRoutes.adminSubject.path} element={<AdminSubjectPage/>} />
+            <Route path={adminRoutes.adminHome.path} element={<AdminSubjectPage/>} />
+            <Route path={adminRoutes.adminSubject.path} element={<AdminSubjectPage/>} />
           </Route>
           <Route path={"/*"} element={<NotFound/>}/>
         </Routes>

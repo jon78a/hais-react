@@ -1,5 +1,4 @@
 export interface RouteExp {
-  namespace?: string;
   path: string;
   re: RegExp;
   detail?: (key: string) => string;
@@ -12,13 +11,11 @@ interface AdminRoutesType {
 
 export const adminRoutes: AdminRoutesType = {
   adminHome: {
-    namespace: 'admin',
-    path: '/',
+    path: '/admin',
     re: new RegExp('^/admin')
   },
   adminSubject: {
-    namespace: 'admin',
-    path: '/subject',
+    path: '/admin/subject',
     re: new RegExp('^/admin/subject')
   }
 }

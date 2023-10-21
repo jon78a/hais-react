@@ -42,7 +42,6 @@ const userRepository: UserRepository = {
       return null;
     }
   },
-  // admin으로 옮겨줄 것
   async findByCredential(email: string, password: string) {
     const q = query(collection(firebaseDb, CollectionName.User),
       where("email", "==", email),

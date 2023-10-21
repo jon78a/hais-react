@@ -2,7 +2,14 @@ import { createContext, useState, useMemo, useContext, useEffect } from "react";
 import { matchPath, useLocation, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { routes } from "../../../routes";
+import { adminRoutes, routes } from "../../../routes";
+import { AuthorizeContext } from "../../../service/authorize";
+import {
+  AuthSessionRepository,
+  AuthRepository
+} from "../../../domain/account/auth.interface";
+import { UserRepository } from "../../../domain/account/user.interface";
+import { OAuthEnum } from '../../../policy/auth';
 
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -19,14 +26,19 @@ import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 
-const Context = createContext<{
-  openState: [boolean, (value: boolean) => void];
+const titleMap = {
+  [adminRoutes.adminHome.path]: "교과과목",
+  [adminRoutes.adminSubject.path]: "교과과목"
+}
+
+const BaseContainerContext = createContext<{
+  sideBarOpenState: [boolean, (value: boolean) => void];
   pathname: string;
 } | undefined>(undefined);
 
 const SideNavBar = () => {
   const isPersistent = useMediaQuery('(min-width:600px');
-  const { openState } = useContext(Context)!;
+  const { sideBarOpenState: openState } = useContext(BaseContainerContext)!;
   const [open, setOpen] = openState;
 
   const drawerWidth = useMemo(() => open ? 240 : undefined, [open]);
@@ -58,8 +70,8 @@ const SideNavBar = () => {
       }}>
         <LinkItem
           icon={<MenuBookIcon />}
-          title={"교과과목"}
-          href={routes.adminSubject.namespace + routes.adminSubject.path}
+          title={titleMap[routes.adminSubject.path]}
+          href={routes.adminSubject.path}
         />
       </Stack>
     </Drawer>
@@ -75,9 +87,9 @@ interface LinkItemProps {
 const LinkItem: React.FC<LinkItemProps> = (props) => {
   const navigate = useNavigate();
 
-  const { openState, pathname } = useContext(Context)!;
+  const { sideBarOpenState, pathname } = useContext(BaseContainerContext)!;
   
-  const [open] = openState;
+  const [open] = sideBarOpenState;
   const isMatched = useMemo(() => !!matchPath(props.href, pathname), [pathname, matchPath]);
 
   return (
@@ -109,56 +121,103 @@ const LinkItem: React.FC<LinkItemProps> = (props) => {
 }
 
 const AdminBaseContainer = ({
-  children
-}: {children: React.ReactNode}) => {
+  children,
+  repositories
+}: {
+  children: React.ReactNode,
+  repositories: {
+    authSessionRepository: AuthSessionRepository,
+    authRepository: AuthRepository,
+    userRepository: UserRepository
+  }
+}) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const openState = useState<boolean>(true);
-  const [open, setOpen] = openState;
+  const {
+    authSessionRepository,
+    authRepository,
+    userRepository
+  } = repositories;
+
+  const sideBarOpenState = useState<boolean>(true);
+  const [open, setOpen] = sideBarOpenState;
 
   const isAdminHomePath = useMemo(() => !!matchPath(
-    routes.adminHome.namespace + routes.adminHome.path, pathname
+    routes.adminHome.path, pathname
   ), [pathname, matchPath]);
-
+  
   useEffect(() => {
-    if (isAdminHomePath) navigate(routes.adminSubject.namespace + routes.adminSubject.path);
+    if (isAdminHomePath) navigate(routes.adminSubject.path);
   }, [isAdminHomePath, navigate]);
 
   return (
-    <Context.Provider value={{
-      openState,
+    <BaseContainerContext.Provider value={{
+      sideBarOpenState,
       pathname
     }}>
-      <div className="w-screen h-screen flex flex-row bg-gray-100">
-        <SideNavBar/>
-        <Box width={"100%"}>
-          <AppBar position={"static"} color={"inherit"} elevation={1}>
-            <Toolbar>
-              {
-                !open && (
-                  <>
-                  <IconButton onClick={() => setOpen(!open)}>
-                    <MenuIcon/>
-                  </IconButton>
-                  <Box width={60} sx={{
-                    mx: "auto",
-                  }}>
-                    <img src={process.env.PUBLIC_URL + "/logo-sm.png"}/>
-                  </Box>
-                  </>
-                )
-              }
-            </Toolbar>
-          </AppBar>
-          <Container maxWidth="lg">
-            <Box height="100vh">
-              {children}
-            </Box>
-          </Container>
-        </Box>
-      </div>
-    </Context.Provider>
+      <AuthorizeContext.Provider value={{
+        async isLogined() {
+          const session = await authSessionRepository.find();
+          const current = Math.floor(Date.now() / 1000);
+          if (!!session && session.exp > current && session.status === "GRANT") return true;
+          return false;
+        },
+        async terminateSession() {
+          const session = await authSessionRepository.find();
+          if (session) {
+            const user = await userRepository.findByUserId(session.userId);
+            if (user?.authChoice && user.authChoice !== "NORMAL") {
+              authRepository.oAuthLogout(OAuthEnum[user.authChoice]);
+              return;
+            }
+            await authSessionRepository.clear();
+          };
+          navigate(routes.home.path, {replace: true});
+          alert("로그아웃 되었습니다.");
+        },
+      }}>
+        <div className="w-screen h-screen flex flex-row bg-gray-100">
+          <SideNavBar/>
+          <Box width={"100%"} sx={{
+            overflow: "hidden"
+          }}>
+            <AppBar position={"static"} color={"inherit"} elevation={1}>
+              <Toolbar>
+                {
+                  !open && (
+                    <>
+                    <IconButton onClick={() => setOpen(!open)}>
+                      <MenuIcon/>
+                    </IconButton>
+                    <Box width={60} sx={{
+                      mx: "auto",
+                    }}>
+                      <img src={process.env.PUBLIC_URL + "/logo-sm.png"}/>
+                    </Box>
+                    </>
+                  )
+                }
+              </Toolbar>
+            </AppBar>
+            <Container maxWidth="lg">
+              <Box height="100vh">
+                <Typography variant={"h4"} component={"h1"} sx={{
+                  textDecoration: "underline",
+                  color: "primary.main",
+                  textAlign: "center",
+                  mt: 5,
+                  mb: 3
+                }}>
+                  {titleMap[pathname]}
+                </Typography>
+                {children}
+              </Box>
+            </Container>
+          </Box>
+        </div>
+      </AuthorizeContext.Provider>
+    </BaseContainerContext.Provider>
   );
 }
 
