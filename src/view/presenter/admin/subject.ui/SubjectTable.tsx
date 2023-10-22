@@ -6,7 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { SubjectTableUx } from "../subject.ux/SubjectTableUx";
 import { subjectSummaryListState } from "../../../../schema/states/SubjectTable";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
-import { ModalContext, ModalContextState } from "./ModalContext";
+import { ModalContext, ModalState } from "./ModalContext";
 
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
@@ -17,7 +17,12 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
-const SubjectTable: React.FC<SubjectTableUx> = (ux) => {
+const SubjectTable: React.FC<{
+  ux: SubjectTableUx,
+  children: React.ReactNode;
+}> = (props) => {
+  const {ux, children} = props;
+
   const theme = useTheme();
 
   const mobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -32,7 +37,7 @@ const SubjectTable: React.FC<SubjectTableUx> = (ux) => {
       field: "code", headerName: "과목코드"
     },
     {
-      field: "group", headerName: "과목분류"
+      field: "group", headerName: "그룹명"
     },
     {
       field: "name", headerName: "과목명"
@@ -43,11 +48,11 @@ const SubjectTable: React.FC<SubjectTableUx> = (ux) => {
   ], [mobile]);
 
   const [rowSelections, setRowSelections] = useState<string[]>([]);
-  const [modalState, setModalState] = useState<ModalContextState>(null);
+  const [modalState, setModalState] = useState<ModalState>(null);
   const [keywordValue, setKeywordValue] = useState<string>("");
 
   return (
-    <ModalContext.Provider value={modalState}>
+    <ModalContext.Provider value={{modalState, setModalState}}>
       <Stack spacing={1} sx={{mt: 1}}>
         <Stack direction={"row"} width={"100%"} justifyContent={"space-between"}>
           <Paper
@@ -98,15 +103,16 @@ const SubjectTable: React.FC<SubjectTableUx> = (ux) => {
             }}
             checkboxSelection
             onRowSelectionModelChange={(rowSelectionModel) => {
-              setRowSelections(rowSelectionModel as string[]);
+              setRowSelections(rowSelectionModel.map((v) => String(v)));
             }}
             onRowDoubleClick={(params) => {
-              ux.clickRow(params.id as string);
+              ux.clickRow(String(params.id));
               setModalState("UPDATE");
             }}
           />
         </Box>
       </Stack>
+      {children}
     </ModalContext.Provider>
   );
 }

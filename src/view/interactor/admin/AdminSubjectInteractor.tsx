@@ -4,12 +4,16 @@ import { debounce } from "lodash";
 
 import SubjectTable from "../../presenter/admin/subject.ui/SubjectTable";
 import { useAdminSubjectService } from "../../../service/admin/subject";
-import { subjectDistinctState, subjectFilterState, subjectSummaryListState } from "../../../schema/states/SubjectTable";
+import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState, subjectFilterState, subjectSummaryListState } from "../../../schema/states/SubjectTable";
 import SubjectTabs from "../../presenter/admin/subject.ui/SubjectTabs";
+import SubjectDetailDialog from "../../presenter/admin/subject.ui/SubjectDetailDialog";
+import type { CommonSubjectDetail, OptionalSubjectDetail } from "../../../schema/types/SubjectTable";
 
 const AdminSubjectInteractor = () => {
   const [distinct, setDistinct] = useRecoilState(subjectDistinctState);
   const [filter, setFilter] = useRecoilState(subjectFilterState);
+  const setCommonDetail = useSetRecoilState(commonSubjectDetailState);
+  const setOptionalDetail = useSetRecoilState(optionalSubjectDetailState);
 
   const setSubjectSummaryList = useSetRecoilState(subjectSummaryListState);
   const service = useAdminSubjectService();
@@ -28,15 +32,30 @@ const AdminSubjectInteractor = () => {
         }}
       >
         <SubjectTable
-          clickRow={(code) => {
-            
+          ux={{
+            clickRow(code) {
+              if (distinct === "COMMON") {
+                service.readSubjectProfile(code, distinct)
+                  .then((data) => setCommonDetail(data as CommonSubjectDetail));
+              }
+              else if (distinct === "OPTION") {
+                service.readSubjectProfile(code, distinct)
+                  .then((data) => setOptionalDetail(data as OptionalSubjectDetail));
+              }
+            },
+            inputKeyword: debounce((value) => {
+              setFilter({
+                nameKeyword: value
+              });
+            }, 250)
           }}
-          inputKeyword={debounce((value) => {
-            setFilter({
-              nameKeyword: value
-            });
-          }, 250)}
-        />
+        >
+          <SubjectDetailDialog
+            modify={(distinct, form) => {
+
+            }}
+          />
+        </SubjectTable>
       </SubjectTabs>
     </div>
   );

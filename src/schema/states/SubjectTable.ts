@@ -1,11 +1,9 @@
 import { atom } from "recoil";
 
-import {
-  type SubjectDistinct,
-  type SubjectColumn,
-  type EditRequest,
-  type CommonSubjectDetail,
-  type OptionalSubjectDetail,
+import type {
+  SubjectDistinct,
+  CommonSubjectDetail,
+  OptionalSubjectDetail,
   SubjectSummary,
   SubjectFilter
 } from "../types/SubjectTable";
@@ -25,4 +23,14 @@ export const subjectFilterState = atom<SubjectFilter>({
 export const subjectSummaryListState = atom<SubjectSummary[]>({
   key: "/schema/states/SubjectTable/SubjectSummary",
   default: []
+});
+
+export const commonSubjectDetailState = atom<CommonSubjectDetail | undefined>({
+  key: "/schema/states/SubjectTable/CommonSubjectDetail",
+  default: undefined
+});
+
+export const optionalSubjectDetailState = atom<OptionalSubjectDetail | undefined>({
+  key: "/schema/states/SubjectTable/OptionalSubjectDetail",
+  default: undefined
 });

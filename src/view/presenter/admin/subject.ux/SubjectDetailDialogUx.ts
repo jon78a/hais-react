@@ -3,7 +3,6 @@ import type { CommonSubjectDetail, OptionalSubjectDetail, SubjectDistinct } from
 export interface SubjectDetailDialogUx {
   modify: (
     distinct: SubjectDistinct,
-    code: string,
     form: CommonSubjectDetail | OptionalSubjectDetail
   ) => void;
 }

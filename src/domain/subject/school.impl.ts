@@ -20,6 +20,14 @@ export const studentState = atom<DataStateType<Student>>({
   }
 });
 
+export const commonSubjectListState = atom<DataStateType<CommonSubject[]>>({
+  key: "subject/school/commonSubjectList",
+  default: {
+    data: [],
+    loading: false
+  }
+});
+
 export const optionalSubjectListState = atom<DataStateType<OptionalSubject[]>>({
   key: "subject/school/optionalSubjectList",
   default: {

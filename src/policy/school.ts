@@ -6,4 +6,7 @@ export const studentCategoryMap = {
   "C": "예체능",
 }
 
-export type OptionalSubjectCategory = "일반선택" | "진로선택" | "융합선택";
+export type OptionalSubjectCategory = |
+"일반선택" |
+"진로선택" |
+"융합선택";
