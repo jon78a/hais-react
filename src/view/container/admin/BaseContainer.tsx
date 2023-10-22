@@ -10,6 +10,7 @@ import {
 } from "../../../domain/account/auth.interface";
 import { UserRepository } from "../../../domain/account/user.interface";
 import { OAuthEnum } from '../../../policy/auth';
+import useScreenWidth from "../../../hooks/useScreenWidth";
 
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -140,7 +141,8 @@ const AdminBaseContainer = ({
     userRepository
   } = repositories;
 
-  const sideBarOpenState = useState<boolean>(true);
+  const screenWidth = useScreenWidth();
+  const sideBarOpenState = useState<boolean>(screenWidth < 600 ? false : true);
   const [open, setOpen] = sideBarOpenState;
 
   const isAdminHomePath = useMemo(() => !!matchPath(
@@ -177,12 +179,12 @@ const AdminBaseContainer = ({
           alert("로그아웃 되었습니다.");
         },
       }}>
-        <div className="w-screen h-screen flex flex-row bg-gray-100">
+        <div className="w-screen h-screen flex flex-row">
           <SideNavBar/>
           <Box width={"100%"} sx={{
-            overflow: "hidden"
+            overflowY: "scroll",
           }}>
-            <AppBar position={"static"} color={"inherit"} elevation={1}>
+            <AppBar position={"fixed"} color={"inherit"} elevation={1}>
               <Toolbar>
                 {
                   !open && (
@@ -200,13 +202,16 @@ const AdminBaseContainer = ({
                 }
               </Toolbar>
             </AppBar>
-            <Container maxWidth="lg">
-              <Box height="100vh">
+            <Container maxWidth="lg" sx={{
+              height: "100%"
+            }}>
+              <Box height="100%" sx={{
+                pt: 10,
+              }}>
                 <Typography variant={"h4"} component={"h1"} sx={{
                   textDecoration: "underline",
                   color: "primary.main",
                   textAlign: "center",
-                  mt: 5,
                   mb: 3
                 }}>
                   {titleMap[pathname]}

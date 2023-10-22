@@ -6,8 +6,4 @@ export const studentCategoryMap = {
   "C": "예체능",
 }
 
-export enum OptionalSubjectCategoryEnum {
-  Normal = "일반선택",
-  Job = "진로선택",
-  Convergence = "융합선택",
-}
+export type OptionalSubjectCategory = "일반선택" | "진로선택" | "융합선택";

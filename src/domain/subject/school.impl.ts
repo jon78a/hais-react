@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { OptionalSubject, Student, StudentExceptionMap } from "./school.interface";
+import { CommonSubject, OptionalSubject, Student, StudentExceptionMap } from "./school.interface";
 
 import type { DataStateType } from "../../types";
 
@@ -26,7 +26,7 @@ export const optionalSubjectListState = atom<DataStateType<OptionalSubject[]>>({
     data: [],
     loading: false
   }
-})
+});
 
 export const studentExceptionMap: StudentExceptionMap = {
   INVALID_NAME: {
