@@ -2,6 +2,7 @@ export class CollectionName {
   static User = "users";
   static Student = "students";
   static AuthSession = "auth_session";
+  static CommonSubject = "common_subject";
 }
 
 export class StorageSource {

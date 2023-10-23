@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Link,
   matchPath,
@@ -70,8 +70,8 @@ export const BaseContainer = ({
           }
           await authSessionRepository.clear();
         };
-        navigate(routes.home.path, {replace: true});
         alert("로그아웃 되었습니다.");
+        window.location.reload();
       },
     }}> 
     <TopNavBarXl />
@@ -292,15 +292,15 @@ const StyledTab = styled(Tab)`
 
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
-  const [login, setLogin] = useState<boolean>(false);
+  const [login, setLogin] = useState<boolean | undefined>(false);
   const {pathname} = useLocation();
 
-  useLayoutEffect(() => {
-    const item = sessionStorage.getItem(AUTH_SESSION_KEY);
-    if (!item) setLogin(false);
-    else setLogin(true);
+  useEffect(() => {
+    authService.isLogined()
+      .then((result) => setLogin(result));
   }, [pathname]);
 
+  if (typeof login === undefined) return <></>;
   return (
     <Stack spacing={2} sx={{
       position: "relative",

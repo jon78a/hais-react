@@ -22,6 +22,7 @@ export interface User {
   authChoice: AuthChoiceType | null;
   activated: boolean;
   verified: boolean;
+  isAdmin?: boolean;
   serviceAgreement: YN;
   marketingAgreement: YN;
   privacyAgreement: YN;
@@ -50,6 +51,7 @@ export interface UserRepository {
     activated?: boolean;
     password?: string;
     verified?: boolean;
+    isAdmin?: boolean;
   }) => Promise<void>;
   findByCredential: (email: string, password: string) => Promise<User | null>;
 }
