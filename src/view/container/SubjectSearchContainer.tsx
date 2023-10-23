@@ -1,4 +1,4 @@
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilState } from "recoil";
 
 import { MajorRepository, UnivRepository } from "../../domain/subject/univ.interface";
 import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
@@ -26,7 +26,7 @@ const SubjectSearchContainer = ({
 
   const setUnivListSnapshot = useSetRecoilState(univListState);
   const setMajorListSnapshot = useSetRecoilState(majorListState);
-  const setOptionalSubjectListSnapshot = useSetRecoilState(optionalSubjectListState);
+  const [optionalSubjectListSnapshot,setOptionalSubjectListSnapshot] = useRecoilState(optionalSubjectListState);
 
   return (
     <SubjectSearchContext.Provider value={{
@@ -80,15 +80,19 @@ const SubjectSearchContainer = ({
           return {
             code: v.code,
             sbjName: v.name,
-            category: v.category,
+            subjectCategory: v.subjectCategory,
             group: v.group,
             suneungOX: v.suneungInfo === "수능 출제 과목 아님" ? "X" : "O"
           }
         })
       },
-      // searchMore(code) {
-        
-      // },
+      async searchMore(code) {
+        const optionalSubject = optionalSubjectListSnapshot.data.find((v) => v.code===code);
+        return {
+          description: optionalSubject?.description || "",
+          etcInfo: optionalSubject?.etcInfo || "",
+        }
+      },
     }}>
       {children}
     </SubjectSearchContext.Provider>

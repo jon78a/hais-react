@@ -12,7 +12,8 @@ import {
   majorChoiceState,
   univChoiceListState,
   majorChoiceListState,
-  searchSummaryListState
+  searchSummaryListState,
+  searchDetailState
 } from "../../schema/states/SubjectSearch";
 import { Box, Typography } from "@mui/material";
 import { theme } from "../../theme";
@@ -30,6 +31,7 @@ const SubjectSearchInteractor = () => {
   const setUnivChoiceList = useSetRecoilState(univChoiceListState);
   const setMajorChoiceList = useSetRecoilState(majorChoiceListState);
   const setSearchSummaryList = useSetRecoilState(searchSummaryListState);
+  const setSearchDetail = useSetRecoilState(searchDetailState);
 
   //추가한 부분!
   const [showTable, setShowTable] = useState(false);
@@ -43,14 +45,14 @@ const SubjectSearchInteractor = () => {
             .then((choices) => {
               setUnivChoiceList(choices);
             });
-        }, 750)}
+        }, 250)}
         inputMajorKeyword={debounce((value) => {
           setMajorKeyword(value);
           service.showMajors(value, univChoice.name)
             .then((choices) => {
               setMajorChoiceList(choices);
             });
-        }, 750)}
+        }, 250)}
         selectUnivChoice={(value) => {
           setUnivChoice(value);
           service.showMajors("", value.name)
@@ -86,7 +88,11 @@ const SubjectSearchInteractor = () => {
           <Typography variant="h6" sx={{m:2, fontWeight: 'bold', textAlign: 'left', width:'100%' }} style={{ color: theme.palette.primary.main }}>
             추천교과 목록
           </Typography>
-          <SearchTable />
+          <SearchTable 
+            clickMore={(code) => {
+              service.searchMore(code).then((data) => setSearchDetail(data));
+            }}
+          />
   
         </>
       )}
