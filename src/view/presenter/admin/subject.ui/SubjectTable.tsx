@@ -87,7 +87,7 @@ const SubjectTable: React.FC<{
               ux.clickRow(rowSelections[0]);
               setModalState("UPDATE");
             }}>수정</Button>
-            <Button disabled={rowSelections.length !== 1}>삭제</Button>
+            <Button disabled={rowSelections.length < 1}>삭제</Button>
           </Stack>
         </Stack>
         <Box height={screenHeight * 0.65}>

@@ -24,7 +24,10 @@ const commonSubjectRepository: CommonSubjectRepository = {
       });
       const nextCode = String(Number(maxCode) + 1);
       const docRef = doc(firebaseDb, CollectionName.CommonSubject, nextCode);
-      await setDoc(docRef, commonSubject);
+      await setDoc(docRef, {
+        ...commonSubject,
+        code: nextCode
+      });
     }
     else { // update
       const docRef = doc(firebaseDb, CollectionName.CommonSubject, key);
@@ -50,6 +53,9 @@ const commonSubjectRepository: CommonSubjectRepository = {
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) return snapshot.data() as CommonSubject;
     return null;
+  },
+  async delete(key) {
+    
   },
 }
 

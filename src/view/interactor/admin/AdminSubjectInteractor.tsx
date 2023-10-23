@@ -8,6 +8,8 @@ import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctSt
 import SubjectTabs from "../../presenter/admin/subject.ui/SubjectTabs";
 import SubjectDetailDialog from "../../presenter/admin/subject.ui/SubjectDetailDialog";
 import type { CommonSubjectDetail, OptionalSubjectDetail } from "../../../schema/types/SubjectTable";
+import AddSpeedDial from "../../presenter/admin/subject.ui/AddSpeedDial";
+import SubjectCreateDialog from "../../presenter/admin/subject.ui/SubjectCreateDialog";
 
 const AdminSubjectInteractor = () => {
   const [distinct, setDistinct] = useRecoilState(subjectDistinctState);
@@ -51,10 +53,24 @@ const AdminSubjectInteractor = () => {
           }}
         >
           <SubjectDetailDialog
-            modify={(distinct, form) => {
-
+            modify={(form) => {
+              service.editSubject(form)
+                .then(() => {
+                  service.readSubject(distinct, filter)
+                    .then((data) => setSubjectSummaryList(data));
+                });
             }}
           />
+          <SubjectCreateDialog
+            create={(form) => {
+              service.addSubject(form)
+                .then(() => {
+                  service.readSubject(distinct, filter)
+                    .then((data) => setSubjectSummaryList(data));
+                });
+            }}
+          />
+          <AddSpeedDial/>
         </SubjectTable>
       </SubjectTabs>
     </div>

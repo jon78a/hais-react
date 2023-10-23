@@ -30,6 +30,25 @@ export type EditRequest = {
   data: CommonSubjectDetail | OptionalSubjectDetail;
 }
 
+export type CreateRequest = {
+  distinct: SubjectDistinct;
+  data: {
+    group: string;
+    studentCategory?: StudentCategoryCode;
+    name: string;
+    description: string;
+    etcInfo: string;
+  } | {
+    group: string;
+    name: string;
+    description: string;
+    etcInfo: string;
+    studentCategory?: StudentCategoryCode;
+    subjectCategory: OptionalSubjectCategory;
+    suneungInfo: string;
+  };
+}
+
 export type CommonSubjectDetail = {
   code: string;
   group: string;

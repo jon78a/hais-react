@@ -1,11 +1,11 @@
 import { useContext, useMemo, useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
-import { SubjectDetailDialogUx } from "../subject.ux/SubjectDetailDialogUx";
 import { ModalContext } from "./ModalContext";
-import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState } from "../../../../schema/states/SubjectTable";
+import { subjectDistinctState } from "../../../../schema/states/SubjectTable";
 import { OptionalSubjectCategory, StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
-import type { EditRequest, OptionalSubjectDetail } from "../../../../schema/types/SubjectTable";
+import type { CreateRequest, OptionalSubjectDetail } from "../../../../schema/types/SubjectTable";
+import { SubjectCreateDialogUx } from "../subject.ux/SubjectCreateDialogUx";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from '@mui/material/DialogActions';
@@ -19,61 +19,58 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
-const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
-  const {modalState, setModalState} = useContext(ModalContext);
+const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
+  const { modalState, setModalState } = useContext(ModalContext);
   const distinct = useRecoilValue(subjectDistinctState);
-  const commonSubjectDetail = useRecoilValue(commonSubjectDetailState);
-  const optionalSubjectDetail = useRecoilValue(optionalSubjectDetailState);
 
-  const [form, setForm] = useState<EditRequest | undefined>(undefined);
+  const [form, setForm] = useState<CreateRequest | undefined>(undefined);
   useEffect(() => {
-    if (modalState !== "UPDATE") return undefined;
-    let profile;
+    if (modalState !== "CREATE") return undefined;
     switch (distinct) {
       case "COMMON":
-        profile = commonSubjectDetail!;
         setForm({
           distinct: distinct,
-          subjectCode: profile.code,
-          data: profile
+          data: {
+            group: "",
+            studentCategory: "NONE",
+            name: "",
+            description: "",
+            etcInfo: ""
+          }
         });
         break;
       case "OPTION":
-        profile = optionalSubjectDetail!;
         setForm({
           distinct: distinct,
-          subjectCode: profile.code,
-          data: profile
+          data: {
+            group: "",
+            studentCategory: "NONE",
+            name: "",
+            description: "",
+            etcInfo: "",
+            subjectCategory: "일반선택",
+            suneungInfo: ""
+          }
         });
         break;
     }
   }, [
     distinct,
-    commonSubjectDetail,
-    optionalSubjectDetail,
     modalState
   ]);
 
   const detailFields = useMemo(() => {
-    if (modalState !== "UPDATE") return undefined;
+    if (modalState !== "CREATE") return undefined;
     if (!form) return undefined;
 
     if (distinct === "COMMON") return (
       <DialogContent dividers>
         <TextField
-          label="과목코드"
-          fullWidth
-          variant="standard"
-          value={form.data.code}
-          disabled
-          sx={{mt: 2}}
-        />
-        <TextField
           label="그룹명 (국어, 수학, 사회, 과학...)"
           fullWidth
           variant="standard"
           value={form.data.group}
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -87,7 +84,7 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           fullWidth
           variant="standard"
           value={form.data.name}
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -96,19 +93,21 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
             }
           })}
         />
-        <FormControl fullWidth sx={{mt: 2}}>
+        <FormControl fullWidth sx={{ mt: 2 }}>
           <InputLabel id="계열">계열</InputLabel>
           <Select
             labelId="계열"
             label={"계열"}
             value={form.data.studentCategory ?? "NONE"}
-            onChange={(e) => setForm({
-              ...form,
-              data: {
-                ...form.data,
-                studentCategory: e.target.value as StudentCategoryCode
-              }
-            })}
+            onChange={(e) => {
+              setForm({
+                ...form,
+                data: {
+                  ...form.data,
+                  studentCategory: e.target.value as StudentCategoryCode
+                }
+              })
+            }}
           >
             {
               Object.entries(studentCategoryMap).map((e) => (
@@ -125,7 +124,7 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           variant="standard"
           value={form.data.description}
           multiline
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -140,7 +139,7 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           variant="standard"
           value={form.data.etcInfo}
           multiline
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -154,19 +153,11 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
     if (distinct === "OPTION") return (
       <DialogContent dividers>
         <TextField
-          label="과목코드"
-          fullWidth
-          variant="standard"
-          value={form.data.code}
-          disabled
-          sx={{mt: 2}}
-        />
-        <TextField
           label="선택과목분류"
           fullWidth
           variant="standard"
           value={(form.data as OptionalSubjectDetail).subjectCategory}
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -180,7 +171,7 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           fullWidth
           variant="standard"
           value={form.data.group}
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -194,7 +185,47 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           fullWidth
           variant="standard"
           value={form.data.name}
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
+          onChange={(e) => setForm({
+            ...form,
+            data: {
+              ...form.data,
+              name: e.target.value
+            }
+          })}
+        />
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="계열">계열</InputLabel>
+          <Select
+            labelId="계열"
+            label={"계열"}
+            value={form.data.studentCategory ?? "NONE"}
+            onChange={(e) => {
+              setForm({
+                ...form,
+                data: {
+                  ...form.data,
+                  studentCategory: e.target.value as StudentCategoryCode
+                }
+              })
+            }}
+          >
+            {
+              Object.entries(studentCategoryMap).map((e) => (
+                <MenuItem value={e[0]}>
+                  {e[1]}
+                </MenuItem>
+              ))
+            }
+          </Select>
+        </FormControl>
+        <TextField
+          label="설명"
+          fullWidth
+          variant="standard"
+          value={form.data.description}
+          multiline
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -204,27 +235,12 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           })}
         />
         <TextField
-          label="설명"
-          fullWidth
-          variant="standard"
-          value={form.data.description}
-          multiline
-          sx={{mt: 2}}
-          onChange={(e) => setForm({
-            ...form,
-            data: {
-              ...form.data,
-              description: e.target.value
-            }
-          })}
-        />
-        <TextField
           label="수능과목정보"
           fullWidth
           variant="standard"
           value={(form.data as OptionalSubjectDetail).suneungInfo}
           multiline
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -239,7 +255,7 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
           variant="standard"
           value={form.data.etcInfo}
           multiline
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           onChange={(e) => setForm({
             ...form,
             data: {
@@ -254,20 +270,20 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
 
   return (
     <Dialog
-      open={modalState === "UPDATE"} onClose={() => setModalState(null)}
+      open={modalState === "CREATE"} onClose={() => setModalState(null)}
       scroll={"paper"}
     >
-      <DialogTitle>교과상세</DialogTitle>
+      <DialogTitle>교과추가</DialogTitle>
         {detailFields}
       <DialogActions>
         <Button onClick={() => setModalState(null)}>취소</Button>
         <Button onClick={() => {
-          ux.modify(form!);
+          ux.create(form!);
           setModalState(null);
-        }}>수정</Button>
+        }}>추가</Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default SubjectDetailDialog;
+export default SubjectCreateDialog;

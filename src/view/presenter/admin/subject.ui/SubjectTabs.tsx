@@ -29,8 +29,8 @@ const SubjectTabs: React.FC<{
           ux.clickTab("OPTION");
         }
       }}>
-        <Tab label="일반교과"/>
-        <Tab label="선택교과"/>
+        <Tab label="공통과목"/>
+        <Tab label="선택과목"/>
       </Tabs>
       {children}
     </Box>

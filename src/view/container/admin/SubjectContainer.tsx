@@ -78,7 +78,23 @@ const AdminSubjectContainer = ({
         }
       },
       async editSubject(req) {
-        
+        const {distinct} = req;
+        switch(distinct) {
+          case "COMMON":
+            await commonSubjectRepository.save(req.data, req.data.code);
+            return;
+        }
+      },
+      async addSubject(req) {
+        const {distinct} = req;
+        switch(distinct) {
+          case "COMMON":
+            await commonSubjectRepository.save({
+              ...req.data,
+              code: ""
+            });
+            return;
+        }
       },
     }}>
     {children}

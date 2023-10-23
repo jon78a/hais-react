@@ -6,6 +6,7 @@ import type {
   SubjectDistinct,
   SubjectSummary,
   SubjectFilter,
+  CreateRequest,
 } from "../../schema/types/SubjectTable";
 
 interface AdminSubjectService {
@@ -13,6 +14,7 @@ interface AdminSubjectService {
   readSubjectProfile: (code: string, distinct: SubjectDistinct) =>
     Promise<OptionalSubjectDetail | CommonSubjectDetail>;
   editSubject: (req: EditRequest) => Promise<void>;
+  addSubject: (req: CreateRequest) => Promise<void>;
 }
 
 export const AdminSubjectContext = createContext<AdminSubjectService | undefined>(undefined);

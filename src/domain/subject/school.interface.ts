@@ -58,6 +58,7 @@ export interface CommonSubjectRepository {
   save: (commonSubject: CommonSubject, key?: string) => Promise<void>;
   findBy: (filter: SubjectFilter) => Promise<CommonSubject[]>;
   findByCode: (code: string) => Promise<CommonSubject | null>;
+  delete: (key: string) => Promise<void>;
 }
 
 export interface OptionalSubjectRepository {
