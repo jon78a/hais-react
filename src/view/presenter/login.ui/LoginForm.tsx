@@ -65,7 +65,7 @@ const LoginForm: React.FC<LoginFormUx> = (ux) => {
           </div>
         </Stack>
         <Button variant="contained" sx={{mt: 4}} type={"submit"}>
-          가입하기
+          로그인
         </Button>
       </Box>
       <Divider sx={{width: "100%", mt: 3}}>
