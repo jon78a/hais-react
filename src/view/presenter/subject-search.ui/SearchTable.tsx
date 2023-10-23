@@ -86,7 +86,7 @@ const SearchTable: React.FC<SearchTableUx> = (ux) => {
                 <TableCell component="th" scope="row">
                   {row.sbjName}
                 </TableCell>
-                <TableCell align="right">{row.category}</TableCell>
+                <TableCell align="right">{row.subjectCategory}</TableCell>
                 <TableCell align="right">{row.group}</TableCell>
                 <TableCell align="right">{row.suneungOX}</TableCell>
                 {/* <TableCell align="right">{row.recommendPoint}/40</TableCell> */}

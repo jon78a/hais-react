@@ -80,7 +80,7 @@ const SubjectSearchContainer = ({
           return {
             code: v.code,
             sbjName: v.name,
-            category: v.category,
+            subjectCategory: v.subjectCategory,
             group: v.group,
             suneungOX: v.suneungInfo === "수능 출제 과목 아님" ? "X" : "O"
           }

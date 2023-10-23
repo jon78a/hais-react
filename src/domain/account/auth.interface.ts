@@ -17,6 +17,7 @@ export interface AuthSession {
   exp: number;
   userId: string;
   status: AuthSessionStatus;
+  isAdmin?: boolean;
   createdAt?: number;
 }
 
