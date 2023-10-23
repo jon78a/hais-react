@@ -74,23 +74,29 @@ export const BaseContainer = ({
         window.location.reload();
       },
     }}> 
-    <TopNavBarXl />
-    <div>
-    <TopNavBarSm />
-    </div>
+      <TopNavBarXl />
+      <div className='h-'>
+      <TopNavBarSm />
+      </div>
       {children}
     </AuthorizeContext.Provider>
   );
 }
 
 export function TopNavBarXl(){
-  const matchesDesktopXl = useMediaQuery('(min-width: 900px)'); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
+  const [screenWidth, setScreenWidth] = useState(0)
+  useEffect(() => {
+      setScreenWidth(window.screen.width);
+  }, []);
+  const matchesDesktopXl = useMediaQuery('(min-width: 450px)'); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
   return (
-    <div className={`flex w-full justify-center ${matchesDesktopXl ? `` : 'hidden'} ` }>
+    <div className={`flex justify-center ${matchesDesktopXl ? `` : 'hidden'} ` } style={{
+      width: `${screenWidth}px`}} >
       <AppBar position={"static"} color={"inherit"} sx={{
         boxShadow: "none",
       }}>
-        <div className='flex flex-row items-center justify-between w-[876px] py-4 mx-auto'>
+        <div className='flex flex-row items-center justify-between py-4 mx-auto' style={{
+      width: `${screenWidth*0.8}px`}}>
           <Link to={"/"} className='w-[60px] h-[60px]'>
             <img src="/logo-main.png" alt="logo"/>
           </Link>
@@ -103,7 +109,7 @@ export function TopNavBarXl(){
 }
 
 export function TopNavBarSm() {
-  const matchesDesktopSm = useMediaQuery('(max-width: 899px)');
+  const matchesDesktopSm = useMediaQuery('(max-width: 449px)');
   const pageWidth = document.documentElement.scrollWidth;
   const StyledToolbar = styled(Toolbar)`
   display: flex;
@@ -111,14 +117,13 @@ export function TopNavBarSm() {
   height: 100%;
   `
   return (
-    <div className={`pb-[100px] w-[${pageWidth}px] ${matchesDesktopSm ? `max-w-[${pageWidth}px]` : "hidden"} w-full`}>
-      <AppBar position="fixed" color={"inherit"} sx={{boxShadow: "none",
-        pb: 2
+    <div className={` ${matchesDesktopSm ? `` : "hidden"} flex`} >
+      <AppBar  color={"inherit"} position={"static"} sx={{boxShadow: "none",
       }}>
         <StyledToolbar>
           <TemporaryDrawer />
           <Link to={"/"}>
-            <img src="/logo-sm.png" alt="logo"  className='m-4 h-[40px]'/>
+            <img src="/logo-sm.png" alt="logo"  className='m-4 h-[30px]'/>
           </Link>
         </StyledToolbar>
       </AppBar>
@@ -166,7 +171,7 @@ export function TemporaryDrawer() {
       >
         {
           <Box
-            sx={{ width: 250 }}
+            sx={{ width: `200px` }}
             role="presentation"
             onClick={toggleDrawer(false)}
             onKeyDown={toggleDrawer(false)}

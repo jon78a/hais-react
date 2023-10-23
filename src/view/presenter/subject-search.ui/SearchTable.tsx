@@ -17,7 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { OptionalSubject } from '../../../domain/subject/school.interface';
 import { searchDetailState, searchSummaryListState } from '../../../schema/states/SubjectSearch';
 import { SearchTableUx } from '../subject-search.ux/SearchTable';
-import { SearchDetail } from '../../../schema/types/SubjectSearch';
+//import { SearchDetail } from '../../../schema/types/SubjectSearch';
 
 
 export interface TableDataInfo {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Slider from "react-slick";
@@ -16,28 +16,35 @@ export const Carousel = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-
+  const [screenWidth, setScreenWidth] = useState(0)
+  useEffect(() => {
+      setScreenWidth(window.screen.width);
+  }, []);
+  
   const matchesDesktopXl = useMediaQuery("(min-width:450px)");
   
   return (
-    <div className={`w-full ${matchesDesktopXl ? "" : "hidden"}`}>
+    <div  style={{
+      width: `${screenWidth}px`}} 
+      className={`w-full min-w-[${screenWidth}px]`}>
       <Slider {...settings}>
         <div className="relative">
-          <img src="/Hais_Banner1.png" alt="banner1" />
+        <img src="/Hais_Banner1.png" alt="banner3" width={`${screenWidth}px`} />
           <Link to="/subject/search">
-            <button className="z-50 p-1 absolute text-white bg-[#4E9E65] font-black left-[20%] top-[80%] w-[15%] h-[20%] rounded-2xl ">
+            <button className="z-50 absolute text-white bg-[#4E9E65] text-[6%] left-[20%] top-[80%] w-[15%] h-[15%] rounded-2xl ">
               <p>교과탐색</p>
             </button>
           </Link>
         </div>
         <div className="relative">
-          <img src="/Hais_Banner2.png" alt="banner2" />
-          <div className="'z-50 absolute left-[20%] top-[65%] w-[23%] h-full">
+        <img src="/Hais_Banner2.png" alt="banner3" width={`${screenWidth}px`} />
+          <div className="'z-50 absolute left-[20%] top-[70%] w-[23%] h-full">
             <FreeSoloCreateOption />
           </div>
         </div>
         <div>
-            <img src="/Hais_Banner3.png" alt="banner3" />
+        <img src="/Hais_Banner3.png" alt="banner3" width={`${screenWidth}px`} />
+
         </div>
         <div>
           <h3>4</h3>
@@ -141,10 +148,21 @@ const UnivOption: readonly UnivOptionType[] = [
 //추후 대학 정보 map
 
 const HomePage = (): JSX.Element => {
+  const screenWidth = window.screen.width;
+  const screenHeight = window.screen.height;
   return (
-    <div className="flex justify-center w-[100%]">
+    <div className={`flex flex-col justify-center`} style={{
+      width: `${screenWidth}px`,
+      marginTop:`${screenWidth*0.06}px`,
+      marginBottom:`${screenWidth*0.06}px` }} >
+        
       <Carousel />
-      <CarouselSM />
+      <img src="/Hais_Home_info.png" alt="info"  width={`${screenWidth}px`} style={{
+      marginTop:`${screenWidth*0.06}px`,
+      marginBottom:`${screenWidth*0.06}px` }} />
+      <img src="/Hais_recommend_info.png" alt="info"  width={`${screenWidth}px`} style={{
+      marginTop:`${screenWidth*0.06}px`,
+      marginBottom:`${screenWidth*0.06}px` }}  />
     </div>
   );
 };
