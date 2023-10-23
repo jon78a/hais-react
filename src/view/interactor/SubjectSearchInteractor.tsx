@@ -45,14 +45,14 @@ const SubjectSearchInteractor = () => {
             .then((choices) => {
               setUnivChoiceList(choices);
             });
-        }, 750)}
+        }, 250)}
         inputMajorKeyword={debounce((value) => {
           setMajorKeyword(value);
           service.showMajors(value, univChoice.name)
             .then((choices) => {
               setMajorChoiceList(choices);
             });
-        }, 750)}
+        }, 250)}
         selectUnivChoice={(value) => {
           setUnivChoice(value);
           service.showMajors("", value.name)
