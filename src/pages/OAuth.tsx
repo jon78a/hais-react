@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { debounce } from "lodash";
 
 import { AuthChoiceType, OAuthEnum } from "../policy/auth";
 import { generateOAuthEmail, generateOAuthPassword } from "../policy/auth";
@@ -77,7 +78,7 @@ const OAuthPage = () => {
     navigate
   ]);
 
-  useEffect(() => {
+  useEffect(debounce(() => {
     const oAuthClient = new OAuthClient(oAuthType);
 
     try {
@@ -96,7 +97,7 @@ const OAuthPage = () => {
     }
 
     return () => oAuthStatusRepository.clear();
-  }, [
+  }), [
     handleSocialLogin,
     handleSocialLogin,
     oAuthStatus
