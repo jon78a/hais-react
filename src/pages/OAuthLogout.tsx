@@ -1,16 +1,12 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { routes } from "../routes";
 
 import authSessionRepository from "../driver/repository/authSessionRepository";
+import { routes } from "../routes";
 
 const OAuthLogout = () => {
-  const navigate = useNavigate();
-
   useEffect(() => {
-    authSessionRepository.clear().then(() => navigate(routes.home.path, {replace: true}));
-  });
+    authSessionRepository.clear().then(() => window.location.replace(routes.home.path));
+  },[]);
   return (
     <></>
   );
