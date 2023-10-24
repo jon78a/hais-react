@@ -38,7 +38,8 @@ const AdminSubjectContainer = ({
             });
             return payload.map((v) => {
               return {
-                code: v.code,
+                id: Number(v.code),
+                distinctDetail: "공통과목",
                 group: v.group,
                 name: v.name,
                 description: v.description
@@ -56,7 +57,8 @@ const AdminSubjectContainer = ({
             });
             return payload.map((v) => {
               return {
-                code: v.code,
+                id: Number(v.code),
+                distinctDetail: v.subjectCategory,
                 group: v.group,
                 name: v.name,
                 description: v.description
