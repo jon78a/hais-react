@@ -6,6 +6,8 @@ import type { GridColDef } from '@mui/x-data-grid';
 
 export type SubjectDistinct = "COMMON" | "OPTION"
 
+export type SubjectDistinctDetail = "공통과목" | "일반선택" | "융합선택" | "진로선택"
+
 export type SubjectColumn = {
   code: GridColDef;
   group: GridColDef;
@@ -18,7 +20,8 @@ export type SubjectFilter = {
 }
 
 export type SubjectSummary = {
-  code: string;
+  id: number;
+  distinctDetail: SubjectDistinctDetail;
   group: string;
   name: string;
   description: string;

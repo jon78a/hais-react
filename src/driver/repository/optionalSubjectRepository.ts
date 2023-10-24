@@ -1,7 +1,17 @@
-import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
+import {
+  getDoc,
+  doc,
+  query,
+  collection,
+  getDocs,
+  orderBy,
+} from "firebase/firestore";
+
+import { OptionalSubject, OptionalSubjectRepository } from "../../domain/subject/school.interface";
 import { OptionalSubjectCategory } from "../../policy/school";
-import { StorageSource } from "../firebase/constants";
+import { CollectionName, StorageSource } from "../firebase/constants";
 import { MajorCategoryGroupType, OptionalSubjectType, RecommendGroupType } from "../firebase/types";
+import { firebaseDb } from "../firebase";
 
 const optionalSubjectRepository: OptionalSubjectRepository = {
   async findByMajorId(majorId) {
@@ -11,15 +21,19 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
 
     const gnrMjrCodes = mjrCategoryGroups.filter((v) => v.major_id === majorId).map((v) => v.general_code);
 
-    source = StorageSource.RecommendGroup;
-    res = await fetch(source);
-    let recommendGroups: RecommendGroupType[] = await res.json();
+    let recommendGroups: RecommendGroupType[] = [];
+    const recommendGroupSnapshot = await getDocs(collection(firebaseDb, CollectionName.RecommendGroup));
+    recommendGroupSnapshot.forEach((doc) => {
+      recommendGroups.push(doc.data() as RecommendGroupType);
+    });
 
     const optSbjCodes = recommendGroups.filter((v) => gnrMjrCodes.includes(v.gnr_mjr_code)).map((v) => v.opt_sbj_code);
 
-    source = StorageSource.OptionalSubject;
-    res = await fetch(source);
-    let optionalSubjects: OptionalSubjectType[] = await res.json();
+    let optionalSubjects: OptionalSubjectType[] = [];
+    const optionalSubjectSnapshot = await getDocs(collection(firebaseDb, CollectionName.OptionalSubject));
+    optionalSubjectSnapshot.forEach((doc) => {
+      optionalSubjects.push(doc.data() as OptionalSubjectType);
+    });
 
     return optionalSubjects.filter((v) => optSbjCodes.includes(v.code))
       .map((v) => {
@@ -35,45 +49,45 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
       });
   },
   async findBy(filter) {
-    const source = StorageSource.OptionalSubject;
-    const res = await fetch(source);
-    let optionalSubjects: OptionalSubjectType[] = await res.json();
+    const conds = [];
+    conds.push(orderBy("group"));
 
-    return optionalSubjects.map((v) => {
-      return {
-        code: v.code,
-        group: v.group,
+    const q = query(collection(firebaseDb, CollectionName.OptionalSubject), ...conds);
+  
+    const snapshot = await getDocs(q);
+    let _list: OptionalSubject[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      _list.push({
+        code: data.code,
+        group: data.group,
         studentCategory: undefined,
-        subjectCategory: v.category as OptionalSubjectCategory,
-        name: v.name,
-        description: v.description,
-        suneungInfo: v.suneung_info,
-        etcInfo: v.etc_info
-      }
-    }).filter((v) => {
-      if (!!filter.nameKeyword) {
-        if (!v.name.includes(filter.nameKeyword)) return false;
-      }
-      return true;
-    })
+        subjectCategory: data.category as OptionalSubjectCategory,
+        name: data.name,
+        description: data.description,
+        suneungInfo: data.suneung_info,
+        etcInfo: data.etc_info
+      });
+    });
+    return _list.filter((v) => v.name.includes(filter.nameKeyword));
   },
   async findByCode(code) {
-    const source = StorageSource.OptionalSubject;
-    const res = await fetch(source);
-    let optionalSubjects: OptionalSubjectType[] = await res.json();
+    const docRef = doc(firebaseDb, CollectionName.OptionalSubject, code);
+    const docSnap = await getDoc(docRef);
 
-    return optionalSubjects.map((v) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
       return {
-        code: v.code,
-        group: v.group,
+        code: data.code,
+        group: data.group,
         studentCategory: undefined,
-        subjectCategory: v.category as OptionalSubjectCategory,
-        name: v.name,
-        description: v.description,
-        suneungInfo: v.suneung_info,
-        etcInfo: v.etc_info
+        subjectCategory: data.category as OptionalSubjectCategory,
+        name: data.name,
+        description: data.description,
+        suneungInfo: data.suneung_info,
+        etcInfo: data.etc_info
       }
-    }).find((v) => v.code === code) ?? null;
+    } else return null;
   },
 }
 

@@ -3,6 +3,9 @@ export class CollectionName {
   static Student = "students";
   static AuthSession = "auth_session";
   static CommonSubject = "common_subject";
+  static GeneralMajor = "general_major";
+  static OptionalSubject = "optional_subject";
+  static RecommendGroup = "recommend_group";
 }
 
 export class StorageSource {

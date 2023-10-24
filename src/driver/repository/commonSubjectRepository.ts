@@ -3,7 +3,7 @@ import {
   setDoc,
   query,
   collection,
-  where,
+  orderBy,
   getDocs,
   getDoc
 } from "firebase/firestore";
@@ -36,9 +36,8 @@ const commonSubjectRepository: CommonSubjectRepository = {
   },
   async findBy(filter) {
     const conds = [];
-    if (!!filter.nameKeyword) {
-      conds.push(where("name", ">=", filter.nameKeyword))
-    }
+    conds.push(orderBy("group"));
+
     const q = query(collection(firebaseDb, CollectionName.CommonSubject), ...conds);
   
     const snapshot = await getDocs(q);
@@ -46,7 +45,7 @@ const commonSubjectRepository: CommonSubjectRepository = {
     snapshot.forEach((doc) => {
       _list.push(doc.data() as CommonSubject);
     });
-    return _list
+    return _list.filter((v) => v.name.includes(filter.nameKeyword));
   },
   async findByCode(code) {
     const docRef = doc(firebaseDb, CollectionName.CommonSubject, code);

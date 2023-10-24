@@ -31,10 +31,10 @@ const SubjectTable: React.FC<{
   const subjectSummaryList = useRecoilValue(subjectSummaryListState);
   const subjectColumns = useMemo<GridColDef[]>(() => [
     {
-      field: "id", headerName: "ID", width: 80
+      field: "id", headerName: "과목코드", width: 80
     },
     {
-      field: "code", headerName: "과목코드"
+      field: "distinctDetail", headerName: "구분"
     },
     {
       field: "group", headerName: "그룹명"
@@ -92,9 +92,7 @@ const SubjectTable: React.FC<{
         </Stack>
         <Box height={screenHeight * 0.65}>
           <DataGrid
-            rows={subjectSummaryList.map((v) => {
-              return {id: Number(v.code), ...v}
-            })}
+            rows={subjectSummaryList}
             columns={subjectColumns}
             initialState={{
               pagination: {
