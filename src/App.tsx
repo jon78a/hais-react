@@ -20,13 +20,7 @@ import { AdminLayout } from './pages/Layout';
 import AdminSubjectPage from './pages/admin/Subject';
 
 function App() {
-  const [screenWidth, setScreenWidth] = useState(0)
-  useEffect(() => {
-      setScreenWidth(window.screen.availWidth);
-  }, []);
-  
   return (
-    <div className={`w-[${screenWidth}px]`}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout/>}>
@@ -46,7 +40,6 @@ function App() {
           <Route path={"/*"} element={<NotFound/>}/>
         </Routes>
       </BrowserRouter>
-    </div>
   );
 }
 
