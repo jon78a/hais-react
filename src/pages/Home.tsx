@@ -17,37 +17,42 @@ export const Carousel = () => {
     slidesToScroll: 1,
   };
   const [screenWidth, setScreenWidth] = useState(0)
+  const [isMobile, setIsMobile] = useState<boolean>()
+  
   useEffect(() => {
       setScreenWidth(window.screen.width);
+      const newWidth = window.screen.width;
+      setIsMobile(newWidth < 450);
   }, []);
+ 
   
-  const matchesDesktopXl = useMediaQuery("(min-width:450px)");
   
   return (
     <div  style={{
-      width: `${screenWidth}px`}} 
-      className={`w-full min-w-[${screenWidth}px]`}>
+      width: `${isMobile ? screenWidth*0.95 : screenWidth*0.75 }px`}} className="mx-auto">
       <Slider {...settings}>
-        <div className="relative">
-        <img src="/Hais_Banner1.png" alt="banner3" width={`${screenWidth}px`} />
+        <div className="relative p-1">
+        <img src="/Hais_Banner1.png" alt="banner3" width={`100%`} />
           <Link to="/subject/search">
-            <button className="z-50 absolute text-white bg-[#4E9E65] text-[6%] left-[20%] top-[80%] w-[15%] h-[15%] rounded-2xl ">
-              <p>교과탐색</p>
+            <button className=" z-50 absolute text-white bg-[#4E9E65] font-bold left-[20%] top-[80%] w-[15%] h-[15%] rounded-xl ">
+              <p className={`${isMobile ? `text-[8px]` : `text-xl`}`}>교과탐색</p>
             </button>
           </Link>
         </div>
-        <div className="relative">
-        <img src="/Hais_Banner2.png" alt="banner3" width={`${screenWidth}px`} />
-          <div className="'z-50 absolute left-[20%] top-[70%] w-[23%] h-full">
-            <FreeSoloCreateOption />
-          </div>
+        <div className="relative p-1">
+        <img src="/Hais_Banner1.png" alt="banner3" width={`100%`} />
+        <Link to="/subject/search">
+            <button className=" z-50 absolute text-white bg-[#4E9E65] font-bold left-[20%] top-[80%] w-[15%] h-[15%] rounded-xl ">
+              <p className={`${isMobile ? `text-[8px]` : `text-xl`}`}>교과탐색</p>
+            </button>
+          </Link>
         </div>
-        <div>
-        <img src="/Hais_Banner3.png" alt="banner3" width={`${screenWidth}px`} />
+        <div className="p-1">
+        <img src="/Hais_Banner1.png" alt="banner3" width={`100%`} />
 
         </div>
-        <div>
-          <h3>4</h3>
+        <div className="p-1">
+        <img src="/Hais_Banner1.png" alt="banner3" width={`100%`} />
         </div>
       </Slider>
     </div>
@@ -151,19 +156,20 @@ const HomePage = (): JSX.Element => {
   const screenWidth = window.screen.width;
   const screenHeight = window.screen.height;
   return (
+    <>
     <div className={`flex flex-col justify-center`} style={{
-      width: `${screenWidth}px`,
-      marginTop:`${screenWidth*0.06}px`,
-      marginBottom:`${screenWidth*0.06}px` }} >
-        
+      marginTop:`${screenWidth*0.03}px`,
+      marginBottom:`${screenWidth*0.06}px`,
+      width:`${screenWidth}px` }} >
       <Carousel />
       <img src="/Hais_Home_info.png" alt="info"  width={`${screenWidth}px`} style={{
-      marginTop:`${screenWidth*0.06}px`,
-      marginBottom:`${screenWidth*0.06}px` }} />
+      marginTop:`${screenWidth*0.07}px`,
+      marginBottom:`${screenWidth*0.03}px` }} />
       <img src="/Hais_recommend_info.png" alt="info"  width={`${screenWidth}px`} style={{
-      marginTop:`${screenWidth*0.06}px`,
+      marginTop:`${screenWidth*0.03}px`,
       marginBottom:`${screenWidth*0.06}px` }}  />
     </div>
+    </>
   );
 };
 
