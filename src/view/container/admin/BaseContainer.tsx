@@ -58,7 +58,9 @@ const SideNavBar = () => {
       onClose={(e) => setOpen(false)}
     >
       <div className="flex justify-between px-3 py-4">
-        <Box width={60}>
+        <Box width={60} sx={{
+            cursor: "pointer"
+          }} onClick={() => window.location.replace('/')}>
           <img src={process.env.PUBLIC_URL + "/logo-sm.png"}/>
         </Box>
         <IconButton onClick={() => setOpen(false)}>
@@ -178,6 +180,12 @@ const AdminBaseContainer = ({
           navigate(routes.home.path, {replace: true});
           alert("로그아웃 되었습니다.");
         },
+        async isAdmin() {
+          const session = await authSessionRepository.find();
+          const current = Math.floor(Date.now() / 1000);
+          if (!!session && session.exp > current && session.status === "GRANT") return !!session.isAdmin;
+          return false;
+        },
       }}>
         <div className="w-screen h-screen flex flex-row">
           <SideNavBar/>
@@ -194,7 +202,8 @@ const AdminBaseContainer = ({
                     </IconButton>
                     <Box width={60} sx={{
                       mx: "auto",
-                    }}>
+                      cursor: "pointer"
+                    }} onClick={() => window.location.replace('/')}>
                       <img src={process.env.PUBLIC_URL + "/logo-sm.png"}/>
                     </Box>
                     </>

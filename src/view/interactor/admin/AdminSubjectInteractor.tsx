@@ -8,7 +8,7 @@ import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctSt
 import SubjectTabs from "../../presenter/admin/subject.ui/SubjectTabs";
 import SubjectDetailDialog from "../../presenter/admin/subject.ui/SubjectDetailDialog";
 import type { CommonSubjectDetail, OptionalSubjectDetail } from "../../../schema/types/SubjectTable";
-import AddSpeedDial from "../../presenter/admin/subject.ui/AddSpeedDial";
+import AddFloatButton from "../../presenter/admin/subject.ui/AddFloatButton";
 import SubjectCreateDialog from "../../presenter/admin/subject.ui/SubjectCreateDialog";
 
 const AdminSubjectInteractor = () => {
@@ -70,7 +70,7 @@ const AdminSubjectInteractor = () => {
                 });
             }}
           />
-          <AddSpeedDial/>
+          <AddFloatButton/>
         </SubjectTable>
       </SubjectTabs>
     </div>

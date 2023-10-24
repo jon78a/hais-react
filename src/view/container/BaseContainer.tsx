@@ -11,7 +11,6 @@ import { AuthRepository, AuthSessionRepository } from '../../domain/account/auth
 import { AuthorizeContext, useAuthorizeService } from '../../service/authorize';
 import { UserRepository } from '../../domain/account/user.interface';
 import { OAuthEnum } from '../../policy/auth';
-import { AUTH_SESSION_KEY } from '../../driver/sessionStorage/constants';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Stack from '@mui/material/Stack';
@@ -45,8 +44,6 @@ export const BaseContainer = ({
     userRepository: UserRepository
   }
 }): JSX.Element => {
-  const navigate = useNavigate();
-
   const {
     authSessionRepository,
     authRepository,
@@ -72,6 +69,12 @@ export const BaseContainer = ({
         };
         alert("로그아웃 되었습니다.");
         window.location.reload();
+      },
+      async isAdmin() {
+        const session = await authSessionRepository.find();
+        const current = Math.floor(Date.now() / 1000);
+        if (!!session && session.exp > current && session.status === "GRANT") return !!session.isAdmin;
+        return false;
       },
     }}> 
       <TopNavBarXl />
@@ -296,12 +299,15 @@ const StyledTab = styled(Tab)`
 
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
-  const [login, setLogin] = useState<boolean | undefined>(false);
+  const [login, setLogin] = useState<boolean | undefined>(undefined);
+  const [admin, setAdmin] = useState<boolean | undefined>(undefined);
   const {pathname} = useLocation();
 
   useEffect(() => {
     authService.isLogined()
       .then((result) => setLogin(result));
+    authService.isAdmin()
+      .then((result) => setAdmin(result));
   }, [pathname]);
 
   if (typeof login === undefined) return <></>;
@@ -314,11 +320,20 @@ export function SubNavSeparator() {
         {
           login ? [
             <Link key={0} to={routes.my.path} className='text-base text-black'>
-              마이페이지
+              <Button sx={{color: "GrayText"}}>
+                마이페이지
+              </Button>
             </Link>,
-            <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}>
+            <Button key={1} className='text-base font-bold text-black' onClick={() => authService.terminateSession()}
+              sx={{color: "GrayText"}}
+            >
               로그아웃
-            </Button>
+            </Button>,
+            admin && <Link key={0} to={routes.adminHome.path} className='text-base text-black'>
+              <Button sx={{color: "GrayText"}}>
+                관리자
+              </Button>
+            </Link>
           ] : [
             <Link key={0} to={routes.login.path} className='text-base text-black'>
               로그인

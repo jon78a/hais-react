@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 import { AuthSession, AuthSessionRepository } from "../../domain/account/auth.interface";
+import { User } from "../../domain/account/user.interface";
 import { AUTH_SESSION_KEY } from "../sessionStorage/constants";
 import { AUTH_SESSION_TTL } from "../../policy/auth";
 import { firebaseDb } from "../firebase";
@@ -9,12 +10,22 @@ import { CollectionName } from "../firebase/constants";
 
 const authSessionRepository: AuthSessionRepository = {
   async save(userId, status) {
+    const docRef = doc(firebaseDb, CollectionName.User, userId);
+    const docSnap = await getDoc(docRef);
+    let user: User;
+    if (docSnap.exists()) {
+      user = docSnap.data() as User;
+    } else {
+      return;
+    }
+
     const id = uuidv4();
     const session: AuthSession = {
       id,
       exp: Math.floor(Date.now() / 1000) + AUTH_SESSION_TTL,
       userId,
-      status
+      status,
+      isAdmin: user.isAdmin || false
     }
 
     await setDoc(doc(firebaseDb, CollectionName.AuthSession, id), {
