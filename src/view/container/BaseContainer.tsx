@@ -75,9 +75,7 @@ export const BaseContainer = ({
       },
     }}> 
       <TopNavBarXl />
-      <div className='h-'>
       <TopNavBarSm />
-      </div>
       {children}
     </AuthorizeContext.Provider>
   );
@@ -111,19 +109,20 @@ export function TopNavBarXl(){
 export function TopNavBarSm() {
   const matchesDesktopSm = useMediaQuery('(max-width: 449px)');
   const pageWidth = document.documentElement.scrollWidth;
+  const [navHeight, setNavHeight] = useState<number>(30)
   const StyledToolbar = styled(Toolbar)`
   display: flex;
   align-items: center;
   height: 100%;
   `
   return (
-    <div className={` ${matchesDesktopSm ? `` : "hidden"} flex`} >
-      <AppBar  color={"inherit"} position={"static"} sx={{boxShadow: "none",
+    <div className={` ${matchesDesktopSm ? `` : "hidden"} flex`} style={{paddingBottom: `${navHeight+16}px`,}} >
+      <AppBar  color={"inherit"} position={"fixed"} sx={{boxShadow: "none"
       }}>
         <StyledToolbar>
           <TemporaryDrawer />
           <Link to={"/"}>
-            <img src="/logo-sm.png" alt="logo"  className='m-4 h-[30px]'/>
+            <img src="/logo-sm.png" alt="logo" height={`${navHeight}px`}/>
           </Link>
         </StyledToolbar>
       </AppBar>
