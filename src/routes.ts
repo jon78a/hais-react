@@ -7,6 +7,7 @@ export interface RouteExp {
 interface AdminRoutesType {
   adminHome: RouteExp;
   adminSubject: RouteExp;
+  adminMajor: RouteExp;
 }
 
 export const adminRoutes: AdminRoutesType = {
@@ -17,6 +18,10 @@ export const adminRoutes: AdminRoutesType = {
   adminSubject: {
     path: '/admin/subject',
     re: new RegExp('^/admin/subject')
+  },
+  adminMajor: {
+    path: '/admin/major',
+    re: new RegExp('^/admin/major')
   }
 }
 
