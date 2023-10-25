@@ -6,7 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { SubjectTableUx } from "../subject.ux/SubjectTableUx";
 import { subjectSummaryListState } from "../../../../schema/states/SubjectTable";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
-import { ModalContext, ModalState } from "./ModalContext";
+import { TableContext, ModalState } from "./TableContext";
 
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
@@ -47,12 +47,21 @@ const SubjectTable: React.FC<{
     }
   ], [mobile]);
 
-  const [rowSelections, setRowSelections] = useState<string[]>([]);
+  const [rowSelections, setRowSelections] = useState<number[]>([]);
   const [modalState, setModalState] = useState<ModalState>(null);
   const [keywordValue, setKeywordValue] = useState<string>("");
 
   return (
-    <ModalContext.Provider value={{modalState, setModalState}}>
+    <TableContext.Provider value={{
+      modal: {
+        state: modalState,
+        set: setModalState
+      },
+      selections: {
+        state: rowSelections,
+        set: setRowSelections
+      }
+    }}>
       <Stack spacing={1} sx={{mt: 1}}>
         <Stack direction={"row"} width={"100%"} justifyContent={"space-between"}>
           <Paper
@@ -84,10 +93,12 @@ const SubjectTable: React.FC<{
           </Paper>
           <Stack direction={"row"}>
             <Button disabled={rowSelections.length !== 1} onClick={() => {
-              ux.clickRow(rowSelections[0]);
+              ux.clickRow(String(rowSelections[0]));
               setModalState("UPDATE");
             }}>수정</Button>
-            <Button disabled={rowSelections.length < 1}>삭제</Button>
+            <Button disabled={rowSelections.length < 1} onClick={() => {
+              setModalState("DELETE")
+            }}>삭제</Button>
           </Stack>
         </Stack>
         <Box height={screenHeight * 0.65}>
@@ -101,17 +112,18 @@ const SubjectTable: React.FC<{
             }}
             checkboxSelection
             onRowSelectionModelChange={(rowSelectionModel) => {
-              setRowSelections(rowSelectionModel.map((v) => String(v)));
+              setRowSelections(rowSelectionModel.map(v => Number(v)));
             }}
             onRowDoubleClick={(params) => {
               ux.clickRow(String(params.id));
               setModalState("UPDATE");
             }}
+            rowSelectionModel={rowSelections}
           />
         </Box>
       </Stack>
       {children}
-    </ModalContext.Provider>
+    </TableContext.Provider>
   );
 }
 
