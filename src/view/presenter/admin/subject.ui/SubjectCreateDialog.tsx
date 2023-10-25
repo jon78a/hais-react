@@ -230,7 +230,7 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
             ...form,
             data: {
               ...form.data,
-              name: e.target.value
+              description: e.target.value
             }
           })}
         />

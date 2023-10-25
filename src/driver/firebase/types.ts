@@ -1,3 +1,5 @@
+import type { StudentCategoryCode } from "../../policy/school";
+
 export type GeneralMajorType = {
   code: string;
   clsf_name: string;
@@ -28,6 +30,7 @@ export type MajorCategoryGroupType = {
 export type OptionalSubjectType = {
   code: string;
   group: string;
+  student_category?: StudentCategoryCode,
   category: string;
   name: string;
   description: string;

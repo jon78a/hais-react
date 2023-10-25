@@ -32,7 +32,7 @@ const commonSubjectRepository: CommonSubjectRepository = {
     }
     else { // update
       const docRef = doc(firebaseDb, CollectionName.CommonSubject, key);
-      await setDoc(docRef, commonSubject);
+      await setDoc(docRef, {...commonSubject});
     }
   },
   async findBy(filter) {
