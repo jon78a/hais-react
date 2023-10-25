@@ -98,6 +98,14 @@ const AdminSubjectContainer = ({
             return;
         }
       },
+      async deleteSubject(req) {
+        const {distinct} = req;
+        switch(distinct) {
+          case "COMMON":
+            await commonSubjectRepository.delete(req.subjectCode);
+            return;
+        }
+      },
     }}>
     {children}
     </AdminSubjectContext.Provider>

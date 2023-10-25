@@ -2,7 +2,7 @@ import { useContext, useMemo, useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
 import { SubjectDetailDialogUx } from "../subject.ux/SubjectDetailDialogUx";
-import { ModalContext } from "./ModalContext";
+import { TableContext } from "./TableContext";
 import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState } from "../../../../schema/states/SubjectTable";
 import { OptionalSubjectCategory, StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
 import type { EditRequest, OptionalSubjectDetail } from "../../../../schema/types/SubjectTable";
@@ -20,14 +20,14 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
 const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
-  const {modalState, setModalState} = useContext(ModalContext);
+  const context = useContext(TableContext);
   const distinct = useRecoilValue(subjectDistinctState);
   const commonSubjectDetail = useRecoilValue(commonSubjectDetailState);
   const optionalSubjectDetail = useRecoilValue(optionalSubjectDetailState);
 
   const [form, setForm] = useState<EditRequest | undefined>(undefined);
   useEffect(() => {
-    if (modalState !== "UPDATE") return undefined;
+    if (context.modal.state !== "UPDATE") return undefined;
     let profile;
     switch (distinct) {
       case "COMMON":
@@ -51,11 +51,11 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
     distinct,
     commonSubjectDetail,
     optionalSubjectDetail,
-    modalState
+    context.modal.state
   ]);
 
   const detailFields = useMemo(() => {
-    if (modalState !== "UPDATE") return undefined;
+    if (context.modal.state !== "UPDATE") return undefined;
     if (!form) return undefined;
 
     if (distinct === "COMMON") return (
@@ -250,20 +250,20 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
         />
       </DialogContent>
     )
-  }, [distinct, modalState, form]);
+  }, [distinct, context.modal.state, form]);
 
   return (
     <Dialog
-      open={modalState === "UPDATE"} onClose={() => setModalState(null)}
+      open={context.modal.state === "UPDATE"} onClose={() => context.modal.set(null)}
       scroll={"paper"}
     >
       <DialogTitle>교과상세</DialogTitle>
         {detailFields}
       <DialogActions>
-        <Button onClick={() => setModalState(null)}>취소</Button>
+        <Button onClick={() => context.modal.set(null)}>취소</Button>
         <Button onClick={() => {
           ux.modify(form!);
-          setModalState(null);
+          context.modal.set(null);
         }}>수정</Button>
       </DialogActions>
     </Dialog>

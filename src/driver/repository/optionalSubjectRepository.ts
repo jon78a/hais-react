@@ -5,6 +5,7 @@ import {
   collection,
   getDocs,
   orderBy,
+  deleteDoc
 } from "firebase/firestore";
 
 import { OptionalSubject, OptionalSubjectRepository } from "../../domain/subject/school.interface";
@@ -88,6 +89,9 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         etcInfo: data.etc_info
       }
     } else return null;
+  },
+  async delete(key) {
+    await deleteDoc(doc(firebaseDb, CollectionName.OptionalSubject, key));
   },
 }
 

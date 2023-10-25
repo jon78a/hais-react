@@ -1,7 +1,7 @@
 import { useContext, useMemo, useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
-import { ModalContext } from "./ModalContext";
+import { TableContext } from "./TableContext";
 import { subjectDistinctState } from "../../../../schema/states/SubjectTable";
 import { OptionalSubjectCategory, StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
 import type { CreateRequest, OptionalSubjectDetail } from "../../../../schema/types/SubjectTable";
@@ -20,12 +20,12 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
 const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
-  const { modalState, setModalState } = useContext(ModalContext);
+  const context = useContext(TableContext);
   const distinct = useRecoilValue(subjectDistinctState);
 
   const [form, setForm] = useState<CreateRequest | undefined>(undefined);
   useEffect(() => {
-    if (modalState !== "CREATE") return undefined;
+    if (context.modal.state !== "CREATE") return undefined;
     switch (distinct) {
       case "COMMON":
         setForm({
@@ -56,11 +56,11 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
     }
   }, [
     distinct,
-    modalState
+    context.modal.state
   ]);
 
   const detailFields = useMemo(() => {
-    if (modalState !== "CREATE") return undefined;
+    if (context.modal.state !== "CREATE") return undefined;
     if (!form) return undefined;
 
     if (distinct === "COMMON") return (
@@ -266,20 +266,20 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
         />
       </DialogContent>
     )
-  }, [distinct, modalState, form]);
+  }, [distinct, context.modal.state, form]);
 
   return (
     <Dialog
-      open={modalState === "CREATE"} onClose={() => setModalState(null)}
+      open={context.modal.state === "CREATE"} onClose={() => context.modal.set(null)}
       scroll={"paper"}
     >
       <DialogTitle>교과추가</DialogTitle>
         {detailFields}
       <DialogActions>
-        <Button onClick={() => setModalState(null)}>취소</Button>
+        <Button onClick={() => context.modal.set(null)}>취소</Button>
         <Button onClick={() => {
           ux.create(form!);
-          setModalState(null);
+          context.modal.set(null);
         }}>추가</Button>
       </DialogActions>
     </Dialog>

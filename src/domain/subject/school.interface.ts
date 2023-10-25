@@ -65,4 +65,5 @@ export interface OptionalSubjectRepository {
   findByMajorId: (majorId: number) => Promise<OptionalSubject[]>;
   findBy: (filter: SubjectFilter) => Promise<OptionalSubject[]>;
   findByCode: (code: string) => Promise<OptionalSubject | null>;
+  delete: (key: string) => Promise<void>;
 }

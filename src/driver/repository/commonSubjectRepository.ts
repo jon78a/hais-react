@@ -5,7 +5,8 @@ import {
   collection,
   orderBy,
   getDocs,
-  getDoc
+  getDoc,
+  deleteDoc
 } from "firebase/firestore";
 
 import { firebaseDb } from "../firebase";
@@ -54,7 +55,7 @@ const commonSubjectRepository: CommonSubjectRepository = {
     return null;
   },
   async delete(key) {
-    
+    await deleteDoc(doc(firebaseDb, CollectionName.CommonSubject, key));
   },
 }
 

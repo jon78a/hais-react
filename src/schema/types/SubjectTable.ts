@@ -52,6 +52,11 @@ export type CreateRequest = {
   };
 }
 
+export type DeleteRequest = {
+  distinct: SubjectDistinct;
+  subjectCode: string;
+}
+
 export type CommonSubjectDetail = {
   code: string;
   group: string;
