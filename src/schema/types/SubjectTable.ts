@@ -2,6 +2,7 @@ import type {
   StudentCategoryCode,
   OptionalSubjectCategory
 } from '../../policy/school';
+
 import type { GridColDef } from '@mui/x-data-grid';
 
 export type SubjectDistinct = "COMMON" | "OPTION"
