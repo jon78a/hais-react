@@ -5,7 +5,8 @@ import { responsiveFontSizes } from '@mui/material/styles';
 export let theme = createTheme({
   palette: {
     primary: {
-      main: "#4E9E65"
+      main: "#4E9E65",
+      light: "rgba( 78, 158, 101, 0.05 )"
     }
   },
   typography: {

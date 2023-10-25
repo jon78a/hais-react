@@ -105,7 +105,8 @@ const LinkItem: React.FC<LinkItemProps> = (props) => {
   return (
     <Button sx={{
         width: "100%",
-        py: 2
+        py: 2,
+        bgcolor: isMatched ? "primary.light": "background.paper",
       }}
       onClick={() => navigate(props.href)}
     >
