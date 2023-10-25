@@ -86,3 +86,4 @@ interface TableData<T> {
 * 1.4. onInputChange(*)
 * 1.5. inputValue(*)
 * 1.6. size(*)
+* 1.7. sx
