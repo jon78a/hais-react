@@ -7,6 +7,7 @@ import type {
   SubjectSummary,
   SubjectFilter,
   CreateRequest,
+  DeleteRequest,
 } from "../../schema/types/SubjectTable";
 
 interface AdminSubjectService {
@@ -15,6 +16,7 @@ interface AdminSubjectService {
     Promise<OptionalSubjectDetail | CommonSubjectDetail>;
   editSubject: (req: EditRequest) => Promise<void>;
   addSubject: (req: CreateRequest) => Promise<void>;
+  deleteSubject: (req: DeleteRequest) => Promise<void>;
 }
 
 export const AdminSubjectContext = createContext<AdminSubjectService | undefined>(undefined);

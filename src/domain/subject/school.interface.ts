@@ -5,7 +5,7 @@ import type { ExceptionDetail } from "../../types";
 export interface SubjectBase {
   code: string;
   group: string;
-  studentCategory?: StudentCategoryCode;
+  studentCategory: StudentCategoryCode;
   name: string;
   description: string;
   etcInfo: string;
@@ -65,4 +65,6 @@ export interface OptionalSubjectRepository {
   findByMajorId: (majorId: number) => Promise<OptionalSubject[]>;
   findBy: (filter: SubjectFilter) => Promise<OptionalSubject[]>;
   findByCode: (code: string) => Promise<OptionalSubject | null>;
+  save: (optionalSubject: OptionalSubject, key?: string) => Promise<void>;
+  delete: (key: string) => Promise<void>;
 }

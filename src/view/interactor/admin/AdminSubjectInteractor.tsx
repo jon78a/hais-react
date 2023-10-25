@@ -10,6 +10,7 @@ import SubjectDetailDialog from "../../presenter/admin/subject.ui/SubjectDetailD
 import type { CommonSubjectDetail, OptionalSubjectDetail } from "../../../schema/types/SubjectTable";
 import AddFloatButton from "../../presenter/admin/subject.ui/AddFloatButton";
 import SubjectCreateDialog from "../../presenter/admin/subject.ui/SubjectCreateDialog";
+import SubjectDeleteDialog from "../../presenter/admin/subject.ui/SubjectDeleteDialog";
 
 const AdminSubjectInteractor = () => {
   const [distinct, setDistinct] = useRecoilState(subjectDistinctState);
@@ -68,6 +69,17 @@ const AdminSubjectInteractor = () => {
                   service.readSubject(distinct, filter)
                     .then((data) => setSubjectSummaryList(data));
                 });
+            }}
+          />
+          <SubjectDeleteDialog
+            delete={(code) => {
+              service.deleteSubject({
+                distinct,
+                subjectCode: code
+              }).then(() => {
+                service.readSubject(distinct, filter)
+                  .then((data) => setSubjectSummaryList(data));
+              });
             }}
           />
           <AddFloatButton/>

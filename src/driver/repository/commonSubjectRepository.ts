@@ -5,7 +5,8 @@ import {
   collection,
   orderBy,
   getDocs,
-  getDoc
+  getDoc,
+  deleteDoc
 } from "firebase/firestore";
 
 import { firebaseDb } from "../firebase";
@@ -31,7 +32,7 @@ const commonSubjectRepository: CommonSubjectRepository = {
     }
     else { // update
       const docRef = doc(firebaseDb, CollectionName.CommonSubject, key);
-      await setDoc(docRef, commonSubject);
+      await setDoc(docRef, {...commonSubject});
     }
   },
   async findBy(filter) {
@@ -54,7 +55,7 @@ const commonSubjectRepository: CommonSubjectRepository = {
     return null;
   },
   async delete(key) {
-    
+    await deleteDoc(doc(firebaseDb, CollectionName.CommonSubject, key));
   },
 }
 

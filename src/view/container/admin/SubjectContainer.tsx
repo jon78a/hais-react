@@ -2,6 +2,7 @@ import { useRecoilState } from "recoil";
 import { CommonSubjectRepository, OptionalSubjectRepository } from "../../../domain/subject/school.interface";
 import { AdminSubjectContext } from "../../../service/admin/subject";
 import { commonSubjectListState, optionalSubjectListState } from "../../../domain/subject/school.impl";
+import type { CommonSubjectDto, OptionalSubjectDetail, OptionalSubjectDto } from "../../../schema/types/SubjectTable";
 
 const AdminSubjectContainer = ({
   children,
@@ -85,16 +86,49 @@ const AdminSubjectContainer = ({
           case "COMMON":
             await commonSubjectRepository.save(req.data, req.data.code);
             return;
+          case "OPTION":
+            let data = req.data as OptionalSubjectDetail;
+            await optionalSubjectRepository.save({
+              code: data.code,
+              group: data.group,
+              studentCategory: data.studentCategory,
+              name: data.name,
+              description: data.description,
+              etcInfo: data.etcInfo,
+              subjectCategory: data.subjectCategory,
+              suneungInfo: data.suneungInfo
+            }, data.code);
+            return;
         }
       },
       async addSubject(req) {
         const {distinct} = req;
+        let data;
         switch(distinct) {
           case "COMMON":
+            data = req.data as CommonSubjectDto;
             await commonSubjectRepository.save({
-              ...req.data,
+              ...data,
               code: ""
             });
+            return;
+          case "OPTION":
+            data = req.data as OptionalSubjectDto;
+            await optionalSubjectRepository.save({
+              ...data,
+              code: ""
+            });
+            return;
+        }
+      },
+      async deleteSubject(req) {
+        const {distinct} = req;
+        switch(distinct) {
+          case "COMMON":
+            await commonSubjectRepository.delete(req.subjectCode);
+            return;
+          case "OPTION":
+            await optionalSubjectRepository.delete(req.subjectCode);
             return;
         }
       },

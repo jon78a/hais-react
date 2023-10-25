@@ -5,6 +5,8 @@ import {
   collection,
   getDocs,
   orderBy,
+  deleteDoc,
+  setDoc
 } from "firebase/firestore";
 
 import { OptionalSubject, OptionalSubjectRepository } from "../../domain/subject/school.interface";
@@ -40,6 +42,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         return {
           code: v.code,
           group: v.group,
+          studentCategory: v.student_category ?? "NONE",
           subjectCategory: v.category as OptionalSubjectCategory,
           name: v.name,
           description: v.description,
@@ -61,7 +64,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
       _list.push({
         code: data.code,
         group: data.group,
-        studentCategory: undefined,
+        studentCategory: data.student_category ?? "NONE",
         subjectCategory: data.category as OptionalSubjectCategory,
         name: data.name,
         description: data.description,
@@ -80,7 +83,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
       return {
         code: data.code,
         group: data.group,
-        studentCategory: undefined,
+        studentCategory: data.student_category ?? "NONE",
         subjectCategory: data.category as OptionalSubjectCategory,
         name: data.name,
         description: data.description,
@@ -88,6 +91,47 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         etcInfo: data.etc_info
       }
     } else return null;
+  },
+  async save(optionalSubject, key) {
+    if (!key) { // create
+      const snapshot = await getDocs(collection(firebaseDb, CollectionName.OptionalSubject));
+      let maxCode = "0";
+      snapshot.forEach((doc) => {
+        if (Number(doc.data()["code"]) > Number(maxCode)) {
+          maxCode = doc.data()["code"];
+        }
+      });
+      const nextCode = String(Number(maxCode) + 1);
+      const docRef = doc(firebaseDb, CollectionName.OptionalSubject, nextCode);
+      const data: OptionalSubjectType = {
+        code: nextCode,
+        group: optionalSubject.group,
+        student_category: optionalSubject.studentCategory,
+        category: optionalSubject.subjectCategory,
+        name: optionalSubject.name,
+        description: optionalSubject.description,
+        suneung_info: optionalSubject.suneungInfo,
+        etc_info: optionalSubject.etcInfo
+      }
+      await setDoc(docRef, data);
+    }
+    else { // update
+      const docRef = doc(firebaseDb, CollectionName.OptionalSubject, key);
+      const data: OptionalSubjectType = {
+        code: optionalSubject.code,
+        group: optionalSubject.group,
+        student_category: optionalSubject.studentCategory,
+        category: optionalSubject.subjectCategory,
+        name: optionalSubject.name,
+        description: optionalSubject.description,
+        suneung_info: optionalSubject.suneungInfo,
+        etc_info: optionalSubject.etcInfo
+      }
+      await setDoc(docRef, data);
+    }
+  },
+  async delete(key) {
+    await deleteDoc(doc(firebaseDb, CollectionName.OptionalSubject, key));
   },
 }
 
