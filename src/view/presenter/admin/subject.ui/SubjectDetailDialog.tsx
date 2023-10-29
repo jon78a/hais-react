@@ -3,9 +3,9 @@ import { useRecoilValue } from "recoil";
 
 import { SubjectDetailDialogUx } from "../subject.ux/SubjectDetailDialogUx";
 import { TableContext } from "./TableContext";
-import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState } from "../../../../schema/states/SubjectTable";
+import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState } from "../../../../schema/states/AdminSubject";
 import { OptionalSubjectCategory, StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
-import type { EditRequest, OptionalSubjectDetail } from "../../../../schema/types/SubjectTable";
+import type { EditRequest, OptionalSubjectDetail } from "../../../../schema/types/AdminSubject";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from '@mui/material/DialogActions';

@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { SubjectTableUx } from "../subject.ux/SubjectTableUx";
-import { subjectSummaryListState } from "../../../../schema/states/SubjectTable";
+import { subjectSummaryListState } from "../../../../schema/states/AdminSubject";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
 import { TableContext, ModalState } from "./TableContext";
 

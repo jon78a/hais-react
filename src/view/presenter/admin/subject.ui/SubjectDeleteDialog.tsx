@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 
 import { TableContext } from "./TableContext";
 import { SubjectDeleteDialogUx } from "../subject.ux/SubjectDeleteDialogUx";
-import { subjectSummaryListState } from "../../../../schema/states/SubjectTable";
+import { subjectSummaryListState } from "../../../../schema/states/AdminSubject";
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';

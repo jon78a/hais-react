@@ -26,7 +26,7 @@ const SubjectSearchContainer = ({
 
   const setUnivListSnapshot = useSetRecoilState(univListState);
   const setMajorListSnapshot = useSetRecoilState(majorListState);
-  const [optionalSubjectListSnapshot,setOptionalSubjectListSnapshot] = useRecoilState(optionalSubjectListState);
+  const [optionalSubjectListSnapshot, setOptionalSubjectListSnapshot] = useRecoilState(optionalSubjectListState);
 
   return (
     <SubjectSearchContext.Provider value={{

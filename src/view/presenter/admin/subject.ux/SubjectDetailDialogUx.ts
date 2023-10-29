@@ -1,4 +1,4 @@
-import type { EditRequest } from "../../../../schema/types/SubjectTable";
+import type { EditRequest } from "../../../../schema/types/AdminSubject";
 
 export interface SubjectDetailDialogUx {
   modify: (

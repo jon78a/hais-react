@@ -1,12 +1,69 @@
+import { AdminMajorContext } from "../../../service/admin/major";
+import {
+  MajorRepository,
+  UnivRepository,
+} from "../../../domain/subject/univ.interface";
+import { OptionalSubjectRepository } from "../../../domain/subject/school.interface";
+
 const AdminMajorContainer = ({
-  children
+  children,
+  repositories
 }: {
   children: React.ReactNode;
+  repositories: {
+    majorRepository: MajorRepository;
+    univRepository: UnivRepository;
+    optionalSubjectRepository: OptionalSubjectRepository;
+  };
 }) => {
+  const {
+    majorRepository,
+    univRepository,
+    optionalSubjectRepository
+  } = repositories;
+
   return (
-    <>
-    {children}
-    </>
+    <AdminMajorContext.Provider value={{
+      async suggestUniv(univKeyword) {
+        const univs = await univRepository.findByNameLike(univKeyword);
+        return univs.map((univ) => {
+          return {
+            id: univ.id,
+            name: univ.name
+          }
+        });
+      },
+      async searchByUnivOrMajor(fullNameKeyword) {
+        const majors = await majorRepository.findByUnivOrMajorName(fullNameKeyword);
+        return majors.map((major) => {
+          return {
+            id: major.id,
+            name: major.name,
+            univ: major.univ,
+            department: major.department
+          }
+        })
+      },
+      async searchByMajorKeywordOnUnivName(majorKeyword, univName) {
+        const majors = await majorRepository.findByNameLikeWithUniv(majorKeyword, univName);
+        return majors.map((major) => {
+          return {
+            id: major.id,
+            name: major.name,
+            univ: major.univ,
+            department: major.department
+          }
+        });
+      },
+      async readSubjectList(majorId) {
+        const optionalSubjects = await optionalSubjectRepository.findByMajorId(majorId);
+        return [...optionalSubjects];
+      },
+    }}>
+      <div className="max-w-[600px] min-w-[550px]">
+        {children}
+      </div>
+    </AdminMajorContext.Provider>
   )
 }
 

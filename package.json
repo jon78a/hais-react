@@ -6,6 +6,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.7",
+    "@mui/lab": "^5.0.0-alpha.150",
     "@mui/material": "^5.14.7",
     "@mui/x-data-grid": "^6.16.2",
     "@mui/x-data-grid-generator": "^6.16.2",

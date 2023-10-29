@@ -2,9 +2,9 @@ import { useContext, useMemo, useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
 import { TableContext } from "./TableContext";
-import { subjectDistinctState } from "../../../../schema/states/SubjectTable";
+import { subjectDistinctState } from "../../../../schema/states/AdminSubject";
 import { OptionalSubjectCategory, StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
-import type { CreateRequest, OptionalSubjectDetail } from "../../../../schema/types/SubjectTable";
+import type { CreateRequest, OptionalSubjectDetail } from "../../../../schema/types/AdminSubject";
 import { SubjectCreateDialogUx } from "../subject.ux/SubjectCreateDialogUx";
 
 import Dialog from "@mui/material/Dialog";
