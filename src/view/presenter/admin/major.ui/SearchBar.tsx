@@ -26,6 +26,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Collapse from '@mui/material/Collapse';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const SearchBar: React.FC<SearchBarUx> = (ux) => {
   const searchMode = useRecoilValue(searchModeState);
@@ -96,7 +98,13 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
           minWidth: "unset"
         }} onClick={() => setIsShowList(!isShowList)}>
           {
-            isShowList ? "숨기기" : "열기"
+            isShowList ? <>
+              <KeyboardArrowUpIcon fontSize={"small"}/>
+              숨기기
+            </> : <>
+              <KeyboardArrowDownIcon fontSize={"small"}/>
+              학과 검색결과 보기
+            </>
           }
         </Button>
       </div>
