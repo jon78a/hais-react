@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { routes, adminRoutes } from './routes';
-import {useEffect, useState} from 'react';
 
 import Layout from './pages/Layout';
 import OAuthPage from './pages/OAuth';
@@ -18,6 +17,7 @@ import MyPage from './pages/My';
 // admin page
 import { AdminLayout } from './pages/Layout';
 import AdminSubjectPage from './pages/admin/Subject';
+import AdminMajorPage from './pages/admin/Major';
 
 function App() {
   return (
@@ -36,6 +36,7 @@ function App() {
           <Route path="/" element={<AdminLayout/>}>
             <Route path={adminRoutes.adminHome.path} element={<AdminSubjectPage/>} />
             <Route path={adminRoutes.adminSubject.path} element={<AdminSubjectPage/>} />
+            <Route path={adminRoutes.adminMajor.path} element={<AdminMajorPage/>} />
           </Route>
           <Route path={"/*"} element={<NotFound/>}/>
         </Routes>

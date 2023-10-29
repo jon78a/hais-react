@@ -26,10 +26,12 @@ import Toolbar from '@mui/material/Toolbar';
 import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
+import SchoolIcon from '@mui/icons-material/School';
 
 const titleMap = {
   [adminRoutes.adminHome.path]: "교과과목",
-  [adminRoutes.adminSubject.path]: "교과과목"
+  [adminRoutes.adminSubject.path]: "교과과목",
+  [adminRoutes.adminMajor.path]: "학과관리"
 }
 
 const BaseContainerContext = createContext<{
@@ -76,6 +78,11 @@ const SideNavBar = () => {
           title={titleMap[routes.adminSubject.path]}
           href={routes.adminSubject.path}
         />
+        <LinkItem
+          icon={<SchoolIcon />}
+          title={titleMap[routes.adminMajor.path]}
+          href={routes.adminMajor.path}
+        />
       </Stack>
     </Drawer>
   );
@@ -98,7 +105,8 @@ const LinkItem: React.FC<LinkItemProps> = (props) => {
   return (
     <Button sx={{
         width: "100%",
-        py: 2
+        py: 2,
+        bgcolor: isMatched ? "primary.light": "background.paper",
       }}
       onClick={() => navigate(props.href)}
     >
@@ -113,7 +121,7 @@ const LinkItem: React.FC<LinkItemProps> = (props) => {
               <Typography variant={"subtitle1"} sx={{
                 textAlign: "left",
                 color: isMatched ? undefined : "MenuText",
-                fontWeight: "bold"
+                fontWeight: isMatched ? "bold" : undefined
               }}>{props.title}</Typography>
             </Grid>
          )

@@ -37,6 +37,7 @@ export interface TargetMajor {
 // Repositories
 export interface MajorRepository {
   findByNameLikeWithUniv: (keyword: string, univ: string) => Promise<Major[]>;
+  findByUnivOrMajorName: (keyword: string) => Promise<Major[]>;
   // findByUniv: (univ: string, isActive?: boolean) => Major[];
   // save: (data: Major) => void;
 }

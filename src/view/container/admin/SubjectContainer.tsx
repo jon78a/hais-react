@@ -1,8 +1,9 @@
 import { useRecoilState } from "recoil";
+
 import { CommonSubjectRepository, OptionalSubjectRepository } from "../../../domain/subject/school.interface";
 import { AdminSubjectContext } from "../../../service/admin/subject";
 import { commonSubjectListState, optionalSubjectListState } from "../../../domain/subject/school.impl";
-import type { CommonSubjectDto, OptionalSubjectDetail, OptionalSubjectDto } from "../../../schema/types/SubjectTable";
+import type { CommonSubjectDto, OptionalSubjectDetail, OptionalSubjectDto } from "../../../schema/types/AdminSubject";
 
 const AdminSubjectContainer = ({
   children,

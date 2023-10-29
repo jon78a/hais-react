@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { subjectDistinctState } from '../../../../schema/states/SubjectTable';
+import { subjectDistinctState } from '../../../../schema/states/AdminSubject';
 import { SubjectTabsUx } from '../subject.ux/SubjectTabsUx';
 
 import Tabs from '@mui/material/Tabs';
