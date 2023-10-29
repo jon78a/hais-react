@@ -4,10 +4,10 @@ import { debounce } from "lodash";
 
 import SubjectTable from "../../presenter/admin/subject.ui/SubjectTable";
 import { useAdminSubjectService } from "../../../service/admin/subject";
-import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState, subjectFilterState, subjectSummaryListState } from "../../../schema/states/SubjectTable";
+import { commonSubjectDetailState, optionalSubjectDetailState, subjectDistinctState, subjectFilterState, subjectSummaryListState } from "../../../schema/states/AdminSubject";
 import SubjectTabs from "../../presenter/admin/subject.ui/SubjectTabs";
 import SubjectDetailDialog from "../../presenter/admin/subject.ui/SubjectDetailDialog";
-import type { CommonSubjectDetail, OptionalSubjectDetail } from "../../../schema/types/SubjectTable";
+import type { CommonSubjectDetail, OptionalSubjectDetail } from "../../../schema/types/AdminSubject";
 import AddFloatButton from "../../presenter/admin/subject.ui/AddFloatButton";
 import SubjectCreateDialog from "../../presenter/admin/subject.ui/SubjectCreateDialog";
 import SubjectDeleteDialog from "../../presenter/admin/subject.ui/SubjectDeleteDialog";

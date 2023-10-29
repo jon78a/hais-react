@@ -8,7 +8,7 @@ import type {
   SubjectFilter,
   CreateRequest,
   DeleteRequest,
-} from "../../schema/types/SubjectTable";
+} from "../../schema/types/AdminSubject";
 
 interface AdminSubjectService {
   readSubject: (distinct: SubjectDistinct, filter: SubjectFilter) => Promise<SubjectSummary[]>;

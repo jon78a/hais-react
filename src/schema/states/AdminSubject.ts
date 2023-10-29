@@ -5,32 +5,32 @@ import type {
   CommonSubjectDetail,
   OptionalSubjectDetail,
   SubjectSummary,
-  SubjectFilter
-} from "../types/SubjectTable";
+  SubjectFilter,
+} from "../types/AdminSubject";
 
 export const subjectDistinctState = atom<SubjectDistinct>({
-  key: "/schema/states/SubjectTable/SubjectDistinct",
+  key: "/schema/states/AdminSubject/SubjectDistinct",
   default: "OPTION"
 });
 
 export const subjectFilterState = atom<SubjectFilter>({
-  key: "/schema/states/SubjectTable/SubjectFilter",
+  key: "/schema/states/AdminSubject/SubjectFilter",
   default: {
     nameKeyword: ""
   }
 });
 
 export const subjectSummaryListState = atom<SubjectSummary[]>({
-  key: "/schema/states/SubjectTable/SubjectSummary",
+  key: "/schema/states/AdminSubject/SubjectSummary",
   default: []
 });
 
 export const commonSubjectDetailState = atom<CommonSubjectDetail | undefined>({
-  key: "/schema/states/SubjectTable/CommonSubjectDetail",
+  key: "/schema/states/AdminSubject/CommonSubjectDetail",
   default: undefined
 });
 
 export const optionalSubjectDetailState = atom<OptionalSubjectDetail | undefined>({
-  key: "/schema/states/SubjectTable/OptionalSubjectDetail",
+  key: "/schema/states/AdminSubject/OptionalSubjectDetail",
   default: undefined
 });
