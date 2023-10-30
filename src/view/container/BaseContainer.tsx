@@ -76,10 +76,12 @@ export const BaseContainer = ({
         if (!!session && session.exp > current && session.status === "GRANT") return !!session.isAdmin;
         return false;
       },
-    }}> 
-      <TopNavBarXl />
-      <TopNavBarSm />
-      {children}
+    }}>
+      <div className='w-screen h-screen'>
+        <TopNavBarXl />
+        <TopNavBarSm />
+        {children}
+      </div>
     </AuthorizeContext.Provider>
   );
 }
@@ -111,8 +113,7 @@ export function TopNavBarXl(){
 
 export function TopNavBarSm() {
   const matchesDesktopSm = useMediaQuery('(max-width: 449px)');
-  const pageWidth = document.documentElement.scrollWidth;
-  const [navHeight, setNavHeight] = useState<number>(30)
+  const [navHeight,] = useState<number>(30)
   const StyledToolbar = styled(Toolbar)`
   display: flex;
   align-items: center;
@@ -272,31 +273,6 @@ function MyTabs() {
   );
 }
 
-const StyledTab = styled(Tab)`
-  font-family: 'IBM Plex Sans', sans-serif;
-  color: #000;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-decoration: none;
-  background-color: none;
-  width: 100%;
-  padding: 20px 12px;
-  margin: 6px;
-  margin-bottom: 0;
-  border: none;
-  display: flex;
-  justify-content: center;
-  &:hover {
-    border-bottom: 2px solid primary.main;
-    margin-bottom: -2px;
-  }
-  &:focus {
-    color: #fff;
-    outline-bottom: 2px solid primary.main;
-  }
-`;
-
 export function SubNavSeparator() {
   const authService = useAuthorizeService();
   const [login, setLogin] = useState<boolean | undefined>(undefined);
@@ -308,9 +284,9 @@ export function SubNavSeparator() {
       .then((result) => setLogin(result));
     authService.isAdmin()
       .then((result) => setAdmin(result));
-  }, [pathname]);
+  }, [pathname, authService]);
 
-  if (typeof login === undefined) return <></>;
+  if (typeof login === "undefined") return <></>;
   return (
     <Stack spacing={2} sx={{
       position: "relative",
