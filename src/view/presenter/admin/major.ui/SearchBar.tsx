@@ -52,7 +52,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
           <Tab label="통합 검색" id='major-select-tab' value="FULL" />
         </TabList>
         <TabPanel value={'UNIV'} sx={{p: 0, mt: 4}}>
-          <div className="flex sm:flex-row flex-col sm:space-x-2 sm:space-y-0 space-y-1">
+          <div className="flex flex-col space-y-1 sm:flex-row sm:space-x-2 sm:space-y-0">
             <Autocomplete
               sx={{width: "100%", maxWidth: 400}}
               options={univSearchList}
@@ -90,7 +90,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
           />
         </TabPanel>
       </TabContext>
-      <div className="w-full flex justify-end">
+      <div className="flex justify-end w-full">
         <Button sx={{
           p: 0,
           my: 1,
