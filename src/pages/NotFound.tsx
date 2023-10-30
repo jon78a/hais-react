@@ -7,10 +7,10 @@ import Button from "@mui/material/Button";
 
 const NotFound = (): JSX.Element => {
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <img src={process.env.PUBLIC_URL + "logo-main.png"} alt="logo-main"
-        className="absolute top-4 left-4 w-20 h-24"
-      />
+    <div className="absolute top-0 w-screen h-screen flex flex-col justify-center items-center">
+      <div className="absolute top-8 left-8 w-[60px]">
+        <img src={process.env.PUBLIC_URL + "logo-main.png"} alt="logo-main"/>
+      </div>
       <Stack spacing={2}>
         <Stack direction={"row"} spacing={2} sx={{color: grey[600]}}>
           <WarningAmberIcon sx={{fontSize: "32px"}} />

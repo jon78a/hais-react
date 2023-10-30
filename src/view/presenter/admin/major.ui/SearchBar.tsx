@@ -81,7 +81,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
             }
           </div>
         </TabPanel>
-        <TabPanel value={'FULL'} sx={{p: 0, mt: 2}}>
+        <TabPanel value={'FULL'} sx={{p: 0, mt: 4}}>
           <TextField id="outlined-basic" label="학교 또는 학과명" variant="outlined"
             placeholder={"학교 혹은 학과명을 입력해주세요."}
             sx={{width: "100%", maxWidth: 400}}
