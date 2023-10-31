@@ -49,6 +49,7 @@ export const BaseContainer = ({
     authRepository,
     userRepository
   } = repositories;
+
   return (
     <AuthorizeContext.Provider value={{
       async isLogined() {

@@ -1,4 +1,4 @@
-import type { GradeEnum } from "../../policy/score";
+import type { CreditType, GradeEnum } from "../../policy/score";
 import type { StudentCategoryCode, OptionalSubjectCategory } from "../../policy/school";
 import type { ExceptionDetail } from "../../types";
 
@@ -23,11 +23,20 @@ export interface OptionalSubject extends SubjectBase {
   suneungInfo: string;
 }
 
-export interface ProfileScore {
+export interface GradeScore {
   id: string;
   studentId: string;
   subjectCode: string;
   grade: GradeEnum;
+  category: string;
+}
+
+export interface CreditScore {
+  id: string;
+  studentId: string;
+  subjectCode: string;
+  credit: CreditType;
+  category: string;
 }
 
 export interface Student {
@@ -44,10 +53,6 @@ export interface StudentExceptionMap {
 }
 
 // Repositories
-export interface ProfileScoreRepository {
-  findByStudent: (studentId: string) => Promise<ProfileScore[]>;
-}
-
 export interface StudentRepository {
   // getByUser: (userId: string) => Promise<Student>;
   // findAll: () => Promise<Student[]>;

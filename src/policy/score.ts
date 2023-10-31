@@ -1,14 +1,13 @@
-export enum GradeEnum {
-  FIRST = 1,
-  SECOND,
-  THIRD,
-  FOURTH,
-  FIFTH,
-  SIXTH,
-  SEVENTH,
-  EIGHTH,
-  NINETH
-}
+export type GradeEnum = |
+  1 |
+  2 |
+  3 |
+  4 |
+  5 |
+  6 |
+  7 |
+  8 |
+  9;
 
 export type CreditType = |
   "A" |

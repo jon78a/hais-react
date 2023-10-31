@@ -49,6 +49,8 @@ export default function Layout() {
     }
   }, [pathname]);
 
+  if (typeof reject === "undefined") return <></>;
+
   return !reject ? (
     <BaseContainer
       repositories={{

@@ -13,11 +13,12 @@ import LoginPage from './pages/Login';
 import SubjectRecommendPage from './pages/SubjectRecommend';
 import OAuthLogout from './pages/OAuthLogout';
 import NotFound from './pages/NotFound';
-import MyPage from './pages/My';
+import MyScorePage from './pages/MyScore';
 // admin page
 import { AdminLayout } from './pages/Layout';
 import AdminSubjectPage from './pages/admin/Subject';
 import AdminMajorPage from './pages/admin/Major';
+import MyPage from './pages/My';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path={routes.login.path} element={<LoginPage/>}/>
             <Route path={routes.subjectRecommend.path} element={<SubjectRecommendPage/>}/>
             <Route path={`/oauth/logout/:slug`} element={<OAuthLogout/>}/>
+            <Route path={routes.myScore.path} element={<MyScorePage/>}/>
             <Route path={routes.my.path} element={<MyPage/>}/>
           </Route>
           <Route path="/" element={<AdminLayout/>}>
