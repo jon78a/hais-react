@@ -1,4 +1,4 @@
-import type { CreditType, GradeEnum } from "../../policy/score";
+import type { CreditType, GradeType } from "../../policy/score";
 import type { StudentCategoryCode, OptionalSubjectCategory } from "../../policy/school";
 import type { ExceptionDetail } from "../../types";
 
@@ -27,7 +27,7 @@ export interface GradeScore {
   id: string;
   studentId: string;
   subjectCode: string;
-  grade: GradeEnum;
+  grade: GradeType;
   category: string;
 }
 
@@ -54,9 +54,19 @@ export interface StudentExceptionMap {
 
 // Repositories
 export interface StudentRepository {
-  // getByUser: (userId: string) => Promise<Student>;
+  findByUser: (userId: string) => Promise<Student>;
   // findAll: () => Promise<Student[]>;
   save: (student: Student) => Promise<void>;
+}
+
+export interface GradeScoreRepository {
+  save: (score: Omit<GradeScore, "id">, key?: string) => Promise<void>;
+  findByStudent: (studentId: string) => Promise<GradeScore[]>;
+}
+
+export interface CreditScoreRepository {
+  save: (score: Omit<CreditScore, "id">, key?: string) => Promise<void>;
+  findByStudent: (studentId: string) => Promise<CreditScore[]>;
 }
 
 export interface CommonSubjectRepository {

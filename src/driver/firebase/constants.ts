@@ -6,6 +6,8 @@ export class CollectionName {
   static GeneralMajor = "general_major";
   static OptionalSubject = "optional_subject";
   static RecommendGroup = "recommend_group";
+  static GradeScore = "grade_score";
+  static CreditScore = "credit_score";
 }
 
 export class StorageSource {
