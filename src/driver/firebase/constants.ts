@@ -8,6 +8,8 @@ export class CollectionName {
   static RecommendGroup = "recommend_group";
   static GradeScore = "grade_score";
   static CreditScore = "credit_score";
+  static GradeScoreWeight = "grade_score_weight";
+  static CommonSubjectWeight = "common_subject_weight";
 }
 
 export class StorageSource {

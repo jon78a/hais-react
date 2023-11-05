@@ -1,13 +1,18 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { creditScoreValueListState, gradeScoreValueListState, selectedSchoolYearState, subjectLabelState, subjectSummaryListState } from "../../schema/states/MyScore";
 import FilterSelect from "../presenter/myScore.ui/FilterSelect";
 import ScoreEditableTable from "../presenter/myScore.ui/ScoreEditableTable";
 import { useMyScoreService } from "../../service/my-score";
+
 import Divider from "@mui/material/Divider";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const MyScoreInteractor = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const setSelectedSchoolYear = useSetRecoilState(selectedSchoolYearState);
   const service = useMyScoreService();
 
@@ -28,6 +33,7 @@ const MyScoreInteractor = () => {
         setSubjectSummaryList(subjectSummaryList);
         setCreditScoreValueList(creditScoreList);
         setGradeScoreValueList(gradeScoreList);
+        setLoading(false);
       });
   }, [
     subjectLabel,
@@ -53,6 +59,7 @@ const MyScoreInteractor = () => {
         <div className="py-12">
           <ScoreEditableTable
             saveCreditScore={(form) => {
+              setLoading(true);
               const prevScore = creditScoreValueList.find((v) => v.code === form.subjectCode);
               if (prevScore) {
                 service.updateCreditScore(form, prevScore.id).then(() => refetch());
@@ -61,6 +68,7 @@ const MyScoreInteractor = () => {
               }
             }}
             saveGradeScore={(form) => {
+              setLoading(true);
               const prevScore = gradeScoreValueList.find((v) => v.code === form.subjectCode);
               if (prevScore) {
                 service.updateGradeScore(form, prevScore.id).then(() => refetch());
@@ -71,6 +79,12 @@ const MyScoreInteractor = () => {
           />
         </div>
       </div>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 };
