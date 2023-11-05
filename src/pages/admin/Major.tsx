@@ -1,5 +1,5 @@
 import AdminMajorContainer from "../../view/container/admin/MajorContainer";
-import AdminMajorInteractor from "../../view/interactor/admin/AdminMajorInteractor";
+import AdminMajorInteractor from "../../view/interactor/admin/MajorInteractor";
 import majorRepository from "../../driver/repository/majorRepository";
 import univRepository from "../../driver/repository/univRepository";
 import optionalSubjectRepository from "../../driver/repository/optionalSubjectRepository";

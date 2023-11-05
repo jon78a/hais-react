@@ -18,6 +18,7 @@ import MyScorePage from './pages/MyScore';
 import { AdminLayout } from './pages/Layout';
 import AdminSubjectPage from './pages/admin/Subject';
 import AdminMajorPage from './pages/admin/Major';
+import AdminMeasurementPage from './pages/admin/Measurement';
 import MyPage from './pages/My';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
             <Route path={adminRoutes.adminHome.path} element={<AdminSubjectPage/>} />
             <Route path={adminRoutes.adminSubject.path} element={<AdminSubjectPage/>} />
             <Route path={adminRoutes.adminMajor.path} element={<AdminMajorPage/>} />
+            <Route path={adminRoutes.adminMeasurement.path} element={<AdminMeasurementPage/>} />
           </Route>
           <Route path={"/*"} element={<NotFound/>}/>
         </Routes>

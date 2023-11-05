@@ -8,6 +8,7 @@ interface AdminRoutesType {
   adminHome: RouteExp;
   adminSubject: RouteExp;
   adminMajor: RouteExp;
+  adminMeasurement: RouteExp;
 }
 
 export const adminRoutes: AdminRoutesType = {
@@ -22,6 +23,10 @@ export const adminRoutes: AdminRoutesType = {
   adminMajor: {
     path: '/admin/major',
     re: new RegExp('^/admin/major')
+  },
+  adminMeasurement: {
+    path: '/admin/measurement',
+    re: new RegExp('^/admin/measurement')
   }
 }
 

@@ -27,11 +27,13 @@ import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import SchoolIcon from '@mui/icons-material/School';
+import SpeedIcon from '@mui/icons-material/Speed';
 
 const titleMap = {
   [adminRoutes.adminHome.path]: "교과과목",
   [adminRoutes.adminSubject.path]: "교과과목",
-  [adminRoutes.adminMajor.path]: "학과관리"
+  [adminRoutes.adminMajor.path]: "학과관리",
+  [adminRoutes.adminMeasurement.path]: "가중치 관리",
 }
 
 const BaseContainerContext = createContext<{
@@ -82,6 +84,11 @@ const SideNavBar = () => {
           icon={<SchoolIcon />}
           title={titleMap[routes.adminMajor.path]}
           href={routes.adminMajor.path}
+        />
+        <LinkItem
+          icon={<SpeedIcon />}
+          title={titleMap[routes.adminMeasurement.path]}
+          href={routes.adminMeasurement.path}
         />
       </Stack>
     </Drawer>
