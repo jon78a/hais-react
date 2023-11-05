@@ -4,9 +4,7 @@ import { MyScoreContext } from "../../service/my-score";
 import {
   CommonSubject,
   CommonSubjectRepository,
-  CreditScore,
   CreditScoreRepository,
-  GradeScore,
   GradeScoreRepository,
   OptionalSubject,
   OptionalSubjectRepository,

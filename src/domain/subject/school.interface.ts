@@ -39,6 +39,16 @@ export interface CreditScore {
   category: string;
 }
 
+export interface GradeScoreWeight {
+  scoreType: GradeType;
+  weight: number;
+}
+
+export interface CommonSubjectWeight {
+  subjectCode: string;
+  weight: number;
+}
+
 export interface Student {
   userId: string;
   id: string;
@@ -82,4 +92,14 @@ export interface OptionalSubjectRepository {
   findByCode: (code: string) => Promise<OptionalSubject | null>;
   save: (optionalSubject: OptionalSubject, key?: string) => Promise<void>;
   delete: (key: string) => Promise<void>;
+}
+
+export interface GradeScoreWeightRepository {
+  save: (form: GradeScoreWeight) => Promise<void>;
+  findAll: () => Promise<GradeScoreWeight[]>;
+}
+
+export interface CommonSubjectWeightRepository {
+  save: (form: CommonSubjectWeight) => Promise<void>;
+  findAll: () => Promise<CommonSubjectWeight[]>;
 }
