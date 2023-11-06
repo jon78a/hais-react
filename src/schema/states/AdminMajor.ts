@@ -1,14 +1,15 @@
 import { atom, selector } from "recoil";
 
-import {
+import type {
   FullNameKeyword,
   MajorResult,
   SearchMode,
   UnivSearchResult,
   SelectedMajorId,
-  SubjectData
+  SubjectData,
+  MajorKeyword,
+  UnivKeyword
 } from "../types/AdminMajor";
-import { MajorKeyword, UnivKeyword } from "../types/SubjectSearch";
 
 export const searchModeState = atom<SearchMode>({
   key: "schema/states/AdminMajor/SearchMode",

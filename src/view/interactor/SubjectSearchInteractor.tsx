@@ -1,103 +1,121 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
-import MajorSearchFilter from "../presenter/subject-search.ui/MajorSearchFilter";
-import SearchTable from "../presenter/subject-search.ui/SearchTable";
-import { useSubjectSearchService } from "../../service/subject-search";
 import {
+  fullNameKeywordState,
+  majorResultListState,
+  isMatchUnivState,
   majorKeywordState,
+  searchModeState,
+  selectedMajorIdState,
   univKeywordState,
-  univChoiceState,
-  majorChoiceState,
-  univChoiceListState,
-  majorChoiceListState,
-  searchSummaryListState,
-  searchDetailState
+  univSearchResultListState,
+  subjectDataListState
 } from "../../schema/states/SubjectSearch";
-import { Box, Typography } from "@mui/material";
-import { theme } from "../../theme";
-import useMediaQuery from '@mui/material/useMediaQuery';
+import SearchBar from "../presenter/subject-search.ui/SearchBar";
+import SubjectList from "../presenter/subject-search.ui/SubjectList";
+import { SubjectSearchService, useSubjectSearchService } from "../../service/subject-search";
+
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+
+const useChangeKeywordEffect = (service: SubjectSearchService) => {
+  const searchMode = useRecoilValue(searchModeState);
+  const isMatchUniv = useRecoilValue(isMatchUnivState);
+
+  const univKeyword = useRecoilValue(univKeywordState);
+  const majorKeyword = useRecoilValue(majorKeywordState);
+  const fullNameKeyword = useRecoilValue(fullNameKeywordState);
+
+  const setUnivSearchResultList = useSetRecoilState(univSearchResultListState);
+  const setFullNameResultList = useSetRecoilState(majorResultListState);
+
+  useEffect(() => {
+    service.suggestUniv("")
+      .then((results) => setUnivSearchResultList(results));
+  }, []);
+
+  useEffect(() => {
+    switch(searchMode) {
+      case "UNIV":
+        if (!isMatchUniv) return;
+        service.searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
+          .then((results) => setFullNameResultList(results));
+        return;
+      case "FULL":
+        if (!fullNameKeyword) return;
+        service.searchByUnivOrMajor(fullNameKeyword)
+          .then((results) => setFullNameResultList(results));
+        return;
+    }
+  }, [
+    service,
+    searchMode,
+    isMatchUniv,
+    univKeyword,
+    majorKeyword,
+    fullNameKeyword,
+    setUnivSearchResultList,
+    setFullNameResultList
+  ]);
+}
 
 const SubjectSearchInteractor = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const service = useSubjectSearchService();
 
   const setUnivKeyword = useSetRecoilState(univKeywordState);
   const setMajorKeyword = useSetRecoilState(majorKeywordState);
+  const setFullNameKeyword = useSetRecoilState(fullNameKeywordState);
+  const setSearchMode = useSetRecoilState(searchModeState);
 
-  const [univChoice, setUnivChoice] = useRecoilState(univChoiceState);
-  const [majorChoice, setMajorChoice] = useRecoilState(majorChoiceState);
+  const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
 
-  const setUnivChoiceList = useSetRecoilState(univChoiceListState);
-  const setMajorChoiceList = useSetRecoilState(majorChoiceListState);
-  const setSearchSummaryList = useSetRecoilState(searchSummaryListState);
-  const setSearchDetail = useSetRecoilState(searchDetailState);
+  useChangeKeywordEffect(service);
 
-  //추가한 부분!
-  const [showTable, setShowTable] = useState(false);
-  const matchesDesktopSm = useMediaQuery('(max-width: 900px)');
+  const setSubjectDataList = useSetRecoilState(subjectDataListState);
+
   return (
-    <Box sx={{ px: matchesDesktopSm ? "2%" : "15%" }}>
-      <MajorSearchFilter
-        inputUnivKeyword={debounce((value) => {
-          setUnivKeyword(value);
-          service.showUnivs(value)
-            .then((choices) => {
-              setUnivChoiceList(choices);
-            });
+    <div className="mt-6">
+      <SearchBar
+        selectSearchMode={(mode) => {
+          setSearchMode(mode);
+        }}
+        inputKeyword={debounce((value: string, type) => {
+          switch (type) {
+            case "univ":
+              setUnivKeyword(value);
+              return;
+            case "major":
+              setMajorKeyword(value);
+              return;
+            case "full":
+              setFullNameKeyword(value);
+              return;
+          }
         }, 250)}
-        inputMajorKeyword={debounce((value) => {
-          setMajorKeyword(value);
-          service.showMajors(value, univChoice.name)
-            .then((choices) => {
-              setMajorChoiceList(choices);
-            });
-        }, 250)}
-        selectUnivChoice={(value) => {
-          setUnivChoice(value);
-          service.showMajors("", value.name)
-            .then((choices) => {
-              setMajorChoiceList(choices);
-            });
-        }}
-        selectMajorChoice={(value) => {
-          setMajorChoice(value);
-        }}
-        deleteUnivChoice={() => {
-          setUnivChoiceList([]);
-          setMajorChoiceList([]);
-        }}
-        deleteMajorChoice={() => {
-          setMajorChoiceList([]);
-        }}
-        inputGeneralMajorKeyword={(value) => {}}
-        clickClsfChoices={(choice) => {}}
-        checkMajorNameChoices={(choices) => {}}
-        clickSearchButton={() => {
-          majorChoice && setShowTable(true);
-          service.search({
-            univToMajor: {
-              univChoice: univChoice,
-              majorChoice: majorChoice
-            }
-          }).then((data) => setSearchSummaryList(data));
+        clickMajor={(id) => {
+          setLoading(true);
+          setSelectedMajorCode(id);
+          service.readSubjectList(id).then((list) => {
+            setSubjectDataList(list);
+            setLoading(false);
+          });
         }}
       />
-      {showTable && (
-        <>
-          <Typography variant="h6" sx={{m:2, fontWeight: 'bold', textAlign: 'left', width:'100%' }} style={{ color: theme.palette.primary.main }}>
-            추천교과 목록
-          </Typography>
-          <SearchTable 
-            clickMore={(code) => {
-              service.searchMore(code).then((data) => setSearchDetail(data));
-            }}
-          />
-  
-        </>
-      )}
-    </Box>
+      <div className="mt-4 pb-12">
+        <SubjectList />
+      </div>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </div>
   );
-}
+};
 
 export default SubjectSearchInteractor;
