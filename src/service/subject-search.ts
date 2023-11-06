@@ -1,22 +1,19 @@
 import { useContext, createContext } from "react";
 
 import {
-  GeneralMajorByClsfInput,
-  SearchSummary,
-  SearchDetail,
-  UnivToMajorInput,
-  UnivChoice,
-  MajorChoice
+  UnivKeyword,
+  MajorKeyword,
+  FullNameKeyword,
+  UnivSearchResult,
+  MajorResult,
+  SubjectData
 } from "../schema/types/SubjectSearch";
 
-interface SubjectSearchService {
-  showUnivs: (keyword: string) => Promise<UnivChoice[]>;
-  showMajors: (keyword: string, univName: string) => Promise<MajorChoice[]>;
-  search: (filters: {
-    univToMajor: UnivToMajorInput;
-    generalMajorByClsf?: GeneralMajorByClsfInput;
-  }) => Promise<SearchSummary[]>;
-  searchMore: (code: string) => Promise<SearchDetail>;
+export interface SubjectSearchService {
+  suggestUniv: (univKeyword: UnivKeyword) => Promise<UnivSearchResult[]>;
+  searchByMajorKeywordOnUnivName: (majorKeyword: MajorKeyword, univName: string) => Promise<MajorResult[]>;
+  searchByUnivOrMajor: (fullNameKeyword: FullNameKeyword) => Promise<MajorResult[]>;
+  readSubjectList: (majorId: number) => Promise<SubjectData[]>;
 }
 
 export const SubjectSearchContext = createContext<SubjectSearchService | undefined>(undefined);

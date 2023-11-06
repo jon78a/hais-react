@@ -1,11 +1,7 @@
-import { useSetRecoilState, useRecoilState } from "recoil";
-
 import { MajorRepository, UnivRepository } from "../../domain/subject/univ.interface";
 import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
 import { SubjectSearchContext } from "../../service/subject-search";
-import { univListState } from "../../domain/subject/univ.impl";
-import { majorListState } from "../../domain/subject/univ.impl";
-import { optionalSubjectListState } from "../../domain/subject/school.impl";
+import Container from "@mui/material/Container";
 
 const SubjectSearchContainer = ({
   children,
@@ -24,77 +20,47 @@ const SubjectSearchContainer = ({
     optionalSubjectRepository
   } = repositories;
 
-  const setUnivListSnapshot = useSetRecoilState(univListState);
-  const setMajorListSnapshot = useSetRecoilState(majorListState);
-  const [optionalSubjectListSnapshot, setOptionalSubjectListSnapshot] = useRecoilState(optionalSubjectListState);
-
   return (
     <SubjectSearchContext.Provider value={{
-      async showUnivs(keyword) {
-        setUnivListSnapshot({
-          data: [],
-          loading: true
-        });
-        const univs = await univRepository.findByNameLike(keyword);
-        setUnivListSnapshot({
-          data: univs,
-          loading: false
-        });
-        return univs.map(v => {
+      async suggestUniv(univKeyword) {
+        const univs = await univRepository.findByNameLike(univKeyword);
+        return univs.map((univ) => {
           return {
-            id: v.id,
-            name: v.name
+            id: univ.id,
+            name: univ.name
           }
         });
       },
-      async showMajors(keyword, univName) {
-        setMajorListSnapshot({
-          data: [],
-          loading: true
-        })
-        const majors = await majorRepository.findByNameLikeWithUniv(keyword, univName);
-        setMajorListSnapshot({
-          data: majors,
-          loading: false
-        })
-        return majors.map(v => {
+      async searchByUnivOrMajor(fullNameKeyword) {
+        const majors = await majorRepository.findByUnivOrMajorName(fullNameKeyword);
+        return majors.map((major) => {
           return {
-            id: v.id,
-            name: v.name
+            id: major.id,
+            name: major.name,
+            univ: major.univ,
+            department: major.department
+          }
+        })
+      },
+      async searchByMajorKeywordOnUnivName(majorKeyword, univName) {
+        const majors = await majorRepository.findByNameLikeWithUniv(majorKeyword, univName);
+        return majors.map((major) => {
+          return {
+            id: major.id,
+            name: major.name,
+            univ: major.univ,
+            department: major.department
           }
         });
       },
-      async search(filters) {
-        const {univToMajor} = filters;
-        const majorId = univToMajor.majorChoice.id
-        setOptionalSubjectListSnapshot({
-          data: [],
-          loading: true
-        });
+      async readSubjectList(majorId) {
         const optionalSubjects = await optionalSubjectRepository.findByMajorId(majorId);
-        setOptionalSubjectListSnapshot({
-          data: optionalSubjects,
-          loading: false
-        });
-        return optionalSubjects.map((v) => {
-          return {
-            code: v.code,
-            sbjName: v.name,
-            subjectCategory: v.subjectCategory,
-            group: v.group,
-            suneungOX: v.suneungInfo === "수능 출제 과목 아님" ? "X" : "O"
-          }
-        })
-      },
-      async searchMore(code) {
-        const optionalSubject = optionalSubjectListSnapshot.data.find((v) => v.code===code);
-        return {
-          description: optionalSubject?.description || "",
-          etcInfo: optionalSubject?.etcInfo || "",
-        }
+        return [...optionalSubjects];
       },
     }}>
-      {children}
+      <Container maxWidth={"md"}>
+        {children}
+      </Container>
     </SubjectSearchContext.Provider>
   );
 }
