@@ -1,7 +1,9 @@
 import { MajorRepository, UnivRepository } from "../../domain/subject/univ.interface";
 import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
 import { SubjectSearchContext } from "../../service/subject-search";
+
 import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
 
 const SubjectSearchContainer = ({
   children,
@@ -58,7 +60,7 @@ const SubjectSearchContainer = ({
         return [...optionalSubjects];
       },
     }}>
-      <Container maxWidth={"md"}>
+      <Container maxWidth={"md"} component={Paper}>
         {children}
       </Container>
     </SubjectSearchContext.Provider>
