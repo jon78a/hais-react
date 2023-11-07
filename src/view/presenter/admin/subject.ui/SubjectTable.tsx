@@ -37,7 +37,7 @@ const SubjectTable: React.FC<{
       field: "distinctDetail", headerName: "구분"
     },
     {
-      field: "group", headerName: "그룹명"
+      field: "group", headerName: "교과(군)"
     },
     {
       field: "name", headerName: "과목명"

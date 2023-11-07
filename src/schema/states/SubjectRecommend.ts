@@ -9,41 +9,41 @@ import type {
   SubjectData,
   MajorKeyword,
   UnivKeyword
-} from "../types/SubjectSearch";
+} from "../types/SubjectRecommend";
 
 export const searchModeState = atom<SearchMode>({
-  key: "schema/states/SubjectSearch/SearchMode",
-  default: "UNIV"
+  key: "schema/states/SubjectRecommend/SearchMode",
+  default: "UNIV",
 });
 
 export const univKeywordState = atom<UnivKeyword>({
-  key: "schema/states/SubjectSearch/UnivKeyword",
-  default: ""
+  key: "schema/states/SubjectRecommend/UnivKeyword",
+  default: "",
 });
 
 export const majorKeywordState = atom<MajorKeyword>({
-  key: "schema/states/SubjectSearch/MajorKeyword",
-  default: ""
+  key: "schema/states/SubjectRecommend/MajorKeyword",
+  default: "",
 });
 
 export const fullNameKeywordState = atom<FullNameKeyword>({
-  key: "schema/states/SubjectSearch/FullNameKeyword",
-  default: ""
+  key: "schema/states/SubjectRecommend/FullNameKeyword",
+  default: "",
 });
 
 export const univSearchResultListState = atom<UnivSearchResult[]>({
-  key: "schema/states/SubjectSearch/UnivSearchResultList",
-  default: []
+  key: "schema/states/SubjectRecommend/UnivSearchResultList",
+  default: [],
 });
 
 export const majorResultListState = atom<MajorResult[]>({
-  key: "schema/states/SubjectSearch/MajorResultList",
-  default: []
+  key: "schema/states/SubjectRecommend/MajorResultList",
+  default: [],
 });
 
 export const isMatchUnivState = selector<boolean>({
-  key: "schema/states/SubjectSearch/isMatchUniv",
-  get: ({get}) => {
+  key: "schema/states/SubjectRecommend/isMatchUniv",
+  get: ({ get }) => {
     const mode = get(searchModeState);
     if (mode !== "UNIV") return false;
 
@@ -58,20 +58,20 @@ export const isMatchUnivState = selector<boolean>({
 });
 
 export const selectedMajorIdState = atom<SelectedMajorId>({
-  key: "schema/states/SubjectSearch/SelectedMajorId",
-  default: null
+  key: "schema/states/SubjectRecommend/SelectedMajorId",
+  default: null,
 });
 
 export const selectedMajorState = selector<MajorResult | undefined>({
-  key: "schema/states/SubjectSearch/selectedMajor",
-  get: ({get}) => {
+  key: "schema/states/SubjectRecommend/selectedMajor",
+  get: ({ get }) => {
     const selectedId = get(selectedMajorIdState);
     if (!selectedId) return undefined;
     return get(majorResultListState).find((v) => v.id === selectedId);
-  }
+  },
 });
 
 export const subjectDataListState = atom<SubjectData[]>({
-  key: "schema/states/SubjectSearch/SubjectDataList",
-  default: []
+  key: "schema/states/SubjectRecommend/SubjectDataList",
+  default: [],
 });
