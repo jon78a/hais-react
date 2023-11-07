@@ -6,26 +6,36 @@ import AdminBaseContainer from "../view/container/admin/BaseContainer";
 import authSessionRepository from "../driver/repository/authSessionRepository";
 import authRepository from "../driver/repository/authRepository";
 import userRepository from "../driver/repository/userRepository";
+import studentRepository from "../driver/repository/studentRepository";
+import gradeScoreRepository from "../driver/repository/gradeScoreRepository";
 import { authPermissionRoutes, publicRoutes, routes } from "../routes";
+import commonSubjectRepository from "../driver/repository/commonSubjectRepository";
 
 import NotFound from "./NotFound";
 import Alert from "../Alert";
 
 export default function Layout() {
-  const [reject, setReject] = useState<boolean | undefined>(undefined);
+  const [unauthorized, setUnauthorized] = useState<boolean | undefined>(undefined);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+  const [needScore, setNeedScore] = useState<boolean | undefined>(undefined);
 
   const {pathname} = useLocation();
   const navigate = useNavigate();
 
-  const handleClose = () => {
-    setReject(false);
+  const handleLoginClose = () => {
+    setUnauthorized(false);
     navigate(routes.login.path);
   };
+
+  const handleScoreClose = () => {
+    setNeedScore(undefined);
+    navigate(routes.myScore.path);
+  }
 
   useEffect(() => {
     for (let v of Object.values(publicRoutes)) {
       if (v.re.test(pathname)) {
-        setReject(false);
+        setUnauthorized(false);
         return;
       }
     }
@@ -38,20 +48,44 @@ export default function Layout() {
               userRepository.findByUserId(session.userId)
                 .then((user) => {
                   if (!user) { 
-                    setReject(true);
+                    setUnauthorized(true);
+                    return;
                   }
-                  setReject(!user?.activated);
+                  setUserId(user.id);
+                  setUnauthorized(!user.activated);
                 })
-            } else { setReject(true) }
+            } else { setUnauthorized(true) }
           });
         return;
       }
     }
   }, [pathname]);
 
-  if (typeof reject === "undefined") return <></>;
+  useEffect(() => {
+    if (!userId) return;
+    if (pathname === routes.subjectRecommend.path) {
+      studentRepository.findByUser(userId)
+        .then((student) => {
+          Promise.all([
+            gradeScoreRepository.findByStudent(student.id),
+            commonSubjectRepository.findBy({
+              nameKeyword: ''
+            })
+          ])
+            .then((value) => {
+              const [scores, subjects] = value;
+              setNeedScore(scores.length < subjects.length);
+            });
+        });
+    }
+  }, [userId, pathname]);
 
-  return !reject ? (
+  if (typeof unauthorized === "undefined") return <></>;
+  if (pathname === routes.subjectRecommend.path && needScore) return (
+    <Alert open={!!needScore} onClose={handleScoreClose} message="공통과목 성적을 등록해주세요."/>
+  );
+
+  return !unauthorized ? (
     <BaseContainer
       repositories={{
         authSessionRepository,
@@ -62,7 +96,7 @@ export default function Layout() {
       <Outlet />
     </BaseContainer>
   ) : (
-    <Alert open={!!reject} onClose={handleClose} message="로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다."/>
+    <Alert open={!!unauthorized} onClose={handleLoginClose} message="로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다."/>
   )
 }
 

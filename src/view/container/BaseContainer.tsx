@@ -192,12 +192,12 @@ export function TemporaryDrawer() {
                 </ListItem>
               </Link>
               <Link to={routes.subjectRecommend.path}>
-                <ListItem key="교과추천" disablePadding>
+                <ListItem key="성적별 교과탐색" disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
                       <InboxIcon />
                     </ListItemIcon>
-                    <ListItemText primary="교과추천" />
+                    <ListItemText primary="성적별 교과탐색" />
                   </ListItemButton>
                 </ListItem>
               </Link>
@@ -264,7 +264,7 @@ function MyTabs() {
           color: "black",
         }}
       />
-      <Tab value={routes.subjectRecommend.path} label="교과추천"
+      <Tab value={routes.subjectRecommend.path} label="성적별 교과탐색"
         sx={{
           fontSize: "1.25rem",
           color: "black",
