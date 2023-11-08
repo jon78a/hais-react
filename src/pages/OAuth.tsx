@@ -13,21 +13,12 @@ import unsignedUserRepository from "../driver/repository/unsignedUserRepository"
 import oAuthStatusRepository from "../driver/repository/oAuthStatusRepository";
 import userRepository from "../driver/repository/userRepository";
 import authSessionRepository from "../driver/repository/authSessionRepository";
-import { STATE_TOKEN_SESSION_KEY } from "../driver/sessionStorage/constants";
 
 const OAuthPage = () => {
   const navigate = useNavigate();
 
   const [searchParams, __setSearchParams] = useSearchParams();
   const code = searchParams.get("code")!;
-  if (searchParams.has("state")) {
-    const state = searchParams.get("state");
-    const item = sessionStorage.getItem(STATE_TOKEN_SESSION_KEY);
-    if (state !== item) {
-      alert("비정상적인 접근입니다.");
-      window.location.replace(routes.home.path);
-    }
-  }
 
   const { slug } = useParams();
   const oAuthType = slug as OAuthEnum;
