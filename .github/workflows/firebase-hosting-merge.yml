@@ -23,6 +23,8 @@ jobs:
           echo "REACT_APP_FB_MEASUREMENT_ID=${{ secrets.REACT_APP_FB_MEASUREMENT_ID }}" >> .env
           echo "REACT_APP_HOST_URL=${{ secrets.REACT_APP_HOST_URL }}" >> .env
           echo "REACT_APP_KAKAO_API_KEY=${{ secrets.REACT_APP_KAKAO_API_KEY }}" >> .env
+          echo "REACT_APP_NAVER_API_KEY=${{ secrets.REACT_APP_NAVER_API_KEY }}" >> .env
+          echo "REACT_APP_NAVER_SECRET_KEY=${{ secrets.REACT_APP_NAVER_SECRET_KEY }}" >> .env
       - run: npm install && CI=false npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

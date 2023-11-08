@@ -37,7 +37,7 @@ const commonSubjectRepository: CommonSubjectRepository = {
   },
   async findBy(filter) {
     const conds = [];
-    conds.push(orderBy("group"));
+    conds.push(orderBy("code"));
 
     const q = query(collection(firebaseDb, CollectionName.CommonSubject), ...conds);
   

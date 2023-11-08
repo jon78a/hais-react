@@ -12,9 +12,9 @@ import {
   univKeywordState,
   univSearchResultListState,
   subjectDataListState
-} from "../../schema/states/SubjectSearch";
-import SearchBar from "../presenter/subject-search.ui/SearchBar";
-import SubjectList from "../presenter/subject-search.ui/SubjectList";
+} from "../../schema/states/SubjectRecommend";
+import SearchBar from "../presenter/subject-recommend.ui/SearchBar";
+import SubjectList from "../presenter/subject-recommend.ui/SubjectList";
 import { SubjectSearchService, useSubjectSearchService } from "../../service/subject-search";
 
 import Backdrop from '@mui/material/Backdrop';
@@ -65,7 +65,7 @@ const useChangeKeywordEffect = (service: SubjectSearchService) => {
   ]);
 }
 
-const SubjectSearchInteractor = () => {
+const SubjectRecommendInteractor = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const service = useSubjectSearchService();
@@ -130,4 +130,4 @@ const SubjectSearchInteractor = () => {
   );
 };
 
-export default SubjectSearchInteractor;
+export default SubjectRecommendInteractor;

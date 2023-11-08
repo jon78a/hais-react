@@ -61,6 +61,7 @@ const MeasurementInteractor = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <div className="h-[100px]" />
     </>
   );
 };

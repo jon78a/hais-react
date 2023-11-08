@@ -31,7 +31,7 @@ const SubjectList: React.FC = () => {
             <TableCell align="center">과목코드</TableCell>
             <TableCell align="center">교과명</TableCell>
             <TableCell align="center">구분</TableCell>
-            <TableCell align="center">그룹명</TableCell>
+            <TableCell align="center">교과(군)</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>

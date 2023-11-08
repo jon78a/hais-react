@@ -27,7 +27,7 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
   const fullNameKeyword = useRecoilValue(fullNameKeywordState);
 
   const setUnivSearchResultList = useSetRecoilState(univSearchResultListState);
-  const setFullNameResultList = useSetRecoilState(majorResultListState);
+  const setMajorResultList = useSetRecoilState(majorResultListState);
 
   useEffect(() => {
     service.suggestUniv("")
@@ -39,12 +39,12 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
       case "UNIV":
         if (!isMatchUniv) return;
         service.searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
-          .then((results) => setFullNameResultList(results));
+          .then((results) => setMajorResultList(results));
         return;
       case "FULL":
         if (!fullNameKeyword) return;
         service.searchByUnivOrMajor(fullNameKeyword)
-          .then((results) => setFullNameResultList(results));
+          .then((results) => setMajorResultList(results));
         return;
     }
   }, [
@@ -55,7 +55,7 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
     majorKeyword,
     fullNameKeyword,
     setUnivSearchResultList,
-    setFullNameResultList
+    setMajorResultList
   ]);
 }
 
