@@ -164,9 +164,13 @@ export default function SignupContainer({
         await authRepository.oAuthAuthorize(OAuthEnum[type]);
       },
       submitStudentInfo(form) {
+        const user = unsignedUserRepository.getUser();
+        if (!user) throw Error("유저 세션이 존재하지 않습니다.");
+
         setStudentSnapshot({
           data: {
             ...studentSnapshot.data,
+            userId: user.id,
             name: form.name,
             category: form.subjectCategory,
             schoolYear: form.schoolYear,

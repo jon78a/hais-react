@@ -206,6 +206,7 @@ class KakaoOAuth extends OAuthProvider {
 }
 
 export class NaverOAuth extends OAuthProvider {
+  protected stateToken: string = 'naver-hais-state';
   constructor() {
     super();
     this.redirectUri = process.env.REACT_APP_HOST_URL + routes.oauth.detail!(OAuthEnum.NAVER);
@@ -216,7 +217,7 @@ export class NaverOAuth extends OAuthProvider {
           'response_type': 'code',
           'client_id': this.clientId,
           'redirect_uri': this.redirectUri,
-          'state': this.generateStateToken()
+          'state': this.stateToken
         }),
         getFetchFormat() { return undefined },
         serialize(data) {
@@ -227,17 +228,8 @@ export class NaverOAuth extends OAuthProvider {
         url: "https://nid.naver.com/oauth2.0/token",
         getFetchFormat: (code: string) => {
           return {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: qs.stringify({
-              "grant_type": "authorization_code",
-              "client_id": this.clientId,
-              "client_secret": process.env.REACT_APP_NAVER_SECRET_KEY,
-              "code": code,
-              "state": this.stateToken
-            })
+            method: "GET",
+            mode: 'no-cors'
           }
         },
         serialize(data) {
@@ -253,9 +245,10 @@ export class NaverOAuth extends OAuthProvider {
           return {
             method: "POST",
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+              "Content-Type": "application/json",
               "Authorization": `${capitalize(this.tokenType)} ${token}`
-            }
+            },
+            mode: 'no-cors'
           }
         },
         serialize(data) {
@@ -265,6 +258,18 @@ export class NaverOAuth extends OAuthProvider {
         },
       },
     }
+  }
+
+  async getOAuthToken(code: string): Promise<TokenResult> {
+    const res = await fetch(this.apiConfigs.token.url + '?' + qs.stringify({
+      "grant_type": "authorization_code",
+      "client_id": this.clientId,
+      "client_secret": process.env.REACT_APP_NAVER_SECRET_KEY,
+      "code": code,
+      "state": this.stateToken
+    }), this.apiConfigs.token.getFetchFormat(code));
+    const data = await res.json();
+    return this.apiConfigs.token.serialize(data) as TokenResult;
   }
 }
 
