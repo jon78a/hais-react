@@ -11,16 +11,20 @@ import {
   selectedMajorIdState,
   univKeywordState,
   univSearchResultListState,
-  subjectDataListState
+  subjectDataListState,
+  recommendStatusState,
 } from "../../schema/states/SubjectRecommend";
 import SearchBar from "../presenter/subject-recommend.ui/SearchBar";
 import SubjectList from "../presenter/subject-recommend.ui/SubjectList";
-import { SubjectSearchService, useSubjectSearchService } from "../../service/subject-search";
+import {
+  SubjectRecommendService,
+  useSubjectRecommendService,
+} from "../../service/subject-recommend";
 
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
-const useChangeKeywordEffect = (service: SubjectSearchService) => {
+const useChangeKeywordEffect = (service: SubjectRecommendService) => {
   const searchMode = useRecoilValue(searchModeState);
   const isMatchUniv = useRecoilValue(isMatchUnivState);
 
@@ -32,24 +36,25 @@ const useChangeKeywordEffect = (service: SubjectSearchService) => {
   const setMajorResultList = useSetRecoilState(majorResultListState);
 
   useEffect(() => {
-    service.suggestUniv("")
-      .then((results) => setUnivSearchResultList(results));
-  }, []);
+    service.suggestUniv("").then((results) => setUnivSearchResultList(results));
+  }, [service, setUnivSearchResultList]);
 
   useEffect(() => {
     function clear() {
       setMajorResultList([]);
     }
 
-    switch(searchMode) {
+    switch (searchMode) {
       case "UNIV":
         if (!isMatchUniv) return clear;
-        service.searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
+        service
+          .searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
           .then((results) => setMajorResultList(results));
         return clear;
       case "FULL":
         if (!fullNameKeyword) return clear;
-        service.searchByUnivOrMajor(fullNameKeyword)
+        service
+          .searchByUnivOrMajor(fullNameKeyword)
           .then((results) => setMajorResultList(results));
         return clear;
     }
@@ -61,14 +66,14 @@ const useChangeKeywordEffect = (service: SubjectSearchService) => {
     majorKeyword,
     fullNameKeyword,
     setUnivSearchResultList,
-    setMajorResultList
+    setMajorResultList,
   ]);
-}
+};
 
 const SubjectRecommendInteractor = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const service = useSubjectSearchService();
+  const service = useSubjectRecommendService();
 
   const setUnivKeyword = useSetRecoilState(univKeywordState);
   const setMajorKeyword = useSetRecoilState(majorKeywordState);
@@ -77,17 +82,20 @@ const SubjectRecommendInteractor = () => {
 
   const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
 
-  useEffect(() =>
-    () => {
-      setUnivKeyword('');
-      setFullNameKeyword('');
-      setSearchMode('UNIV');
+  useEffect(
+    () => () => {
+      setUnivKeyword("");
+      setFullNameKeyword("");
+      setSearchMode("UNIV");
       setSelectedMajorCode(null);
-    }, []);
+    },
+    [setUnivKeyword, setFullNameKeyword, setSearchMode, setSelectedMajorCode]
+  );
 
   useChangeKeywordEffect(service);
 
   const setSubjectDataList = useSetRecoilState(subjectDataListState);
+  const setRecommendStatus = useSetRecoilState(recommendStatusState);
 
   return (
     <div className="mt-6">
@@ -113,7 +121,10 @@ const SubjectRecommendInteractor = () => {
           setSelectedMajorCode(id);
           service.readSubjectList(id).then((list) => {
             setSubjectDataList(list);
-            setLoading(false);
+            service.recommend(list).then((status) => {
+              setRecommendStatus(status);
+              setLoading(false);
+            });
           });
         }}
       />
@@ -121,7 +132,7 @@ const SubjectRecommendInteractor = () => {
         <SubjectList />
       </div>
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >
         <CircularProgress color="inherit" />

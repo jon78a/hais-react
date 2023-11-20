@@ -9,7 +9,7 @@ import {
   selectedMajorIdState,
 } from "../../../schema/states/SubjectRecommend";
 import { SearchBarUx } from "../subject-recommend.ux/SearchBarUx";
-import type { SearchMode } from "../../../schema/types/SubjectSearch";
+import type { SearchMode } from "../../../schema/types/SubjectRecommend";
 
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -34,7 +34,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
   const isMatchUniv = useRecoilValue(isMatchUnivState);
 
   const univSearchList = useRecoilValue(univSearchResultListState);
-  const fullNameList = useRecoilValue(majorResultListState);
+  const majorResultList = useRecoilValue(majorResultListState);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     ux.selectSearchMode(newValue as SearchMode);
@@ -122,7 +122,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
         </Button>
       </div>
       <Divider />
-      {!!fullNameList.length ? (
+      {!!majorResultList.length ? (
         <Collapse in={isShowList}>
           <Paper
             sx={{
@@ -131,7 +131,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
             }}
           >
             <List>
-              {fullNameList.map((value) => (
+              {majorResultList.map((value) => (
                 <ListItem sx={{ p: 0 }}>
                   <ListItemButton
                     onClick={() => {
