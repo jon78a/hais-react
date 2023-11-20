@@ -29,3 +29,14 @@ export type SubjectData = {
   suneungInfo: string; // 수능과목정보
   etcInfo: string; // 기타정보
 };
+
+export type RecommendStatus = {
+  status: number;
+  // status: '양호' | '불안' | '위험';
+  comparisons: Comparison[];
+}
+
+export type Comparison = {
+  subjectName: string;
+  score: number;
+}
