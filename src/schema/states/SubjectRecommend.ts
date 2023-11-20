@@ -1,14 +1,15 @@
 import { atom, selector } from "recoil";
 
-import type {
-  FullNameKeyword,
-  MajorResult,
-  SearchMode,
-  UnivSearchResult,
-  SelectedMajorId,
-  SubjectData,
-  MajorKeyword,
-  UnivKeyword
+import {
+  type FullNameKeyword,
+  type MajorResult,
+  type SearchMode,
+  type UnivSearchResult,
+  type SelectedMajorId,
+  type SubjectData,
+  type MajorKeyword,
+  type UnivKeyword,
+  RecommendStatus
 } from "../types/SubjectRecommend";
 
 export const searchModeState = atom<SearchMode>({
@@ -74,4 +75,12 @@ export const selectedMajorState = selector<MajorResult | undefined>({
 export const subjectDataListState = atom<SubjectData[]>({
   key: "schema/states/SubjectRecommend/SubjectDataList",
   default: [],
+});
+
+export const recommendStatusState = atom<RecommendStatus>({
+  key: "schema/states/SubjectRecommend/RecommendStatus",
+  default: {
+    status: 0,
+    comparisons: []
+  }
 });
