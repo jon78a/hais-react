@@ -1,6 +1,16 @@
 import type { CreditType, GradeType } from "../../policy/score";
-import type { StudentCategoryCode, OptionalSubjectCategory } from "../../policy/school";
+import type {
+  StudentCategoryCode,
+  OptionalSubjectCategory,
+} from "../../policy/school";
 import type { ExceptionDetail } from "../../types";
+
+export interface CreditSubject {
+  name: string;
+  category: string;
+  credit: number;
+  group: string;
+}
 
 export interface SubjectBase {
   code: string;
