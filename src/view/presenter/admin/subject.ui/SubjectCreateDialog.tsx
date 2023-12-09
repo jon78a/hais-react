@@ -3,7 +3,8 @@ import { useRecoilValue } from "recoil";
 
 import { TableContext } from "./TableContext";
 import { subjectDistinctState } from "../../../../schema/states/AdminSubject";
-import { OptionalSubjectCategory, StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
+import { StudentCategoryCode, studentCategoryMap } from "../../../../policy/school";
+import { formatNumber } from "../../../../policy/utils";
 import type { CreateRequest, OptionalSubjectDetail } from "../../../../schema/types/AdminSubject";
 import { SubjectCreateDialogUx } from "../subject.ux/SubjectCreateDialogUx";
 
@@ -162,7 +163,7 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
             ...form,
             data: {
               ...form.data,
-              subjectCategory: e.target.value as OptionalSubjectCategory
+              subjectCategory: e.target.value
             }
           })}
         />
@@ -219,6 +220,25 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
             }
           </Select>
         </FormControl>
+        <TextField
+          label="이수학점"
+          fullWidth
+          variant="standard"
+          value={(form.data as OptionalSubjectDetail).creditAmount}
+          sx={{ mt: 2 }}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              data: {
+                ...form.data,
+                creditAmount: formatNumber(
+                  e.target.value,
+                  (form.data as OptionalSubjectDetail).creditAmount
+                ),
+              },
+            })
+          }
+        />
         <TextField
           label="설명"
           fullWidth

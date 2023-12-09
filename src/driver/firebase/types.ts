@@ -36,6 +36,7 @@ export type OptionalSubjectType = {
   description: string;
   suneung_info: string;
   etc_info: string;
+  credit_amount: number;
 };
 
 export type RecommendGroupType = {

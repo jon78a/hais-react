@@ -1,16 +1,6 @@
 import type { CreditType, GradeType } from "../../policy/score";
-import type {
-  StudentCategoryCode,
-  OptionalSubjectCategory,
-} from "../../policy/school";
+import type { StudentCategoryCode } from "../../policy/school";
 import type { ExceptionDetail } from "../../types";
-
-export interface CreditSubject {
-  name: string;
-  category: string;
-  credit: number;
-  group: string;
-}
 
 export interface SubjectBase {
   code: string;
@@ -29,8 +19,9 @@ export interface CommonSubject extends SubjectBase {}
 
 // 선택과목
 export interface OptionalSubject extends SubjectBase {
-  subjectCategory: OptionalSubjectCategory;
+  subjectCategory: string;
   suneungInfo: string;
+  creditAmount: number;
 }
 
 export interface GradeScore {
