@@ -1,38 +1,33 @@
-import type {
-  StudentCategoryCode,
-  OptionalSubjectCategory
-} from '../../policy/school';
+import type { StudentCategoryCode } from "../../policy/school";
 
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef } from "@mui/x-data-grid";
 
-export type SubjectDistinct = "COMMON" | "OPTION"
-
-export type SubjectDistinctDetail = "공통과목" | "일반선택" | "융합선택" | "진로선택"
+export type SubjectDistinct = "COMMON" | "OPTION";
 
 export type SubjectColumn = {
   code: GridColDef;
   group: GridColDef;
   name: GridColDef;
   description: GridColDef;
-}
+};
 
 export type SubjectFilter = {
   nameKeyword: string;
-}
+};
 
 export type SubjectSummary = {
   id: number;
-  distinctDetail: SubjectDistinctDetail;
+  distinctDetail: string;
   group: string;
   name: string;
   description: string;
-}
+};
 
 export type EditRequest = {
   distinct: SubjectDistinct;
   subjectCode: string;
   data: CommonSubjectDetail | OptionalSubjectDetail;
-}
+};
 
 export type CommonSubjectDto = {
   group: string;
@@ -40,7 +35,7 @@ export type CommonSubjectDto = {
   name: string;
   description: string;
   etcInfo: string;
-}
+};
 
 export type OptionalSubjectDto = {
   group: string;
@@ -48,19 +43,20 @@ export type OptionalSubjectDto = {
   description: string;
   etcInfo: string;
   studentCategory: StudentCategoryCode;
-  subjectCategory: OptionalSubjectCategory;
+  subjectCategory: string;
   suneungInfo: string;
-}
+  creditAmount: string;
+};
 
 export type CreateRequest = {
   distinct: SubjectDistinct;
   data: CommonSubjectDto | OptionalSubjectDto;
-}
+};
 
 export type DeleteRequest = {
   distinct: SubjectDistinct;
   subjectCode: string;
-}
+};
 
 export type CommonSubjectDetail = {
   code: string;
@@ -69,7 +65,7 @@ export type CommonSubjectDetail = {
   name: string;
   description: string;
   etcInfo: string;
-}
+};
 
 export type OptionalSubjectDetail = {
   code: string;
@@ -78,6 +74,7 @@ export type OptionalSubjectDetail = {
   description: string;
   etcInfo: string;
   studentCategory: StudentCategoryCode;
-  subjectCategory: OptionalSubjectCategory;
+  subjectCategory: string;
   suneungInfo: string;
-}
+  creditAmount: string;
+};

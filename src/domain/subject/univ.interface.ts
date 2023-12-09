@@ -19,6 +19,20 @@ export interface Major {
   gnrMjrCode?: string;
 }
 
+export type CreditRequirement = {
+  subjectCategory: string;
+  amount: number;
+};
+
+export interface MajorRecruit {
+  name: string;
+  univ: string;
+  investigationYear: string;
+  creditRequirements: CreditRequirement[];
+  subjectGroupConstraints: string[];
+  difficulty: number;
+}
+
 // 일반학과 : 교과 N:N
 export interface GeneralMajor {
   code: string;
@@ -43,7 +57,10 @@ export interface MajorRepository {
 }
 
 export interface TargetMajorRepository {
-  findByStudent: (studentId: string, isActive?: boolean) => Promise<TargetMajor[]>;
+  findByStudent: (
+    studentId: string,
+    isActive?: boolean
+  ) => Promise<TargetMajor[]>;
 }
 
 export interface UnivRepository {
