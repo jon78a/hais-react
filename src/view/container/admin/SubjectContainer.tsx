@@ -97,7 +97,8 @@ const AdminSubjectContainer = ({
               description: data.description,
               etcInfo: data.etcInfo,
               subjectCategory: data.subjectCategory,
-              suneungInfo: data.suneungInfo
+              suneungInfo: data.suneungInfo,
+              creditAmount: parseInt(data.creditAmount)
             }, data.code);
             return;
         }
@@ -117,6 +118,7 @@ const AdminSubjectContainer = ({
             data = req.data as OptionalSubjectDto;
             await optionalSubjectRepository.save({
               ...data,
+              creditAmount: parseInt(data.creditAmount),
               code: ""
             });
             return;

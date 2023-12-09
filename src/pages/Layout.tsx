@@ -13,6 +13,7 @@ import commonSubjectRepository from "../driver/repository/commonSubjectRepositor
 
 import NotFound from "./NotFound";
 import Alert from "../Alert";
+import Batch from "../Batch";
 
 export default function Layout() {
   const [unauthorized, setUnauthorized] = useState<boolean | undefined>(undefined);
@@ -126,6 +127,7 @@ export const AdminLayout = () => {
       }}
     >
       <Outlet />
+      <Batch isActive={false} />
     </AdminBaseContainer>
   );
 }

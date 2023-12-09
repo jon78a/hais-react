@@ -6,13 +6,19 @@ import {
   getDocs,
   orderBy,
   deleteDoc,
-  setDoc
+  setDoc,
 } from "firebase/firestore";
 
-import { OptionalSubject, OptionalSubjectRepository } from "../../domain/subject/school.interface";
-import { OptionalSubjectCategory } from "../../policy/school";
+import {
+  OptionalSubject,
+  OptionalSubjectRepository,
+} from "../../domain/subject/school.interface";
 import { CollectionName, StorageSource } from "../firebase/constants";
-import { MajorCategoryGroupType, OptionalSubjectType, RecommendGroupType } from "../firebase/types";
+import {
+  MajorCategoryGroupType,
+  OptionalSubjectType,
+  RecommendGroupType,
+} from "../firebase/types";
 import { firebaseDb } from "../firebase";
 
 const optionalSubjectRepository: OptionalSubjectRepository = {
@@ -21,42 +27,55 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
     let res = await fetch(source);
     let mjrCategoryGroups: MajorCategoryGroupType[] = await res.json();
 
-    const gnrMjrCodes = mjrCategoryGroups.filter((v) => v.major_id === majorId).map((v) => v.general_code);
+    const gnrMjrCodes = mjrCategoryGroups
+      .filter((v) => v.major_id === majorId)
+      .map((v) => v.general_code);
 
     let recommendGroups: RecommendGroupType[] = [];
-    const recommendGroupSnapshot = await getDocs(collection(firebaseDb, CollectionName.RecommendGroup));
+    const recommendGroupSnapshot = await getDocs(
+      collection(firebaseDb, CollectionName.RecommendGroup)
+    );
     recommendGroupSnapshot.forEach((doc) => {
       recommendGroups.push(doc.data() as RecommendGroupType);
     });
 
-    const optSbjCodes = recommendGroups.filter((v) => gnrMjrCodes.includes(v.gnr_mjr_code)).map((v) => v.opt_sbj_code);
+    const optSbjCodes = recommendGroups
+      .filter((v) => gnrMjrCodes.includes(v.gnr_mjr_code))
+      .map((v) => v.opt_sbj_code);
 
     let optionalSubjects: OptionalSubjectType[] = [];
-    const optionalSubjectSnapshot = await getDocs(collection(firebaseDb, CollectionName.OptionalSubject));
+    const optionalSubjectSnapshot = await getDocs(
+      collection(firebaseDb, CollectionName.OptionalSubject)
+    );
     optionalSubjectSnapshot.forEach((doc) => {
       optionalSubjects.push(doc.data() as OptionalSubjectType);
     });
 
-    return optionalSubjects.filter((v) => optSbjCodes.includes(v.code))
+    return optionalSubjects
+      .filter((v) => optSbjCodes.includes(v.code))
       .map((v) => {
         return {
           code: v.code,
           group: v.group,
           studentCategory: v.student_category ?? "NONE",
-          subjectCategory: v.category as OptionalSubjectCategory,
+          subjectCategory: v.category,
           name: v.name,
           description: v.description,
           suneungInfo: v.suneung_info,
-          etcInfo: v.etc_info
-        }
+          etcInfo: v.etc_info,
+          creditAmount: v.credit_amount,
+        };
       });
   },
   async findBy(filter) {
     const conds = [];
     conds.push(orderBy("group"));
 
-    const q = query(collection(firebaseDb, CollectionName.OptionalSubject), ...conds);
-  
+    const q = query(
+      collection(firebaseDb, CollectionName.OptionalSubject),
+      ...conds
+    );
+
     const snapshot = await getDocs(q);
     let _list: OptionalSubject[] = [];
     snapshot.forEach((doc) => {
@@ -65,11 +84,12 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         code: data.code,
         group: data.group,
         studentCategory: data.student_category ?? "NONE",
-        subjectCategory: data.category as OptionalSubjectCategory,
+        subjectCategory: data.category,
         name: data.name,
         description: data.description,
         suneungInfo: data.suneung_info,
-        etcInfo: data.etc_info
+        etcInfo: data.etc_info,
+        creditAmount: data.credit_amount,
       });
     });
     return _list.filter((v) => v.name.includes(filter.nameKeyword));
@@ -84,17 +104,21 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         code: data.code,
         group: data.group,
         studentCategory: data.student_category ?? "NONE",
-        subjectCategory: data.category as OptionalSubjectCategory,
+        subjectCategory: data.category,
         name: data.name,
         description: data.description,
         suneungInfo: data.suneung_info,
-        etcInfo: data.etc_info
-      }
+        etcInfo: data.etc_info,
+        creditAmount: data.credit_amount,
+      };
     } else return null;
   },
   async save(optionalSubject, key) {
-    if (!key) { // create
-      const snapshot = await getDocs(collection(firebaseDb, CollectionName.OptionalSubject));
+    if (!key) {
+      // create
+      const snapshot = await getDocs(
+        collection(firebaseDb, CollectionName.OptionalSubject)
+      );
       let maxCode = "0";
       snapshot.forEach((doc) => {
         if (Number(doc.data()["code"]) > Number(maxCode)) {
@@ -111,11 +135,12 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         name: optionalSubject.name,
         description: optionalSubject.description,
         suneung_info: optionalSubject.suneungInfo,
-        etc_info: optionalSubject.etcInfo
-      }
+        etc_info: optionalSubject.etcInfo,
+        credit_amount: optionalSubject.creditAmount,
+      };
       await setDoc(docRef, data);
-    }
-    else { // update
+    } else {
+      // update
       const docRef = doc(firebaseDb, CollectionName.OptionalSubject, key);
       const data: OptionalSubjectType = {
         code: optionalSubject.code,
@@ -125,14 +150,15 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         name: optionalSubject.name,
         description: optionalSubject.description,
         suneung_info: optionalSubject.suneungInfo,
-        etc_info: optionalSubject.etcInfo
-      }
+        etc_info: optionalSubject.etcInfo,
+        credit_amount: optionalSubject.creditAmount,
+      };
       await setDoc(docRef, data);
     }
   },
   async delete(key) {
     await deleteDoc(doc(firebaseDb, CollectionName.OptionalSubject, key));
   },
-}
+};
 
 export default optionalSubjectRepository;
