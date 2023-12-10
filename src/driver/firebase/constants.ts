@@ -16,7 +16,7 @@ export class StorageSource {
   static GeneralMajor =
     "https://firebasestorage.googleapis.com/v0/b/hais-72666.appspot.com/o/generalMajor.json?alt=media&token=d74e42a9-cace-4c18-ac4e-b1501590ee78";
   static Major =
-    "https://firebasestorage.googleapis.com/v0/b/hais-72666.appspot.com/o/major.json?alt=media&token=a966858e-023f-4986-8756-929688f30b23";
+    "https://firebasestorage.googleapis.com/v0/b/hais-72666.appspot.com/o/backup%2Fmajor_20231210.json?alt=media&token=6af82b5e-2f77-463b-a221-578266a7b9ec";
   static MajorCategoryGroup =
     "https://firebasestorage.googleapis.com/v0/b/hais-72666.appspot.com/o/majorCategoryGroup.json?alt=media&token=2bd327d1-4c0e-4c7c-8336-291ef09fa303";
   static OptionalSubject =

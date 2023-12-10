@@ -1,12 +1,12 @@
 import { UnivRepository } from "../../domain/subject/univ.interface";
 import { StorageSource } from "../firebase/constants";
-import { UnivType } from "../firebase/types";
+import { UnivModel } from "../firebase/models";
 
 const univRepository: UnivRepository = {
   async findByNameLike(keyword) {
     const source = StorageSource.Univ;
     const res = await fetch(source);
-    const data: UnivType[] = await res.json();
+    const data: UnivModel[] = await res.json();
 
     return data
       .filter((v) => v["name"].startsWith(keyword))

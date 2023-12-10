@@ -5,7 +5,7 @@ export interface Univ {
 }
 
 export interface Major {
-  id: number;
+  id: number | string;
   name: string;
   univ: string;
   department: string;
@@ -17,21 +17,15 @@ export interface Major {
   stdSclsfName: string;
   updatedAt?: number;
   gnrMjrCode?: string;
+  requiredCredits: RequiredCredit[];
+  requiredGroups: string[];
+  difficulty: number;
 }
 
-export type CreditRequirement = {
+export type RequiredCredit = {
   subjectCategory: string;
   amount: number;
 };
-
-export interface MajorRecruit {
-  name: string;
-  univ: string;
-  investigationYear: string;
-  creditRequirements: CreditRequirement[];
-  subjectGroupConstraints: string[];
-  difficulty: number;
-}
 
 // 일반학과 : 교과 N:N
 export interface GeneralMajor {

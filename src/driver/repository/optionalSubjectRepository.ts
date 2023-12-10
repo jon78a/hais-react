@@ -15,40 +15,40 @@ import {
 } from "../../domain/subject/school.interface";
 import { CollectionName, StorageSource } from "../firebase/constants";
 import {
-  MajorCategoryGroupType,
-  OptionalSubjectType,
-  RecommendGroupType,
-} from "../firebase/types";
+  MajorCategoryGroupModel,
+  OptionalSubjectModel,
+  RecommendGroupModel,
+} from "../firebase/models";
 import { firebaseDb } from "../firebase";
 
 const optionalSubjectRepository: OptionalSubjectRepository = {
   async findByMajorId(majorId) {
     let source = StorageSource.MajorCategoryGroup;
     let res = await fetch(source);
-    let mjrCategoryGroups: MajorCategoryGroupType[] = await res.json();
+    let mjrCategoryGroups: MajorCategoryGroupModel[] = await res.json();
 
     const gnrMjrCodes = mjrCategoryGroups
       .filter((v) => v.major_id === majorId)
       .map((v) => v.general_code);
 
-    let recommendGroups: RecommendGroupType[] = [];
+    let recommendGroups: RecommendGroupModel[] = [];
     const recommendGroupSnapshot = await getDocs(
       collection(firebaseDb, CollectionName.RecommendGroup)
     );
     recommendGroupSnapshot.forEach((doc) => {
-      recommendGroups.push(doc.data() as RecommendGroupType);
+      recommendGroups.push(doc.data() as RecommendGroupModel);
     });
 
     const optSbjCodes = recommendGroups
       .filter((v) => gnrMjrCodes.includes(v.gnr_mjr_code))
       .map((v) => v.opt_sbj_code);
 
-    let optionalSubjects: OptionalSubjectType[] = [];
+    let optionalSubjects: OptionalSubjectModel[] = [];
     const optionalSubjectSnapshot = await getDocs(
       collection(firebaseDb, CollectionName.OptionalSubject)
     );
     optionalSubjectSnapshot.forEach((doc) => {
-      optionalSubjects.push(doc.data() as OptionalSubjectType);
+      optionalSubjects.push(doc.data() as OptionalSubjectModel);
     });
 
     return optionalSubjects
@@ -127,7 +127,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
       });
       const nextCode = String(Number(maxCode) + 1);
       const docRef = doc(firebaseDb, CollectionName.OptionalSubject, nextCode);
-      const data: OptionalSubjectType = {
+      const data: OptionalSubjectModel = {
         code: nextCode,
         group: optionalSubject.group,
         student_category: optionalSubject.studentCategory,
@@ -142,7 +142,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
     } else {
       // update
       const docRef = doc(firebaseDb, CollectionName.OptionalSubject, key);
-      const data: OptionalSubjectType = {
+      const data: OptionalSubjectModel = {
         code: optionalSubject.code,
         group: optionalSubject.group,
         student_category: optionalSubject.studentCategory,
