@@ -42,6 +42,11 @@ export const majorResultListState = atom<MajorResult[]>({
   default: [],
 });
 
+export const majorResultLoadingState = atom<boolean>({
+  key: "schema/states/SubjectRecommend/MajorResultLoading",
+  default: false,
+});
+
 export const isMatchUnivState = selector<boolean>({
   key: "schema/states/SubjectRecommend/isMatchUniv",
   get: ({ get }) => {
