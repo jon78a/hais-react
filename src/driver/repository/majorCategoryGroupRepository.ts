@@ -3,13 +3,13 @@ import { ref, uploadString } from "firebase/storage";
 import { firebaseStorage } from "../firebase/firebase";
 import { MajorCategoryGroupRepository } from "../../domain/subject/recommend.interface";
 import { StorageSource } from "../firebase/constants";
-import type { MajorCategoryGroupType } from "../firebase/types";
+import type { MajorCategoryGroupModel } from "../firebase/models";
 import { MAJOR_CATEGORY_GROUPS } from "../localStorage/constants";
 
 const majorCategoryGroupRepository: MajorCategoryGroupRepository = {
   async getByMajorId(majorId) {
     const source = StorageSource.MajorCategoryGroup;
-    const payload: MajorCategoryGroupType[] = await fetch(source).then((res) =>
+    const payload: MajorCategoryGroupModel[] = await fetch(source).then((res) =>
       res.json()
     );
     localStorage.setItem(MAJOR_CATEGORY_GROUPS, JSON.stringify(payload));
@@ -30,9 +30,9 @@ const majorCategoryGroupRepository: MajorCategoryGroupRepository = {
       if (!localItem) {
         throw new Error("getByMajorId가 선행되어야 합니다.");
       }
-      const snapshot: MajorCategoryGroupType[] = JSON.parse(localItem);
+      const snapshot: MajorCategoryGroupModel[] = JSON.parse(localItem);
 
-      const requestData: MajorCategoryGroupType[] = snapshot.map((obj) => {
+      const requestData: MajorCategoryGroupModel[] = snapshot.map((obj) => {
         if (obj.major_id === form.majorId) {
           return {
             id: form.id,

@@ -8,7 +8,7 @@ import type {
   SelectedMajorId,
   SubjectData,
   MajorKeyword,
-  UnivKeyword
+  UnivKeyword,
 } from "../types/AdminMajor";
 
 export const searchModeState = atom<SearchMode>({

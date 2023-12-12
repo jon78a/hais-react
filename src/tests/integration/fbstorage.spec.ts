@@ -1,17 +1,17 @@
 import { StorageSource } from "../../driver/firebase/constants";
 
 import type {
-  MajorType,
-  MajorCategoryGroupType,
-  RecommendGroupType,
-  UnivType
-} from "../../driver/firebase/types";
+  MajorModel,
+  MajorCategoryGroupModel,
+  RecommendGroupModel,
+  UnivModel
+} from "../../driver/firebase/models";
 
 describe("Firebase storage connection", () => {
   it("MajorType(전체학과)", (done) => {
     fetch(StorageSource.Major)
       .then((res) => res.json())
-      .then((data: MajorType[]) => {
+      .then((data: MajorModel[]) => {
         data.forEach((major) => {
           expect(typeof major.id).toBe("number");
           expect(typeof major.department).toBe("string");
@@ -32,7 +32,7 @@ describe("Firebase storage connection", () => {
   it("MajorCategoryGroup(학과분류그룹)", (done) => {
     fetch(StorageSource.MajorCategoryGroup)
       .then((res) => res.json())
-      .then((data: MajorCategoryGroupType[]) => {
+      .then((data: MajorCategoryGroupModel[]) => {
         data.forEach((majorCategoryGroup) => {
           expect(typeof majorCategoryGroup.id).toBe("number");
           expect(typeof majorCategoryGroup.general_code).toBe("string");
@@ -45,7 +45,7 @@ describe("Firebase storage connection", () => {
   it("Univ(대학교)", (done) => {
     fetch(StorageSource.Univ)
       .then((res) => res.json())
-      .then((data: UnivType[]) => {
+      .then((data: UnivModel[]) => {
         data.forEach((univ) => {
           expect(typeof univ.id).toBe("number");
           expect(typeof univ.name).toBe("string");

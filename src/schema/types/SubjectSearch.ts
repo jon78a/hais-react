@@ -12,13 +12,13 @@ export type UnivSearchResult = {
 };
 
 export type MajorResult = {
-  id: number;
+  id: number | string;
   name: string;
   univ: string;
   department: string;
 };
 
-export type SelectedMajorId = number | null;
+export type SelectedMajorId = number | string | null;
 
 export type SubjectData = {
   code: string; // 과목코드

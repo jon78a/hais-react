@@ -1,8 +1,9 @@
 import Fab from "@mui/material/Fab";
-import addCreditAmountField from "./migrations/addCreditAmountField";
 import { useMemo, useState } from "react";
 
 type BatchStatus = "Loading" | "Done" | "Ready" | "Error";
+
+const batchFunction = async () => {};
 
 const Batch = ({ isActive }: { isActive: boolean }) => {
   const [batchStatus, setBatchStatus] = useState<BatchStatus>("Ready");
@@ -22,7 +23,7 @@ const Batch = ({ isActive }: { isActive: boolean }) => {
   }, [batchStatus]);
   const handleClick = () => {
     setBatchStatus("Loading");
-    addCreditAmountField()
+    batchFunction()
       .then(() => setBatchStatus("Done"))
       .catch((e) => setBatchStatus("Error"));
   };

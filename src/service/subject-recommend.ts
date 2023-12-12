@@ -15,7 +15,7 @@ export interface SubjectRecommendService {
   searchByMajorKeywordOnUnivName: (majorKeyword: MajorKeyword, univName: string) => Promise<MajorResult[]>;
   searchByUnivOrMajor: (fullNameKeyword: FullNameKeyword) => Promise<MajorResult[]>;
   recommend: (subjects: SubjectData[]) => Promise<RecommendStatus>;
-  readSubjectList: (majorId: number) => Promise<SubjectData[]>;
+  readSubjectList: (majorId: number | string) => Promise<SubjectData[]>;
 }
 
 export const SubjectRecommendContext = createContext<SubjectRecommendService | undefined>(undefined);
