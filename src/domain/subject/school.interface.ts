@@ -88,7 +88,7 @@ export interface CommonSubjectRepository {
 }
 
 export interface OptionalSubjectRepository {
-  findByMajorId: (majorId: number) => Promise<OptionalSubject[]>;
+  findByMajorId: (majorId: number | string) => Promise<OptionalSubject[]>;
   findBy: (filter: SubjectFilter) => Promise<OptionalSubject[]>;
   findByCode: (code: string) => Promise<OptionalSubject | null>;
   save: (optionalSubject: OptionalSubject, key?: string) => Promise<void>;

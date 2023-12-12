@@ -7,7 +7,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-import type { RecommendGroupType } from "../firebase/types";
+import type { RecommendGroupModel } from "../firebase/models";
 import { firebaseDb } from "../firebase";
 import { CollectionName } from "../firebase/constants";
 import {
@@ -24,7 +24,7 @@ const recommendGroupRepository: RecommendGroupRepository = {
     let recommendGroups: RecommendGroup[] = [];
     const recommendGroupSnapshot = await getDocs(q);
     recommendGroupSnapshot.forEach((doc) => {
-      const data = doc.data() as RecommendGroupType;
+      const data = doc.data() as RecommendGroupModel;
       recommendGroups.push({
         id: data.id,
         generalCode: data.gnr_mjr_code,
@@ -38,7 +38,7 @@ const recommendGroupRepository: RecommendGroupRepository = {
     const batch = writeBatch(firebaseDb);
     list.forEach((v) => {
       const docRef = doc(firebaseDb, CollectionName.RecommendGroup, v.id);
-      const data: RecommendGroupType = {
+      const data: RecommendGroupModel = {
         id: v.id,
         gnr_mjr_code: v.generalCode,
         opt_sbj_code: v.optionalSubjectCode,

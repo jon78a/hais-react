@@ -1,8 +1,11 @@
-import { useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
-import { AdminMajorService, useAdminMajorService } from "../../../service/admin/major";
+import {
+  AdminMajorService,
+  useAdminMajorService,
+} from "../../../service/admin/major";
 import SearchBar from "../../presenter/admin/major.ui/SearchBar";
 import {
   fullNameKeywordState,
@@ -13,10 +16,14 @@ import {
   selectedMajorIdState,
   univKeywordState,
   univSearchResultListState,
-  subjectDataListState
+  subjectDataListState,
+  selectedMajorState,
 } from "../../../schema/states/AdminMajor";
-import SubjectControlForm from "../../presenter/admin/major.ui/SubjectControlForm";
-import SubjectList from "../../presenter/admin/major.ui/SubjectList";
+import MajorRecruitForm from "../../presenter/admin/major.ui/MajorRecruitForm";
+// import SubjectList from "../../presenter/admin/major.ui/SubjectList";
+
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useChangeKeywordEffect = (service: AdminMajorService) => {
   const searchMode = useRecoilValue(searchModeState);
@@ -30,20 +37,21 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
   const setMajorResultList = useSetRecoilState(majorResultListState);
 
   useEffect(() => {
-    service.suggestUniv("")
-      .then((results) => setUnivSearchResultList(results));
+    service.suggestUniv("").then((results) => setUnivSearchResultList(results));
   }, []);
 
   useEffect(() => {
-    switch(searchMode) {
+    switch (searchMode) {
       case "UNIV":
         if (!isMatchUniv) return;
-        service.searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
+        service
+          .searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
           .then((results) => setMajorResultList(results));
         return;
       case "FULL":
         if (!fullNameKeyword) return;
-        service.searchByUnivOrMajor(fullNameKeyword)
+        service
+          .searchByUnivOrMajor(fullNameKeyword)
           .then((results) => setMajorResultList(results));
         return;
     }
@@ -55,11 +63,13 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
     majorKeyword,
     fullNameKeyword,
     setUnivSearchResultList,
-    setMajorResultList
+    setMajorResultList,
   ]);
-}
+};
 
 const AdminMajorInteractor = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const service = useAdminMajorService();
 
   const setUnivKeyword = useSetRecoilState(univKeywordState);
@@ -67,46 +77,156 @@ const AdminMajorInteractor = () => {
   const setFullNameKeyword = useSetRecoilState(fullNameKeywordState);
   const setSearchMode = useSetRecoilState(searchModeState);
 
-  const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
+  const [majorResultList, setMajorResultList] =
+    useRecoilState(majorResultListState);
+  const [selectedMajorId, setSelectedMajorId] =
+    useRecoilState(selectedMajorIdState);
+
+  const selectedMajor = useRecoilValue(selectedMajorState);
 
   useChangeKeywordEffect(service);
 
   const setSubjectDataList = useSetRecoilState(subjectDataListState);
 
   return (
-    <div>
-      <SearchBar
-        selectSearchMode={(mode) => {
-          setSearchMode(mode);
-        }}
-        inputKeyword={debounce((value: string, type) => {
-          switch(type) {
-            case "univ":
-              setUnivKeyword(value);
+    <>
+      <div className="flex flex-col space-y-10 pb-20">
+        <SearchBar
+          selectSearchMode={(mode) => {
+            setSearchMode(mode);
+          }}
+          inputKeyword={debounce((value: string, type) => {
+            switch (type) {
+              case "univ":
+                setUnivKeyword(value);
+                return;
+              case "major":
+                setMajorKeyword(value);
+                return;
+              case "full":
+                setFullNameKeyword(value);
+                return;
+            }
+          }, 250)}
+          clickMajor={(id) => {
+            setSelectedMajorId(id);
+            service
+              .readSubjectList(id)
+              .then((list) => setSubjectDataList(list));
+          }}
+        />
+        <MajorRecruitForm
+          addRequiredCredit={(dto) => {
+            if (!selectedMajor) {
               return;
-            case "major":
-              setMajorKeyword(value);
+            }
+            setMajorResultList(
+              majorResultList.map((result) => {
+                if (result.id === selectedMajorId) {
+                  return {
+                    ...result,
+                    requiredCredits: [dto, ...result.requiredCredits],
+                  };
+                }
+                return result;
+              })
+            );
+          }}
+          removeRequiredCredit={(index) => {
+            if (!selectedMajor) {
               return;
-            case "full":
-              setFullNameKeyword(value);
+            }
+            setMajorResultList(
+              majorResultList.map((result) => {
+                if (result.id === selectedMajorId) {
+                  return {
+                    ...result,
+                    requiredCredits: result.requiredCredits.filter(
+                      (_, curr) => curr !== index
+                    ),
+                  };
+                }
+                return result;
+              })
+            );
+          }}
+          addGroup={(value) => {
+            if (!selectedMajor) {
               return;
-          }
-        }, 250)}
-        clickMajor={(id) => {
-          setSelectedMajorCode(id);
-          service.readSubjectList(id)
-            .then((list) => setSubjectDataList(list));
-        }}
-      />
-      <SubjectControlForm
-        addSubject={(code) => {}}
-        removeSubject={(code) => {}}
-      />
-      <div className="mt-4 pb-12">
+            }
+            setMajorResultList(
+              majorResultList.map((result) => {
+                if (result.id === selectedMajorId) {
+                  return {
+                    ...result,
+                    requiredGroups: [value, ...result.requiredGroups],
+                  };
+                }
+                return result;
+              })
+            );
+          }}
+          removeGroup={(index) => {
+            if (!selectedMajor) {
+              return;
+            }
+            setMajorResultList(
+              majorResultList.map((result) => {
+                if (result.id === selectedMajorId) {
+                  return {
+                    ...result,
+                    requiredGroups: result.requiredGroups.filter(
+                      (_, curr) => curr !== index
+                    ),
+                  };
+                }
+                return result;
+              })
+            );
+          }}
+          editDifficulty={(value) => {
+            if (!selectedMajor) {
+              return;
+            }
+            setMajorResultList(
+              majorResultList.map((result) => {
+                if (result.id === selectedMajorId) {
+                  return {
+                    ...result,
+                    difficulty: value,
+                  };
+                }
+                return result;
+              })
+            );
+          }}
+          save={() => {
+            if (!selectedMajor) {
+              return;
+            }
+            setLoading(true);
+            service.submitMajorRecruit({
+              requiredCredits: selectedMajor.requiredCredits,
+              requiredGroups: selectedMajor.requiredGroups,
+              difficulty: selectedMajor.difficulty
+            }, selectedMajorId).finally(() => setLoading(false));
+          }}
+        />
+        {/* <div className="mt-4 pb-12">
         <SubjectList/>
+      </div> */}
       </div>
-    </div>
+      <Backdrop
+        sx={{
+          color: "#fff",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </>
   );
-}
+};
 
 export default AdminMajorInteractor;

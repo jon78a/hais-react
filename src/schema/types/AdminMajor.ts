@@ -12,13 +12,18 @@ export type UnivSearchResult = {
 };
 
 export type MajorResult = {
-  id: number;
+  id: number | string;
   name: string;
   univ: string;
   department: string;
+  requiredCredits: RequiredCreditFieldDto[];
+  requiredGroups: string[];
+  difficulty: string;
 }
 
-export type SelectedMajorId = number | null;
+export type SelectedMajorId = number | string | null;
+
+export type MajorRecruit = Pick<MajorResult, 'requiredCredits' | 'requiredGroups' | 'difficulty'>;
 
 export type SubjectData = {
   code: string;  // 과목코드
@@ -28,4 +33,9 @@ export type SubjectData = {
   description: string;  // 설명
   suneungInfo: string;  // 수능과목정보
   etcInfo: string;  // 기타정보
+}
+
+export type RequiredCreditFieldDto = {
+  subjectCategory: string;
+  amount: string;
 }

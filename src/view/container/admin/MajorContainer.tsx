@@ -40,7 +40,13 @@ const AdminMajorContainer = ({
             id: major.id,
             name: major.name,
             univ: major.univ,
-            department: major.department
+            department: major.department,
+            requiredCredits: major.requiredCredits.map((v) => ({
+              subjectCategory: v.subjectCategory,
+              amount: v.amount.toString()
+            })),
+            requiredGroups: major.requiredGroups,
+            difficulty: major.difficulty.toString()
           }
         })
       },
@@ -51,13 +57,32 @@ const AdminMajorContainer = ({
             id: major.id,
             name: major.name,
             univ: major.univ,
-            department: major.department
+            department: major.department,
+            requiredCredits: major.requiredCredits.map((v) => ({
+              subjectCategory: v.subjectCategory,
+              amount: v.amount.toString()
+            })),
+            requiredGroups: major.requiredGroups,
+            difficulty: major.difficulty.toString()
           }
         });
       },
       async readSubjectList(majorId) {
         const optionalSubjects = await optionalSubjectRepository.findByMajorId(majorId);
         return [...optionalSubjects];
+      },
+      async submitMajorRecruit(recruit, id) {
+        if (!id) {
+          return;
+        }
+        await majorRepository.updateRecruit({
+          requiredCredits: recruit.requiredCredits.map((v) => ({
+            subjectCategory: v.subjectCategory,
+            amount: parseInt(v.amount)
+          })),
+          requiredGroups: recruit.requiredGroups,
+          difficulty: parseInt(recruit.difficulty)
+        }, id);
       },
     }}>
       <div className="max-w-[600px] min-w-[550px]">
