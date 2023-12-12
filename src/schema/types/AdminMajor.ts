@@ -16,9 +16,14 @@ export type MajorResult = {
   name: string;
   univ: string;
   department: string;
+  requiredCredits: RequiredCreditFieldDto[];
+  requiredGroups: string[];
+  difficulty: string;
 }
 
 export type SelectedMajorId = number | string | null;
+
+export type MajorRecruit = Pick<MajorResult, 'requiredCredits' | 'requiredGroups' | 'difficulty'>;
 
 export type SubjectData = {
   code: string;  // 과목코드
@@ -33,10 +38,4 @@ export type SubjectData = {
 export type RequiredCreditFieldDto = {
   subjectCategory: string;
   amount: string;
-}
-
-export type MajorRecruitFormDto = {
-  requiredCredits: RequiredCreditFieldDto[];
-  requiredGroups: string[];
-  difficulty: string;
 }

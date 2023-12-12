@@ -22,6 +22,12 @@ export interface Major {
   difficulty: number;
 }
 
+export type MajorRecruit = {
+  requiredCredits: RequiredCredit[];
+  requiredGroups: string[];
+  difficulty: number;
+}
+
 export type RequiredCredit = {
   subjectCategory: string;
   amount: number;
@@ -48,6 +54,7 @@ export interface MajorRepository {
   findByUnivOrMajorName: (keyword: string) => Promise<Major[]>;
   // findByUniv: (univ: string, isActive?: boolean) => Major[];
   // save: (data: Major) => void;
+  updateRecruit: (recruit: MajorRecruit, id: string | number) => Promise<void>;
 }
 
 export interface TargetMajorRepository {

@@ -9,7 +9,6 @@ import type {
   SubjectData,
   MajorKeyword,
   UnivKeyword,
-  MajorRecruitFormDto
 } from "../types/AdminMajor";
 
 export const searchModeState = atom<SearchMode>({
@@ -75,13 +74,4 @@ export const selectedMajorState = selector<MajorResult | undefined>({
 export const subjectDataListState = atom<SubjectData[]>({
   key: "schema/states/AdminMajor/SubjectDataList",
   default: []
-});
-
-export const majorRecruitFormDtoState = atom<MajorRecruitFormDto>({
-  key: 'schema/states/AdminMajor/MajorRecruitForm',
-  default: {
-    requiredCredits: [],
-    requiredGroups: [],
-    difficulty: '0'
-  }
 });

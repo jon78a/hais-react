@@ -29,5 +29,6 @@ export class StorageSource {
   static filePath = {
     majorCategoryGroup: "majorCategoryGroup.json",
     recommendGroup: "recommendGroup.json",
+    major: "major.json",
   };
 }

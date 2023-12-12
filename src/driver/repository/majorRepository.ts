@@ -1,4 +1,7 @@
+import { ref, uploadBytes, deleteObject, StorageReference } from "firebase/storage";
+
 import { StorageSource } from "../firebase/constants";
+import { firebaseStorage } from "../firebase/firebase";
 import { MajorRepository } from "../../domain/subject/univ.interface";
 import type { MajorModel } from "../firebase/models";
 
@@ -65,6 +68,43 @@ const majorRepository: MajorRepository = {
           difficulty: v["difficulty"]
         }
       });
+  },
+  async updateRecruit(recruit, id) {
+    const source = StorageSource.Major;
+    const res = await fetch(source);
+    const list: MajorModel[] = await res.json();
+
+    let jsonString: string;
+    let blob: Blob;
+    let storageRef: StorageReference;
+
+    jsonString = JSON.stringify(list);
+    blob = new Blob([jsonString], { type: 'application/json' });
+    storageRef = ref(firebaseStorage, `backup/major_${Date.now()}.json`);
+    await uploadBytes(storageRef, blob);
+
+    const oldFileRef = ref(firebaseStorage, StorageSource.filePath.major);
+    await deleteObject(oldFileRef)
+
+    const models: MajorModel[] = list.map((model) => {
+      if (model.id === id) {
+        return {
+          ...model,
+          required_credits: recruit.requiredCredits.map((value) => ({
+            subject_category: value.subjectCategory,
+            amount: value.amount
+          })),
+          required_groups: recruit.requiredGroups,
+          difficulty: recruit.difficulty
+        };
+      }
+      return model;
+    });
+
+    jsonString = JSON.stringify(models);
+    blob = new Blob([jsonString], { type: 'application/json' });
+    storageRef = ref(firebaseStorage, StorageSource.filePath.major);
+    await uploadBytes(storageRef, blob);
   },
 }
 
