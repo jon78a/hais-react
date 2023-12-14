@@ -38,6 +38,7 @@ interface PublicRoutesType {
   findCredentialPw: RouteExp;
   oauth: RouteExp;
   subjectSearch: RouteExp;
+  people: RouteExp;
 }
 
 export const publicRoutes: PublicRoutesType = {
@@ -70,6 +71,10 @@ export const publicRoutes: PublicRoutesType = {
     path: '/subject/search',
     re: new RegExp('^/subject/search'),
   },
+  people: {
+    path: '/people',
+    re: new RegExp('^/people'),
+  }
 }
 
 interface AuthPermissionRoutesType {
