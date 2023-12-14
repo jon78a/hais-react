@@ -7,6 +7,10 @@ export let theme = createTheme({
     primary: {
       main: "#4E9E65",
       light: "rgba( 78, 158, 101, 0.05 )"
+    },
+    secondary: {
+      main: grey[400],
+      contrastText: "#fff"
     }
   },
   typography: {

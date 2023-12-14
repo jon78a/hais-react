@@ -175,7 +175,7 @@ export function TemporaryDrawer() {
       >
         {
           <Box
-            sx={{ width: `200px` }}
+            sx={{ width: 230 }}
             role="presentation"
             onClick={toggleDrawer(false)}
             onKeyDown={toggleDrawer(false)}
@@ -184,9 +184,6 @@ export function TemporaryDrawer() {
               <Link to={routes.subjectSearch.path}>
                 <ListItem key="교과탐색" disablePadding>
                   <ListItemButton>
-                    <ListItemIcon>
-                      <InboxIcon />
-                    </ListItemIcon>
                     <ListItemText primary="교과탐색" />
                   </ListItemButton>
                 </ListItem>
@@ -194,10 +191,14 @@ export function TemporaryDrawer() {
               <Link to={routes.subjectRecommend.path}>
                 <ListItem key="성적별 교과탐색" disablePadding>
                   <ListItemButton>
-                    <ListItemIcon>
-                      <InboxIcon />
-                    </ListItemIcon>
                     <ListItemText primary="성적별 교과탐색" />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+              <Link to={routes.people.path}>
+                <ListItem key="도움을 주시는 분들" disablePadding>
+                  <ListItemButton>
+                    <ListItemText primary="도움을 주시는 분들" />
                   </ListItemButton>
                 </ListItem>
               </Link>
@@ -236,7 +237,8 @@ function MyTabs() {
   const routeMatch = useRouteMatch([
     routes.subjectSearch.path,
     routes.my.path,
-    routes.subjectRecommend.path
+    routes.subjectRecommend.path,
+    routes.people.path,
   ]);
   const currentTab = routeMatch?.pattern?.path;
 
@@ -248,13 +250,16 @@ function MyTabs() {
       }}
       onChange={(event, newValue) => {
         if (newValue === routes.subjectSearch.path) {
-          navigate(newValue); return;
+          return navigate(newValue);
         }
         if (newValue === routes.my.path) {
-          navigate(newValue); return;
+          return navigate(newValue);
         }
         if (newValue === routes.subjectRecommend.path) {
-          navigate(newValue); return;
+          return navigate(newValue);
+        }
+        if (newValue === routes.people.path) {
+          return navigate(newValue);
         }
       }}
     >
@@ -265,6 +270,12 @@ function MyTabs() {
         }}
       />
       <Tab value={routes.subjectRecommend.path} label="성적별 교과탐색"
+        sx={{
+          fontSize: "1.25rem",
+          color: "black",
+        }}
+      />
+      <Tab value={routes.people.path} label="도움을 주시는 분들"
         sx={{
           fontSize: "1.25rem",
           color: "black",

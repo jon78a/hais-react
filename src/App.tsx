@@ -20,6 +20,7 @@ import AdminSubjectPage from './pages/admin/Subject';
 import AdminMajorPage from './pages/admin/Major';
 import AdminMeasurementPage from './pages/admin/Measurement';
 import MyPage from './pages/My';
+import People from './pages/People';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path={`/oauth/logout/:slug`} element={<OAuthLogout/>}/>
             <Route path={routes.myScore.path} element={<MyScorePage/>}/>
             <Route path={routes.my.path} element={<MyPage/>}/>
+            <Route path={routes.people.path} element={<People/>}/>
           </Route>
           <Route path="/" element={<AdminLayout/>}>
             <Route path={adminRoutes.adminHome.path} element={<AdminSubjectPage/>} />
