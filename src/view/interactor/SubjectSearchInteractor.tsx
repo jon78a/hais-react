@@ -130,8 +130,7 @@ const SubjectSearchInteractor = () => {
             difficulty: major.difficulty
           }).then((list) => {
             setSubjectDataList(list);
-            setLoading(false);
-          });
+          }).finally(() => setLoading(false));
         }}
       />
       <div className="mt-4 pb-12">
