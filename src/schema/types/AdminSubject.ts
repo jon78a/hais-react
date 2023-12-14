@@ -46,6 +46,7 @@ export type OptionalSubjectDto = {
   subjectCategory: string;
   suneungInfo: string;
   creditAmount: string;
+  difficulty: string;
 };
 
 export type CreateRequest = {
@@ -77,4 +78,5 @@ export type OptionalSubjectDetail = {
   subjectCategory: string;
   suneungInfo: string;
   creditAmount: string;
+  difficulty: string;
 };
