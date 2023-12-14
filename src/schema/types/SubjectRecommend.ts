@@ -39,6 +39,7 @@ export type SubjectData = {
   description: string; // 설명
   suneungInfo: string; // 수능과목정보
   etcInfo: string; // 기타정보
+  creditAmount: number // 이수학점
 };
 
 export type RecommendStatus = {
