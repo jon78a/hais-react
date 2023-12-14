@@ -13,6 +13,7 @@ import {
   univSearchResultListState,
   subjectDataListState,
   recommendStatusState,
+  majorResultLoadingState,
 } from "../../schema/states/SubjectRecommend";
 import SearchBar from "../presenter/subject-recommend.ui/SearchBar";
 import SubjectList from "../presenter/subject-recommend.ui/SubjectList";
@@ -34,6 +35,7 @@ const useChangeKeywordEffect = (service: SubjectRecommendService) => {
 
   const setUnivSearchResultList = useSetRecoilState(univSearchResultListState);
   const setMajorResultList = useSetRecoilState(majorResultListState);
+  const setMajorResultLoading = useSetRecoilState(majorResultLoadingState);
 
   useEffect(() => {
     service.suggestUniv("").then((results) => setUnivSearchResultList(results));
@@ -47,15 +49,19 @@ const useChangeKeywordEffect = (service: SubjectRecommendService) => {
     switch (searchMode) {
       case "UNIV":
         if (!isMatchUniv) return clear;
+        setMajorResultLoading(true);
         service
           .searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
-          .then((results) => setMajorResultList(results));
+          .then((results) => setMajorResultList(results))
+          .finally(() => setMajorResultLoading(false));
         return clear;
       case "FULL":
         if (!fullNameKeyword) return clear;
+        setMajorResultLoading(true);
         service
           .searchByUnivOrMajor(fullNameKeyword)
-          .then((results) => setMajorResultList(results));
+          .then((results) => setMajorResultList(results))
+          .finally(() => setMajorResultLoading(true));
         return clear;
     }
   }, [
@@ -67,6 +73,7 @@ const useChangeKeywordEffect = (service: SubjectRecommendService) => {
     fullNameKeyword,
     setUnivSearchResultList,
     setMajorResultList,
+    setMajorResultLoading
   ]);
 };
 
@@ -79,6 +86,8 @@ const SubjectRecommendInteractor = () => {
   const setMajorKeyword = useSetRecoilState(majorKeywordState);
   const setFullNameKeyword = useSetRecoilState(fullNameKeywordState);
   const setSearchMode = useSetRecoilState(searchModeState);
+
+  const majorResultList = useRecoilValue(majorResultListState);
 
   const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
 
@@ -95,7 +104,7 @@ const SubjectRecommendInteractor = () => {
   useChangeKeywordEffect(service);
 
   const setSubjectDataList = useSetRecoilState(subjectDataListState);
-  const setRecommendStatus = useSetRecoilState(recommendStatusState);
+  // const setRecommendStatus = useSetRecoilState(recommendStatusState);
 
   return (
     <div className="mt-6">
@@ -117,14 +126,19 @@ const SubjectRecommendInteractor = () => {
           }
         }, 250)}
         clickMajor={(id) => {
+          const major = majorResultList.find((v) => v.id === id);
+          if (!major) {
+            return;
+          }
           setLoading(true);
           setSelectedMajorCode(id);
-          service.readSubjectList(id).then((list) => {
+          service.readSubjectList({
+            requiredCredits: major.requiredCredits,
+            requiredGroups: major.requiredGroups,
+            difficulty: major.difficulty
+          }).then((list) => {
             setSubjectDataList(list);
-            service.recommend(list).then((status) => {
-              setRecommendStatus(status);
-              setLoading(false);
-            });
+            setLoading(false);
           });
         }}
       />

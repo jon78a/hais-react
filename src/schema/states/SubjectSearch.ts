@@ -41,6 +41,11 @@ export const majorResultListState = atom<MajorResult[]>({
   default: []
 });
 
+export const majorResultLoadingState = atom<boolean>({
+  key: "schema/states/SubjectSearch/MajorResultLoading",
+  default: false
+});
+
 export const isMatchUnivState = selector<boolean>({
   key: "schema/states/SubjectSearch/isMatchUniv",
   get: ({get}) => {

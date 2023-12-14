@@ -7,6 +7,7 @@ import {
   searchModeState,
   univSearchResultListState,
   selectedMajorIdState,
+  majorResultLoadingState,
 } from "../../../schema/states/SubjectSearch";
 import { SearchBarUx } from "../subject-search.ux/SearchBarUx";
 import type { SearchMode } from "../../../schema/types/SubjectSearch";
@@ -28,13 +29,15 @@ import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const SearchBar: React.FC<SearchBarUx> = (ux) => {
   const searchMode = useRecoilValue(searchModeState);
   const isMatchUniv = useRecoilValue(isMatchUnivState);
 
   const univSearchList = useRecoilValue(univSearchResultListState);
-  const fullNameList = useRecoilValue(majorResultListState);
+  const majorResultList = useRecoilValue(majorResultListState);
+  const isLoading = useRecoilValue(majorResultLoadingState);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     ux.selectSearchMode(newValue as SearchMode);
@@ -122,7 +125,11 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
         </Button>
       </div>
       <Divider />
-      {!!fullNameList.length ? (
+      {isLoading ? (
+        <div className="w-full flex items-center justify-center mt-4">
+          <CircularProgress />
+        </div>
+      ) : majorResultList.length ? (
         <Collapse in={isShowList}>
           <Paper
             sx={{
@@ -131,7 +138,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
             }}
           >
             <List>
-              {fullNameList.map((value) => (
+              {majorResultList.map((value) => (
                 <ListItem sx={{ p: 0 }}>
                   <ListItemButton
                     onClick={() => {

@@ -41,6 +41,11 @@ export const majorResultListState = atom<MajorResult[]>({
   default: []
 });
 
+export const majorResultLoadingState = atom<boolean>({
+  key: "schema/states/AdminMajor/MajorResultLoading",
+  default: false
+});
+
 export const isMatchUnivState = selector<boolean>({
   key: "schema/states/AdminMajor/isMatchUniv",
   get: ({get}) => {
@@ -67,7 +72,7 @@ export const selectedMajorState = selector<MajorResult | undefined>({
   get: ({get}) => {
     const selectedId = get(selectedMajorIdState);
     if (!selectedId) return undefined;
-    return get(majorResultListState).find((v) => v.id === selectedId);
+    return get(majorResultListState)?.find((v) => v.id === selectedId);
   }
 });
 

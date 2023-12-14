@@ -18,6 +18,7 @@ import {
   univSearchResultListState,
   subjectDataListState,
   selectedMajorState,
+  majorResultLoadingState,
 } from "../../../schema/states/AdminMajor";
 import MajorRecruitForm from "../../presenter/admin/major.ui/MajorRecruitForm";
 // import SubjectList from "../../presenter/admin/major.ui/SubjectList";
@@ -36,6 +37,8 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
   const setUnivSearchResultList = useSetRecoilState(univSearchResultListState);
   const setMajorResultList = useSetRecoilState(majorResultListState);
 
+  const setMajorResultLoading = useSetRecoilState(majorResultLoadingState);
+
   useEffect(() => {
     service.suggestUniv("").then((results) => setUnivSearchResultList(results));
   }, []);
@@ -44,15 +47,19 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
     switch (searchMode) {
       case "UNIV":
         if (!isMatchUniv) return;
+        setMajorResultLoading(true);
         service
           .searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
-          .then((results) => setMajorResultList(results));
+          .then((results) => setMajorResultList(results))
+          .finally(() => setMajorResultLoading(false));
         return;
       case "FULL":
         if (!fullNameKeyword) return;
+        setMajorResultLoading(true);
         service
           .searchByUnivOrMajor(fullNameKeyword)
-          .then((results) => setMajorResultList(results));
+          .then((results) => setMajorResultList(results))
+          .finally(() => setMajorResultLoading(false));
         return;
     }
   }, [
@@ -64,6 +71,7 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
     fullNameKeyword,
     setUnivSearchResultList,
     setMajorResultList,
+    setMajorResultLoading
   ]);
 };
 
@@ -184,7 +192,7 @@ const AdminMajorInteractor = () => {
               })
             );
           }}
-          editDifficulty={(value) => {
+          inputDifficulty={(value) => {
             if (!selectedMajor) {
               return;
             }
@@ -213,8 +221,8 @@ const AdminMajorInteractor = () => {
           }}
         />
         {/* <div className="mt-4 pb-12">
-        <SubjectList/>
-      </div> */}
+          <SubjectList/>
+        </div> */}
       </div>
       <Backdrop
         sx={{

@@ -16,7 +16,18 @@ export type MajorResult = {
   name: string;
   univ: string;
   department: string;
-};
+} & MajorRecruit;
+
+export type MajorRecruit =  {
+  requiredCredits: RequiredCreditFieldDto[];
+  requiredGroups: string[];
+  difficulty: string;
+}
+
+export type RequiredCreditFieldDto = {
+  subjectCategory: string;
+  amount: string;
+}
 
 export type SelectedMajorId = number | string | null;
 
