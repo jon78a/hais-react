@@ -50,7 +50,9 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
             description: "",
             etcInfo: "",
             subjectCategory: "일반선택",
-            suneungInfo: ""
+            suneungInfo: "",
+            creditAmount: "0",
+            difficulty: "0"
           }
         });
         break;
@@ -234,6 +236,25 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
                 creditAmount: formatNumber(
                   e.target.value,
                   (form.data as OptionalSubjectDetail).creditAmount
+                ),
+              },
+            })
+          }
+        />
+        <TextField
+          label="난이도"
+          fullWidth
+          variant="standard"
+          value={(form.data as OptionalSubjectDetail).difficulty}
+          sx={{ mt: 2 }}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              data: {
+                ...form.data,
+                difficulty: formatNumber(
+                  e.target.value,
+                  (form.data as OptionalSubjectDetail).difficulty
                 ),
               },
             })

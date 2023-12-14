@@ -64,6 +64,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
           suneungInfo: v.suneung_info,
           etcInfo: v.etc_info,
           creditAmount: v.credit_amount,
+          difficulty: v.difficulty
         };
       });
   },
@@ -90,6 +91,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         suneungInfo: data.suneung_info,
         etcInfo: data.etc_info,
         creditAmount: data.credit_amount,
+        difficulty: data.difficulty
       });
     });
     return _list.filter((v) => v.name.includes(filter.nameKeyword));
@@ -110,6 +112,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         suneungInfo: data.suneung_info,
         etcInfo: data.etc_info,
         creditAmount: data.credit_amount,
+        difficulty: data.difficulty
       };
     } else return null;
   },
@@ -137,6 +140,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         suneung_info: optionalSubject.suneungInfo,
         etc_info: optionalSubject.etcInfo,
         credit_amount: optionalSubject.creditAmount,
+        difficulty: optionalSubject.difficulty
       };
       await setDoc(docRef, data);
     } else {
@@ -152,6 +156,7 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         suneung_info: optionalSubject.suneungInfo,
         etc_info: optionalSubject.etcInfo,
         credit_amount: optionalSubject.creditAmount,
+        difficulty: optionalSubject.difficulty
       };
       await setDoc(docRef, data);
     }
