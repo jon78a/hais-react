@@ -5,6 +5,6 @@ export interface MajorRecruitFormUx {
   removeRequiredCredit: (index: number) => void;
   addGroup: (value: string) => void;
   removeGroup: (index: number) => void;
-  editDifficulty: (value: string) => void;
+  inputDifficulty: (value: string) => void;
   save: () => void;
 }

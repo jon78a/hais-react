@@ -5,7 +5,7 @@ import {
 import { CommonSubjectRepository, CommonSubjectWeightRepository, GradeScoreRepository, GradeScoreWeightRepository, OptionalSubjectRepository, StudentRepository } from "../../domain/subject/school.interface";
 import { SubjectRecommendContext } from "../../service/subject-recommend";
 import { AuthSessionRepository } from "../../domain/account/auth.interface";
-import type { Comparison } from "../../schema/types/SubjectRecommend";
+import type { Comparison, SubjectData } from "../../schema/types/SubjectRecommend";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
@@ -58,7 +58,13 @@ const SubjectRecommendContainer = ({
               id: major.id,
               name: major.name,
               univ: major.univ,
-              department: major.department
+              department: major.department,
+              requiredCredits: major.requiredCredits.map((v) => ({
+                subjectCategory: v.subjectCategory,
+                amount: v.amount.toString()
+              })),
+              requiredGroups: major.requiredGroups,
+              difficulty: major.difficulty.toString()
             }
           })
         },
@@ -69,7 +75,13 @@ const SubjectRecommendContainer = ({
               id: major.id,
               name: major.name,
               univ: major.univ,
-              department: major.department
+              department: major.department,
+              requiredCredits: major.requiredCredits.map((v) => ({
+                subjectCategory: v.subjectCategory,
+                amount: v.amount.toString()
+              })),
+              requiredGroups: major.requiredGroups,
+              difficulty: major.difficulty.toString()
             }
           });
         },
@@ -108,10 +120,36 @@ const SubjectRecommendContainer = ({
             comparisons
           }
         },
-        async readSubjectList(majorId) {
-          const optionalSubjects =
-            await optionalSubjectRepository.findByMajorId(majorId);
-          return [...optionalSubjects];
+        async readSubjectList(recruit) {
+          const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
+          const subjectsByGroup = subjects.filter((subject) => recruit.requiredGroups.includes(subject.group));
+
+          let categoryCreditBuffer: {[key: string]: number} = {};
+          let categoryCreditMap: {[key: string]: number} = {};
+          let categorySubjectMap: {[key: string]: SubjectData[]} = {};
+
+          recruit.requiredCredits.forEach((item) => {
+            categoryCreditBuffer[item.subjectCategory] = 0;
+            categoryCreditMap[item.subjectCategory] = parseInt(item.amount);
+          });
+
+          subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
+          subjectsByGroup.forEach((subject) => {
+            const category = subject.subjectCategory;
+            const creditAmount = subject.creditAmount;
+
+            const totalAmount = categoryCreditMap[category];
+            const currAmount = categoryCreditBuffer[category];
+
+            if (currAmount + creditAmount > totalAmount) {
+              return;
+            }
+
+            categoryCreditBuffer[category] += creditAmount;
+            categorySubjectMap[category] = (categorySubjectMap[category] ?? []).concat({...subject});
+          });
+
+          return ([] as SubjectData[]).concat(...Object.values(categorySubjectMap));
         },
       }}
     >

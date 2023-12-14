@@ -7,7 +7,8 @@ import {
   SubjectData,
   MajorKeyword,
   FullNameKeyword,
-  RecommendStatus
+  RecommendStatus,
+  MajorRecruit
 } from "../schema/types/SubjectRecommend";
 
 export interface SubjectRecommendService {
@@ -15,7 +16,7 @@ export interface SubjectRecommendService {
   searchByMajorKeywordOnUnivName: (majorKeyword: MajorKeyword, univName: string) => Promise<MajorResult[]>;
   searchByUnivOrMajor: (fullNameKeyword: FullNameKeyword) => Promise<MajorResult[]>;
   recommend: (subjects: SubjectData[]) => Promise<RecommendStatus>;
-  readSubjectList: (majorId: number | string) => Promise<SubjectData[]>;
+  readSubjectList: (recruit: MajorRecruit) => Promise<SubjectData[]>;
 }
 
 export const SubjectRecommendContext = createContext<SubjectRecommendService | undefined>(undefined);

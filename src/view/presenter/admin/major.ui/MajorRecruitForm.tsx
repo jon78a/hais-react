@@ -176,7 +176,7 @@ const MajorRecruitForm = (ux: MajorRecruitFormUx) => {
             <TextField variant="standard" sx={{maxWidth: 60}} onChange={(e) => {
               const formatted = formatNumber(e.target.value, difficultyValue);
               setDifficultyValue(formatted);
-              ux.editDifficulty(formatted);
+              ux.inputDifficulty(formatted);
             }} value={difficultyValue} />
           </Stack>
         </Stack>

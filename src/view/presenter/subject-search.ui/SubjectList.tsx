@@ -46,7 +46,7 @@ const SubjectList: React.FC = () => {
                 <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.subjectCategory}</TableCell>
                 <TableCell align="center">{row.group}</TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <IconButton
                     aria-label="expand row"
                     size="small"
