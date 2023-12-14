@@ -248,6 +248,25 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
             }
           />
           <TextField
+            label="난이도"
+            fullWidth
+            variant="standard"
+            value={(form.data as OptionalSubjectDetail).difficulty}
+            sx={{ mt: 2 }}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                data: {
+                  ...form.data,
+                  difficulty: formatNumber(
+                    e.target.value,
+                    (form.data as OptionalSubjectDetail).difficulty
+                  ),
+                },
+              })
+            }
+          />
+          <TextField
             label="설명"
             fullWidth
             variant="standard"

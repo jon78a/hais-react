@@ -98,7 +98,8 @@ const AdminSubjectContainer = ({
               etcInfo: data.etcInfo,
               subjectCategory: data.subjectCategory,
               suneungInfo: data.suneungInfo,
-              creditAmount: parseInt(data.creditAmount)
+              creditAmount: parseInt(data.creditAmount),
+              difficulty: parseInt(data.difficulty)
             }, data.code);
             return;
         }
@@ -119,6 +120,7 @@ const AdminSubjectContainer = ({
             await optionalSubjectRepository.save({
               ...data,
               creditAmount: parseInt(data.creditAmount),
+              difficulty: parseInt(data.difficulty),
               code: ""
             });
             return;
