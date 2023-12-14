@@ -82,6 +82,8 @@ const SubjectSearchInteractor = () => {
   const setFullNameKeyword = useSetRecoilState(fullNameKeywordState);
   const setSearchMode = useSetRecoilState(searchModeState);
 
+  const majorResultList = useRecoilValue(majorResultListState);
+
   const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
 
   useEffect(() =>
@@ -116,9 +118,17 @@ const SubjectSearchInteractor = () => {
           }
         }, 250)}
         clickMajor={(id) => {
+          const major = majorResultList.find((v) => v.id === id);
+          if (!major) {
+            return;
+          }
           setLoading(true);
           setSelectedMajorCode(id);
-          service.readSubjectList(id).then((list) => {
+          service.readSubjectList({
+            requiredCredits: major.requiredCredits,
+            requiredGroups: major.requiredGroups,
+            difficulty: major.difficulty
+          }).then((list) => {
             setSubjectDataList(list);
             setLoading(false);
           });

@@ -87,6 +87,8 @@ const SubjectRecommendInteractor = () => {
   const setFullNameKeyword = useSetRecoilState(fullNameKeywordState);
   const setSearchMode = useSetRecoilState(searchModeState);
 
+  const majorResultList = useRecoilValue(majorResultListState);
+
   const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
 
   useEffect(
@@ -102,7 +104,7 @@ const SubjectRecommendInteractor = () => {
   useChangeKeywordEffect(service);
 
   const setSubjectDataList = useSetRecoilState(subjectDataListState);
-  const setRecommendStatus = useSetRecoilState(recommendStatusState);
+  // const setRecommendStatus = useSetRecoilState(recommendStatusState);
 
   return (
     <div className="mt-6">
@@ -124,14 +126,19 @@ const SubjectRecommendInteractor = () => {
           }
         }, 250)}
         clickMajor={(id) => {
+          const major = majorResultList.find((v) => v.id === id);
+          if (!major) {
+            return;
+          }
           setLoading(true);
           setSelectedMajorCode(id);
-          service.readSubjectList(id).then((list) => {
+          service.readSubjectList({
+            requiredCredits: major.requiredCredits,
+            requiredGroups: major.requiredGroups,
+            difficulty: major.difficulty
+          }).then((list) => {
             setSubjectDataList(list);
-            service.recommend(list).then((status) => {
-              setRecommendStatus(status);
-              setLoading(false);
-            });
+            setLoading(false);
           });
         }}
       />
