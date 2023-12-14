@@ -31,10 +31,10 @@ const SubjectList: React.FC = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell align="center">과목코드</TableCell>
-            <TableCell align="center">교과명</TableCell>
             <TableCell align="center">구분</TableCell>
+            <TableCell align="center">교과명</TableCell>
             <TableCell align="center">그룹명</TableCell>
+            <TableCell align="center">이수학점</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -42,10 +42,10 @@ const SubjectList: React.FC = () => {
           {subjectDataList.map((row) => (
             <>
               <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-                <TableCell align="center">{row.code}</TableCell>
-                <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.subjectCategory}</TableCell>
+                <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.group}</TableCell>
+                <TableCell align="center">{row.creditAmount}</TableCell>
                 <TableCell align="center">
                   <IconButton
                     aria-label="expand row"
@@ -72,7 +72,7 @@ const SubjectList: React.FC = () => {
                     in={clickedRowCode === row.code}
                     timeout="auto"
                     unmountOnExit
-                    sx={{ py: 4, px: 1 }}
+                    sx={{ py: 4, px: 5 }}
                   >
                     <Stack spacing={2}>
                       <Stack spacing={1}>

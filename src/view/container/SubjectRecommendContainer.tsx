@@ -122,7 +122,12 @@ const SubjectRecommendContainer = ({
         },
         async readSubjectList(recruit) {
           const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
-          const subjectsByGroup = subjects.filter((subject) => recruit.requiredGroups.includes(subject.group));
+          const subjectsByGroup = subjects
+            .filter(
+              (subject) => 
+                recruit.requiredGroups.includes(subject.group) &&
+                subject.difficulty >= parseInt(recruit.difficulty)
+            );
 
           let categoryCreditBuffer: {[key: string]: number} = {};
           let categoryCreditMap: {[key: string]: number} = {};
