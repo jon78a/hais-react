@@ -1,3 +1,5 @@
+import type { SubjectLabel } from "../../../schema/types/MyScore";
+
 export interface FilterSelectUx {
-  selectSchoolYear: (year: number) => void;
+  selectSubjectLabel: (label: SubjectLabel) => void;
 }

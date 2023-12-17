@@ -1,18 +1,10 @@
 import { atom, selector } from "recoil";
 
-import { SubjectSummary, type SelectedSchoolYear, type SubjectLabel, ScoreRow, CreditScoreValue, GradeScoreValue } from "../types/MyScore";
+import { SubjectSummary, type SubjectLabel, ScoreRow, CreditScoreValue, GradeScoreValue } from "../types/MyScore";
 
-export const selectedSchoolYearState = atom<SelectedSchoolYear>({
-  key: "schema/states/MyScore/SelectedSchoolYear",
-  default: 1
-});
-
-export const subjectLabelState = selector<SubjectLabel>({
+export const subjectLabelState = atom<SubjectLabel>({
   key: "schema/states/MyScore/SubjectLabel",
-  get: ({get}) => {
-    const year = get(selectedSchoolYearState);
-    return year === 1 ? "공통과목" : "선택과목";
-  }
+  default: "공통과목"
 });
 
 export const subjectSummaryListState = atom<SubjectSummary[]>({

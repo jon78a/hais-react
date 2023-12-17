@@ -1,35 +1,35 @@
 import { FilterSelectUx } from "../myScore.ux/FilterSelectUx";
+import type { SubjectLabel } from "../../../schema/types/MyScore";
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useRecoilValue } from "recoil";
-import { selectedSchoolYearState } from "../../../schema/states/MyScore";
+import { subjectLabelState } from "../../../schema/states/MyScore";
 
 const FilterSelect: React.FC<FilterSelectUx> = (ux) => {
-  const year = useRecoilValue(selectedSchoolYearState);
+  const subjectLabel = useRecoilValue(subjectLabelState);
 
   const handleChange = (event: SelectChangeEvent) => {
-    ux.selectSchoolYear(Number(event.target.value));
+    ux.selectSubjectLabel(event.target.value as SubjectLabel);
   };
 
   return (
     <FormControl sx={{
       minWidth: 120
     }}>
-      <InputLabel>학년</InputLabel>
+      <InputLabel>과목분류</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        value={String(year)}
-        label="year"
+        label="과목분류"
+        value={subjectLabel}
         onChange={handleChange}
         size={"small"}
       >
-        <MenuItem value={'1'}>1학년</MenuItem>
-        <MenuItem value={'2'}>2학년</MenuItem>
-        <MenuItem value={'3'}>3학년</MenuItem>
+        <MenuItem value={'공통과목'}>공통과목</MenuItem>
+        <MenuItem value={'선택과목'}>선택과목</MenuItem>
       </Select>
     </FormControl>
   );

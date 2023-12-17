@@ -1,7 +1,5 @@
 import { CreditType, GradeType } from "../../policy/score";
 
-export type SelectedSchoolYear = number;
-
 export type SubjectLabel = "공통과목" | "선택과목";
 
 export type GradeScoreForm = {
