@@ -125,7 +125,6 @@ const SubjectSearchInteractor = () => {
           setLoading(true);
           setSelectedMajorCode(id);
           service.readSubjectList({
-            requiredCredits: major.requiredCredits,
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty
           }).then((list) => {

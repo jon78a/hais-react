@@ -19,10 +19,6 @@ export type MajorModel = {
   _specification?: string;
   investigation_year: string;
   status: "DELETE" | "ACTIVE";
-  required_credits: Array<{
-    subject_category: string;
-    amount: number;
-  }>;
   required_groups: string[];
   difficulty: number;
 };

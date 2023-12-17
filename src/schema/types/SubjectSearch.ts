@@ -19,7 +19,6 @@ export type MajorResult = {
 } & MajorRecruit;
 
 export type MajorRecruit = {
-  requiredCredits: RequiredCreditFieldDto[];
   requiredGroups: string[];
   difficulty: string;
 }
@@ -36,8 +35,3 @@ export type SubjectData = {
   etcInfo: string; // 기타정보
   creditAmount: number;  // 이수학점
 };
-
-export type RequiredCreditFieldDto = {
-  subjectCategory: string;
-  amount: string;
-}

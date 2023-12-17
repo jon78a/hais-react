@@ -12,7 +12,6 @@ import {
   univKeywordState,
   univSearchResultListState,
   subjectDataListState,
-  recommendStatusState,
   majorResultLoadingState,
 } from "../../schema/states/SubjectRecommend";
 import SearchBar from "../presenter/subject-recommend.ui/SearchBar";
@@ -133,7 +132,6 @@ const SubjectRecommendInteractor = () => {
           setLoading(true);
           setSelectedMajorCode(id);
           service.readSubjectList({
-            requiredCredits: major.requiredCredits,
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty
           }).then((list) => {

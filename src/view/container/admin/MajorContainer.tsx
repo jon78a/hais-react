@@ -41,10 +41,6 @@ const AdminMajorContainer = ({
             name: major.name,
             univ: major.univ,
             department: major.department,
-            requiredCredits: major.requiredCredits.map((v) => ({
-              subjectCategory: v.subjectCategory,
-              amount: v.amount.toString()
-            })),
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty.toString()
           }
@@ -58,10 +54,6 @@ const AdminMajorContainer = ({
             name: major.name,
             univ: major.univ,
             department: major.department,
-            requiredCredits: major.requiredCredits.map((v) => ({
-              subjectCategory: v.subjectCategory,
-              amount: v.amount.toString()
-            })),
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty.toString()
           }
@@ -76,10 +68,6 @@ const AdminMajorContainer = ({
           return;
         }
         await majorRepository.updateRecruit({
-          requiredCredits: recruit.requiredCredits.map((v) => ({
-            subjectCategory: v.subjectCategory,
-            amount: parseInt(v.amount)
-          })),
           requiredGroups: recruit.requiredGroups,
           difficulty: parseInt(recruit.difficulty)
         }, id);

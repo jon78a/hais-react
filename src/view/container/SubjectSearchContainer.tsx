@@ -42,10 +42,6 @@ const SubjectSearchContainer = ({
             name: major.name,
             univ: major.univ,
             department: major.department,
-            requiredCredits: major.requiredCredits.map((v) => ({
-              subjectCategory: v.subjectCategory,
-              amount: v.amount.toString()
-            })),
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty.toString()
           }
@@ -59,10 +55,6 @@ const SubjectSearchContainer = ({
             name: major.name,
             univ: major.univ,
             department: major.department,
-            requiredCredits: major.requiredCredits.map((v) => ({
-              subjectCategory: v.subjectCategory,
-              amount: v.amount.toString()
-            })),
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty.toString()
           }
@@ -80,11 +72,6 @@ const SubjectSearchContainer = ({
         let categoryCreditBuffer: {[key: string]: number} = {};
         let categoryCreditMap: {[key: string]: number} = {};
         let categorySubjectMap: {[key: string]: SubjectData[]} = {};
-
-        recruit.requiredCredits.forEach((item) => {
-          categoryCreditBuffer[item.subjectCategory] = 0;
-          categoryCreditMap[item.subjectCategory] = parseInt(item.amount);
-        });
 
         subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
         subjectsByGroup.forEach((subject) => {

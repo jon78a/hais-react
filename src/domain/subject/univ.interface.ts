@@ -17,21 +17,14 @@ export interface Major {
   stdSclsfName: string;
   updatedAt?: number;
   gnrMjrCode?: string;
-  requiredCredits: RequiredCredit[];
   requiredGroups: string[];
   difficulty: number;
 }
 
 export type MajorRecruit = {
-  requiredCredits: RequiredCredit[];
   requiredGroups: string[];
   difficulty: number;
 }
-
-export type RequiredCredit = {
-  subjectCategory: string;
-  amount: number;
-};
 
 // 일반학과 : 교과 N:N
 export interface GeneralMajor {
