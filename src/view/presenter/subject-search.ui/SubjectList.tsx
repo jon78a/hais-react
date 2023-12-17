@@ -34,7 +34,6 @@ const SubjectList: React.FC = () => {
             <TableCell align="center">구분</TableCell>
             <TableCell align="center">교과명</TableCell>
             <TableCell align="center">그룹명</TableCell>
-            <TableCell align="center">이수학점</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -45,7 +44,6 @@ const SubjectList: React.FC = () => {
                 <TableCell align="center">{row.subjectCategory}</TableCell>
                 <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.group}</TableCell>
-                <TableCell align="center">{row.creditAmount}</TableCell>
                 <TableCell align="center">
                   <IconButton
                     aria-label="expand row"

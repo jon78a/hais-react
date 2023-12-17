@@ -229,25 +229,6 @@ const SubjectDetailDialog: React.FC<SubjectDetailDialogUx> = (ux) => {
             }
           />
           <TextField
-            label="이수학점"
-            fullWidth
-            variant="standard"
-            value={(form.data as OptionalSubjectDetail).creditAmount}
-            sx={{ mt: 2 }}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                data: {
-                  ...form.data,
-                  creditAmount: formatNumber(
-                    e.target.value,
-                    (form.data as OptionalSubjectDetail).creditAmount
-                  ),
-                },
-              })
-            }
-          />
-          <TextField
             label="난이도"
             fullWidth
             variant="standard"

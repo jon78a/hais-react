@@ -51,7 +51,6 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
             etcInfo: "",
             subjectCategory: "일반선택",
             suneungInfo: "",
-            creditAmount: "0",
             difficulty: "0"
           }
         });
@@ -222,25 +221,6 @@ const SubjectCreateDialog: React.FC<SubjectCreateDialogUx> = (ux) => {
             }
           </Select>
         </FormControl>
-        <TextField
-          label="이수학점"
-          fullWidth
-          variant="standard"
-          value={(form.data as OptionalSubjectDetail).creditAmount}
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              data: {
-                ...form.data,
-                creditAmount: formatNumber(
-                  e.target.value,
-                  (form.data as OptionalSubjectDetail).creditAmount
-                ),
-              },
-            })
-          }
-        />
         <TextField
           label="난이도"
           fullWidth

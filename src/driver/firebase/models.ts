@@ -38,7 +38,6 @@ export type OptionalSubjectModel = {
   description: string;
   suneung_info: string;
   etc_info: string;
-  credit_amount: number;
   difficulty: number;
 };
 

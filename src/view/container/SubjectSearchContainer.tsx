@@ -69,23 +69,23 @@ const SubjectSearchContainer = ({
                 subject.difficulty >= parseInt(recruit.difficulty)
             );
 
-        let categoryCreditBuffer: {[key: string]: number} = {};
-        let categoryCreditMap: {[key: string]: number} = {};
+        // let categoryCreditBuffer: {[key: string]: number} = {};
+        // let categoryCreditMap: {[key: string]: number} = {};
         let categorySubjectMap: {[key: string]: SubjectData[]} = {};
 
         subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
         subjectsByGroup.forEach((subject) => {
           const category = subject.subjectCategory;
-          const creditAmount = subject.creditAmount;
+          // const creditAmount = subject.creditAmount;
 
-          const totalAmount = categoryCreditMap[category];
-          const currAmount = categoryCreditBuffer[category];
+          // const totalAmount = categoryCreditMap[category];
+          // const currAmount = categoryCreditBuffer[category];
 
-          if (currAmount + creditAmount > totalAmount) {
-            return;
-          }
+          // if (currAmount + creditAmount > totalAmount) {
+          //   return;
+          // }
 
-          categoryCreditBuffer[category] += creditAmount;
+          // categoryCreditBuffer[category] += creditAmount;
           categorySubjectMap[category] = (categorySubjectMap[category] ?? []).concat({...subject});
         });
 
