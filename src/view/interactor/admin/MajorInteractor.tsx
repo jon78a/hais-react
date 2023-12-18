@@ -124,40 +124,6 @@ const AdminMajorInteractor = () => {
           }}
         />
         <MajorRecruitForm
-          addRequiredCredit={(dto) => {
-            if (!selectedMajor) {
-              return;
-            }
-            setMajorResultList(
-              majorResultList.map((result) => {
-                if (result.id === selectedMajorId) {
-                  return {
-                    ...result,
-                    requiredCredits: [dto, ...result.requiredCredits],
-                  };
-                }
-                return result;
-              })
-            );
-          }}
-          removeRequiredCredit={(index) => {
-            if (!selectedMajor) {
-              return;
-            }
-            setMajorResultList(
-              majorResultList.map((result) => {
-                if (result.id === selectedMajorId) {
-                  return {
-                    ...result,
-                    requiredCredits: result.requiredCredits.filter(
-                      (_, curr) => curr !== index
-                    ),
-                  };
-                }
-                return result;
-              })
-            );
-          }}
           addGroup={(value) => {
             if (!selectedMajor) {
               return;
@@ -214,7 +180,6 @@ const AdminMajorInteractor = () => {
             }
             setLoading(true);
             service.submitMajorRecruit({
-              requiredCredits: selectedMajor.requiredCredits,
               requiredGroups: selectedMajor.requiredGroups,
               difficulty: selectedMajor.difficulty
             }, selectedMajorId).finally(() => setLoading(false));

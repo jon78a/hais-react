@@ -28,10 +28,6 @@ const majorRepository: MajorRepository = {
           stdLclsfName: v["std_lclsf_name"],
           stdMclsfName: v["std_mclsf_name"],
           stdSclsfName: v["std_sclsf_name"],
-          requiredCredits: v.required_credits.map((item) => ({
-            subjectCategory: item.subject_category,
-            amount: item.amount
-          })),
           requiredGroups: v["required_groups"],
           difficulty: v["difficulty"]
         }
@@ -60,10 +56,6 @@ const majorRepository: MajorRepository = {
           stdLclsfName: v["std_lclsf_name"],
           stdMclsfName: v["std_mclsf_name"],
           stdSclsfName: v["std_sclsf_name"],
-          requiredCredits: v.required_credits.map((item) => ({
-            subjectCategory: item.subject_category,
-            amount: item.amount
-          })),
           requiredGroups: v["required_groups"],
           difficulty: v["difficulty"]
         }
@@ -90,10 +82,6 @@ const majorRepository: MajorRepository = {
       if (model.id === id) {
         return {
           ...model,
-          required_credits: recruit.requiredCredits.map((value) => ({
-            subject_category: value.subjectCategory,
-            amount: value.amount
-          })),
           required_groups: recruit.requiredGroups,
           difficulty: recruit.difficulty
         };

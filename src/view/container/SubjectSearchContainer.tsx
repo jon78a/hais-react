@@ -2,6 +2,7 @@ import { MajorRepository, UnivRepository } from "../../domain/subject/univ.inter
 import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
 import { SubjectSearchContext } from "../../service/subject-search";
 import type { SubjectData } from "../../schema/types/SubjectSearch";
+import { sortByDifficulty } from "../../policy/univs";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
@@ -42,10 +43,6 @@ const SubjectSearchContainer = ({
             name: major.name,
             univ: major.univ,
             department: major.department,
-            requiredCredits: major.requiredCredits.map((v) => ({
-              subjectCategory: v.subjectCategory,
-              amount: v.amount.toString()
-            })),
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty.toString()
           }
@@ -59,10 +56,6 @@ const SubjectSearchContainer = ({
             name: major.name,
             univ: major.univ,
             department: major.department,
-            requiredCredits: major.requiredCredits.map((v) => ({
-              subjectCategory: v.subjectCategory,
-              amount: v.amount.toString()
-            })),
             requiredGroups: major.requiredGroups,
             difficulty: major.difficulty.toString()
           }
@@ -70,35 +63,29 @@ const SubjectSearchContainer = ({
       },
       async readSubjectList(recruit) {
         const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
-        const subjectsByGroup = subjects
-            .filter(
-              (subject) => 
-                recruit.requiredGroups.includes(subject.group) &&
-                subject.difficulty >= parseInt(recruit.difficulty)
-            );
+        const subjectsByGroup = sortByDifficulty(parseInt(recruit.difficulty), subjects
+          .filter(
+            (subject) => 
+              recruit.requiredGroups.includes(subject.group)
+          )
+        );
 
-        let categoryCreditBuffer: {[key: string]: number} = {};
-        let categoryCreditMap: {[key: string]: number} = {};
+        // let categoryCreditBuffer: {[key: string]: number} = {};
+        // let categoryCreditMap: {[key: string]: number} = {};
         let categorySubjectMap: {[key: string]: SubjectData[]} = {};
 
-        recruit.requiredCredits.forEach((item) => {
-          categoryCreditBuffer[item.subjectCategory] = 0;
-          categoryCreditMap[item.subjectCategory] = parseInt(item.amount);
-        });
-
-        subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
         subjectsByGroup.forEach((subject) => {
           const category = subject.subjectCategory;
-          const creditAmount = subject.creditAmount;
+          // const creditAmount = subject.creditAmount;
 
-          const totalAmount = categoryCreditMap[category];
-          const currAmount = categoryCreditBuffer[category];
+          // const totalAmount = categoryCreditMap[category];
+          // const currAmount = categoryCreditBuffer[category];
 
-          if (currAmount + creditAmount > totalAmount) {
-            return;
-          }
+          // if (currAmount + creditAmount > totalAmount) {
+          //   return;
+          // }
 
-          categoryCreditBuffer[category] += creditAmount;
+          // categoryCreditBuffer[category] += creditAmount;
           categorySubjectMap[category] = (categorySubjectMap[category] ?? []).concat({...subject});
         });
 

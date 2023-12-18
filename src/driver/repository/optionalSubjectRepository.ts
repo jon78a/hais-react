@@ -63,7 +63,6 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
           description: v.description,
           suneungInfo: v.suneung_info,
           etcInfo: v.etc_info,
-          creditAmount: v.credit_amount,
           difficulty: v.difficulty
         };
       });
@@ -90,7 +89,6 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         description: data.description,
         suneungInfo: data.suneung_info,
         etcInfo: data.etc_info,
-        creditAmount: data.credit_amount,
         difficulty: data.difficulty
       });
     });
@@ -139,7 +137,6 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         description: optionalSubject.description,
         suneung_info: optionalSubject.suneungInfo,
         etc_info: optionalSubject.etcInfo,
-        credit_amount: optionalSubject.creditAmount,
         difficulty: optionalSubject.difficulty
       };
       await setDoc(docRef, data);
@@ -155,7 +152,6 @@ const optionalSubjectRepository: OptionalSubjectRepository = {
         description: optionalSubject.description,
         suneung_info: optionalSubject.suneungInfo,
         etc_info: optionalSubject.etcInfo,
-        credit_amount: optionalSubject.creditAmount,
         difficulty: optionalSubject.difficulty
       };
       await setDoc(docRef, data);

@@ -40,7 +40,8 @@ const creditScoreRepository: CreditScoreRepository = {
         studentId: docData.studentId,
         subjectCode: docData.subjectCode,
         credit: docData.credit,
-        category: docData.category
+        category: docData.category,
+        creditAmount: docData.creditAmount
       });
     });
 

@@ -21,7 +21,6 @@ export interface CommonSubject extends SubjectBase {}
 export interface OptionalSubject extends SubjectBase {
   subjectCategory: string;
   suneungInfo: string;
-  creditAmount: number;
   difficulty: number;
 }
 
@@ -38,6 +37,7 @@ export interface CreditScore {
   studentId: string;
   subjectCode: string;
   credit: CreditType;
+  creditAmount: number;
   category: string;
 }
 

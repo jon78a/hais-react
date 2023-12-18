@@ -94,6 +94,7 @@ const MyScoreContainer = ({
             await creditScoreRepository.save({
               ...form,
               studentId,
+              creditAmount: parseInt(form.creditAmount)
             });
           } catch {
             dispatchError({ type: "MODIFY" });
@@ -133,6 +134,7 @@ const MyScoreContainer = ({
               {
                 ...form,
                 studentId,
+                creditAmount: parseInt(form.creditAmount)
               },
               scoreId
             );
@@ -224,7 +226,8 @@ const MyScoreContainer = ({
             return {
               id: score.id,
               code: score.subjectCode,
-              value: score.credit
+              value: score.credit,
+              creditAmount: score.creditAmount.toString()
             }
           });
         },

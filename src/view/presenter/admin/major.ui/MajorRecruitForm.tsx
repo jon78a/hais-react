@@ -12,11 +12,6 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from '@mui/icons-material/Delete';
-import ListItemText from "@mui/material/ListItemText";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 
@@ -59,8 +54,6 @@ const MajorRecruitForm = (ux: MajorRecruitFormUx) => {
     [selectedMajorId, majorResultList]
   );
 
-  const [subjectCategoryValue, setSubjectCategoryValue] = useState<string>("");
-  const [creditAmountValue, setCreditAmountValue] = useState<string>("");
   const [subjectGroupValue, setSubjectGroupValue] = useState<string>("");
   const [difficultyValue, setDifficultyValue] = useState<string>("");
 
@@ -74,69 +67,6 @@ const MajorRecruitForm = (ux: MajorRecruitFormUx) => {
     <Stack spacing={4}>
       <Typography variant="h6" color="primary.main">{major.univ + ' ' + major.name}</Typography>
       <Stack spacing={4}>
-        <Stack spacing={2}>
-          <AddField title="요구학점"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!subjectCategoryValue || !creditAmountValue) {
-                return;
-              }
-              ux.addRequiredCredit({
-                subjectCategory: subjectCategoryValue,
-                amount: creditAmountValue,
-              });
-              setSubjectCategoryValue("");
-              setCreditAmountValue("");
-            }}
-          >
-            <TextField
-              size="small"
-              label="과목구분"
-              variant="outlined"
-              value={subjectCategoryValue}
-              onChange={(e) => {
-                setSubjectCategoryValue(e.target.value);
-              }}
-            />
-            <TextField
-              size="small"
-              label="필요학점"
-              variant="outlined"
-              value={creditAmountValue}
-              onChange={(e) => {
-                setCreditAmountValue(
-                  formatNumber(e.target.value, creditAmountValue)
-                );
-              }}
-            />
-          </AddField>
-          <List sx={{
-            maxWidth: MAX_WIDTH_LIMIT,
-          }}>
-            {
-              major.requiredCredits.map((dto, index) => (
-                <ListItem
-                  key={index}
-                  secondaryAction={
-                    <IconButton onClick={() => ux.removeRequiredCredit(index)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  }
-                  sx={{
-                    boxShadow: 1
-                  }}
-                >
-                  <ListItemText>
-                    과목구분: { dto.subjectCategory }
-                  </ListItemText>
-                  <ListItemText>
-                    필요학점: { dto.amount }학점
-                  </ListItemText>
-                </ListItem>
-              ))
-            }
-          </List>
-        </Stack>
         <Stack spacing={2}>
           <AddField title="필수 과목군"
             onSubmit={(e) => {

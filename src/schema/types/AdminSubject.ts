@@ -45,7 +45,6 @@ export type OptionalSubjectDto = {
   studentCategory: StudentCategoryCode;
   subjectCategory: string;
   suneungInfo: string;
-  creditAmount: string;
   difficulty: string;
 };
 
@@ -77,6 +76,5 @@ export type OptionalSubjectDetail = {
   studentCategory: StudentCategoryCode;
   subjectCategory: string;
   suneungInfo: string;
-  creditAmount: string;
   difficulty: string;
 };

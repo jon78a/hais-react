@@ -2,13 +2,14 @@ import {
   MajorRepository,
   UnivRepository,
 } from "../../domain/subject/univ.interface";
-import { CommonSubjectRepository, CommonSubjectWeightRepository, GradeScoreRepository, GradeScoreWeightRepository, OptionalSubjectRepository, StudentRepository } from "../../domain/subject/school.interface";
+import { CommonSubjectRepository, CommonSubjectWeightRepository, CreditScoreRepository, GradeScoreRepository, GradeScoreWeightRepository, OptionalSubjectRepository, StudentRepository } from "../../domain/subject/school.interface";
 import { SubjectRecommendContext } from "../../service/subject-recommend";
 import { AuthSessionRepository } from "../../domain/account/auth.interface";
 import type { Comparison, SubjectData } from "../../schema/types/SubjectRecommend";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
+import { sortByDifficulty } from "../../policy/univs";
 
 const SubjectRecommendContainer = ({
   children,
@@ -25,6 +26,7 @@ const SubjectRecommendContainer = ({
     commonSubjectWeightRepository: CommonSubjectWeightRepository;
     commonSubjectRepository: CommonSubjectRepository;
     gradeScoreRepository: GradeScoreRepository;
+    creditScoreRepository: CreditScoreRepository;
   };
 }) => {
   const {
@@ -35,9 +37,18 @@ const SubjectRecommendContainer = ({
     studentRepository,
     gradeScoreWeightRepository,
     gradeScoreRepository,
+    creditScoreRepository,
     commonSubjectRepository,
     commonSubjectWeightRepository
   } = repositories;
+
+  const getStudent = async () => {
+    const session = await authSessionRepository.find();
+    if (!session) throw Error('세션이 만료되었습니다.');
+    
+    const userId = session.userId;
+    return await studentRepository.findByUser(userId);
+  }
 
   return (
     <SubjectRecommendContext.Provider
@@ -59,10 +70,6 @@ const SubjectRecommendContainer = ({
               name: major.name,
               univ: major.univ,
               department: major.department,
-              requiredCredits: major.requiredCredits.map((v) => ({
-                subjectCategory: v.subjectCategory,
-                amount: v.amount.toString()
-              })),
               requiredGroups: major.requiredGroups,
               difficulty: major.difficulty.toString()
             }
@@ -76,21 +83,13 @@ const SubjectRecommendContainer = ({
               name: major.name,
               univ: major.univ,
               department: major.department,
-              requiredCredits: major.requiredCredits.map((v) => ({
-                subjectCategory: v.subjectCategory,
-                amount: v.amount.toString()
-              })),
               requiredGroups: major.requiredGroups,
               difficulty: major.difficulty.toString()
             }
           });
         },
         async recommend(subjects) {
-          const session = await authSessionRepository.find();
-          if (!session) throw Error('세션이 만료되었습니다.');
-          
-          const userId = session.userId;
-          const student = await studentRepository.findByUser(userId);
+          const student = await getStudent();
           const scores = await gradeScoreRepository.findByStudent(student.id);
           const scoreWeights = await gradeScoreWeightRepository.findAll();
           const subjectWeights = await commonSubjectWeightRepository.findAll();
@@ -121,36 +120,40 @@ const SubjectRecommendContainer = ({
           }
         },
         async readSubjectList(recruit) {
+          const student = await getStudent();
+          const creditScores = await creditScoreRepository.findByStudent(student.id);
           const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
-          const subjectsByGroup = subjects
+          const subjectsByGroup = sortByDifficulty(parseInt(recruit.difficulty), subjects
             .filter(
-              (subject) => 
-                recruit.requiredGroups.includes(subject.group) &&
-                subject.difficulty >= parseInt(recruit.difficulty)
-            );
+              (subject) => recruit.requiredGroups.includes(subject.group)
+            )
+            .filter(
+              (subject) => {
+                for (const score of creditScores) {
+                  if (score.subjectCode === subject.code) {
+                    return !score.creditAmount;
+                  }
+                }
+                return true;
+              }
+            )
+          );
 
-          let categoryCreditBuffer: {[key: string]: number} = {};
-          let categoryCreditMap: {[key: string]: number} = {};
+          // let categoryCreditBuffer: {[key: string]: number} = {};
+          // let categoryCreditMap: {[key: string]: number} = {};
           let categorySubjectMap: {[key: string]: SubjectData[]} = {};
 
-          recruit.requiredCredits.forEach((item) => {
-            categoryCreditBuffer[item.subjectCategory] = 0;
-            categoryCreditMap[item.subjectCategory] = parseInt(item.amount);
-          });
-
-          subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
           subjectsByGroup.forEach((subject) => {
             const category = subject.subjectCategory;
-            const creditAmount = subject.creditAmount;
 
-            const totalAmount = categoryCreditMap[category];
-            const currAmount = categoryCreditBuffer[category];
+            // const totalAmount = categoryCreditMap[category];
+            // const currAmount = categoryCreditBuffer[category];
 
-            if (currAmount + creditAmount > totalAmount) {
-              return;
-            }
+            // if (currAmount + creditAmount > totalAmount) {
+            //   return;
+            // }
 
-            categoryCreditBuffer[category] += creditAmount;
+            // categoryCreditBuffer[category] += creditAmount;
             categorySubjectMap[category] = (categorySubjectMap[category] ?? []).concat({...subject});
           });
 
