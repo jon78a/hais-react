@@ -9,6 +9,7 @@ import gradeScoreRepository from "../driver/repository/gradeScoreRepository";
 import commonSubjectWeightRepository from "../driver/repository/commonSubjectWeightRepository";
 import SubjectRecommendContainer from "../view/container/SubjectRecommendContainer";
 import commonSubjectRepository from "../driver/repository/commonSubjectRepository";
+import creditScoreRepository from "../driver/repository/creditScoreRepository";
 
 const SubjectRecommendPage = (): JSX.Element => {
   return (
@@ -21,6 +22,7 @@ const SubjectRecommendPage = (): JSX.Element => {
         studentRepository,
         gradeScoreWeightRepository,
         gradeScoreRepository,
+        creditScoreRepository,
         commonSubjectWeightRepository,
         commonSubjectRepository,
       }}

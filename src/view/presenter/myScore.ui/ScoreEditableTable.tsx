@@ -19,7 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputBase from '@mui/material/InputBase';
 import Paper from "@mui/material/Paper";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const GradeScoreSelect = ({save, row}: {
   save: (form: GradeScoreForm) => void;
@@ -69,7 +69,7 @@ const CreditScoreSelect = ({save, row}: {
           subjectCode: row.code,
           credit: event.target.value as CreditType,
           category: row.subjectCategory,
-          creditAmount: row.creditAmount as string
+          creditAmount: row.creditAmount as string || '0'
         });
       }}
       input={<InputBase sx={{
@@ -93,7 +93,11 @@ const CreditAmountInput = ({save, row}: {
   save: (form: CreditScoreForm) => void;
   row: ScoreRow;
 }) => {
-  const [value, setValue] = useState<string>(row.creditAmount ?? '0');
+  const [value, setValue] = useState<string>('0');
+
+  useEffect(() => {
+    setValue(row.creditAmount ?? '0');
+  }, [row]);
 
   const ref = useRef<HTMLInputElement>(null);
 

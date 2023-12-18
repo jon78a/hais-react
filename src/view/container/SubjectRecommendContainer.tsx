@@ -2,7 +2,7 @@ import {
   MajorRepository,
   UnivRepository,
 } from "../../domain/subject/univ.interface";
-import { CommonSubjectRepository, CommonSubjectWeightRepository, GradeScoreRepository, GradeScoreWeightRepository, OptionalSubjectRepository, StudentRepository } from "../../domain/subject/school.interface";
+import { CommonSubjectRepository, CommonSubjectWeightRepository, CreditScoreRepository, GradeScoreRepository, GradeScoreWeightRepository, OptionalSubjectRepository, StudentRepository } from "../../domain/subject/school.interface";
 import { SubjectRecommendContext } from "../../service/subject-recommend";
 import { AuthSessionRepository } from "../../domain/account/auth.interface";
 import type { Comparison, SubjectData } from "../../schema/types/SubjectRecommend";
@@ -26,6 +26,7 @@ const SubjectRecommendContainer = ({
     commonSubjectWeightRepository: CommonSubjectWeightRepository;
     commonSubjectRepository: CommonSubjectRepository;
     gradeScoreRepository: GradeScoreRepository;
+    creditScoreRepository: CreditScoreRepository;
   };
 }) => {
   const {
@@ -36,9 +37,18 @@ const SubjectRecommendContainer = ({
     studentRepository,
     gradeScoreWeightRepository,
     gradeScoreRepository,
+    creditScoreRepository,
     commonSubjectRepository,
     commonSubjectWeightRepository
   } = repositories;
+
+  const getStudent = async () => {
+    const session = await authSessionRepository.find();
+    if (!session) throw Error('세션이 만료되었습니다.');
+    
+    const userId = session.userId;
+    return await studentRepository.findByUser(userId);
+  }
 
   return (
     <SubjectRecommendContext.Provider
@@ -79,11 +89,7 @@ const SubjectRecommendContainer = ({
           });
         },
         async recommend(subjects) {
-          const session = await authSessionRepository.find();
-          if (!session) throw Error('세션이 만료되었습니다.');
-          
-          const userId = session.userId;
-          const student = await studentRepository.findByUser(userId);
+          const student = await getStudent();
           const scores = await gradeScoreRepository.findByStudent(student.id);
           const scoreWeights = await gradeScoreWeightRepository.findAll();
           const subjectWeights = await commonSubjectWeightRepository.findAll();
@@ -114,10 +120,22 @@ const SubjectRecommendContainer = ({
           }
         },
         async readSubjectList(recruit) {
+          const student = await getStudent();
+          const creditScores = await creditScoreRepository.findByStudent(student.id);
           const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
           const subjectsByGroup = sortByDifficulty(parseInt(recruit.difficulty), subjects
             .filter(
               (subject) => recruit.requiredGroups.includes(subject.group)
+            )
+            .filter(
+              (subject) => {
+                for (const score of creditScores) {
+                  if (score.subjectCode === subject.code) {
+                    return !score.creditAmount;
+                  }
+                }
+                return true;
+              }
             )
           );
 
@@ -125,7 +143,6 @@ const SubjectRecommendContainer = ({
           // let categoryCreditMap: {[key: string]: number} = {};
           let categorySubjectMap: {[key: string]: SubjectData[]} = {};
 
-          subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
           subjectsByGroup.forEach((subject) => {
             const category = subject.subjectCategory;
 

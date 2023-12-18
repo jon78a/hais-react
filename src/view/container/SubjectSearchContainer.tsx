@@ -74,7 +74,6 @@ const SubjectSearchContainer = ({
         // let categoryCreditMap: {[key: string]: number} = {};
         let categorySubjectMap: {[key: string]: SubjectData[]} = {};
 
-        subjectsByGroup.sort(() => Math.random() - 0.5);  // shuffle array
         subjectsByGroup.forEach((subject) => {
           const category = subject.subjectCategory;
           // const creditAmount = subject.creditAmount;
