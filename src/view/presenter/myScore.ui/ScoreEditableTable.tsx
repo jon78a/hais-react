@@ -18,6 +18,7 @@ import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputBase from '@mui/material/InputBase';
+import Paper from "@mui/material/Paper";
 
 const GradeScoreSelect = ({save, row}: {
   save: (form: GradeScoreForm) => void;
@@ -90,32 +91,54 @@ const ScoreEditableTable: React.FC<ScoreEditableTableUx> = (ux) => {
   const subjectLabel = useRecoilValue(subjectLabelState);
   const rows = useRecoilValue(scoreRowsState);
 
+  if (subjectLabel === "공통과목") {
+    return <CommonSubjectTable rows={rows} onSaveScore={ux.saveGradeScore} />
+  }
+  if (subjectLabel === "선택과목") {
+    return <OptionalSubjectTable rows={rows} onSaveScore={ux.saveCreditScore} />
+  }
+  return null;
+};
+
+type TableProps<ScoreForm> = {
+  rows: ScoreRow[];
+  onSaveScore: (form: ScoreForm) => void;
+}
+
+const CommonSubjectTable: React.FC<TableProps<GradeScoreForm>> = ({rows, onSaveScore}) => {
   return (
     <Stack spacing={2} sx={{paddingRight: 8}}>
+      <Grid container alignItems="center" component={Paper} sx={{
+        height: 48
+      }}>
+        <Grid xs={2} textAlign="center">
+          <Typography>분류</Typography>
+        </Grid>
+        <Grid xs={4} textAlign="center">
+          <Typography>교과명</Typography>
+        </Grid>
+        <Grid xs={4} textAlign="center">
+          <Typography>교과군</Typography>
+        </Grid>
+        <Grid xs={2} textAlign="center">
+          <Typography>성적</Typography>
+        </Grid>
+      </Grid>
       {
         rows.map((row, index) => (
           <div key={index}>
             <Grid container alignItems="center">
-              <Grid xs={2}>
+              <Grid xs={2} textAlign="center">
                 <Typography>{row.subjectCategory}</Typography>
               </Grid>
-              <Grid xs={4}>
-                <Typography sx={{textAlign: "center"}}>{row.name}</Typography>
+              <Grid xs={4} textAlign="center">
+                <Typography>{row.name}</Typography>
               </Grid>
-              <Grid xs={4}>
-                <Typography sx={{textAlign: "center"}}>{row.group}</Typography>
+              <Grid xs={4} textAlign="center">
+                <Typography>{row.group}</Typography>
               </Grid>
               <Grid xs={2}>
-                {
-                  subjectLabel === "공통과목" && (
-                    <GradeScoreSelect save={ux.saveGradeScore} row={row} />
-                  )
-                }
-                {
-                  subjectLabel === "선택과목" && (
-                    <CreditScoreSelect save={ux.saveCreditScore} row={row} />
-                  )
-                }
+                <GradeScoreSelect save={onSaveScore} row={row} />    
               </Grid>
             </Grid>
           </div>
@@ -123,6 +146,57 @@ const ScoreEditableTable: React.FC<ScoreEditableTableUx> = (ux) => {
       }
     </Stack>
   );
-};
+}
+
+const OptionalSubjectTable: React.FC<TableProps<CreditScoreForm>> = ({rows, onSaveScore}) => {
+  return (
+    <Stack spacing={2}>
+      <Grid container alignItems="center" component={Paper} sx={{
+        height: 48
+      }}>
+        <Grid item xs={2} textAlign="center">
+          <Typography>분류</Typography>
+        </Grid>
+        <Grid item xs={3} textAlign="center">
+          <Typography>교과명</Typography>
+        </Grid>
+        <Grid item xs={3} textAlign="center">
+          <Typography>교과군</Typography>
+        </Grid>
+        <Grid item xs={1} textAlign="center">
+          <Typography>성적</Typography>
+        </Grid>
+        <Grid item xs={1} />
+        <Grid item xs={1} textAlign="center">
+          <Typography>이수학점</Typography>
+        </Grid>
+      </Grid>
+      {
+        rows.map((row, index) => (
+          <div key={index}>
+            <Grid container alignItems="center">
+              <Grid item xs={2} textAlign="center">
+                <Typography>{row.subjectCategory}</Typography>
+              </Grid>
+              <Grid item xs={3} textAlign="center">
+                <Typography>{row.name}</Typography>
+              </Grid>
+              <Grid item xs={3} textAlign="center">
+                <Typography>{row.group}</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <CreditScoreSelect save={onSaveScore} row={row} />    
+              </Grid>
+              <Grid item xs={1} />
+              <Grid item xs={1}>
+                <CreditScoreSelect save={onSaveScore} row={row} />    
+              </Grid>
+            </Grid>
+          </div>
+        ))
+      }
+    </Stack>
+  )
+}
 
 export default ScoreEditableTable;
