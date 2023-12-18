@@ -43,7 +43,8 @@ export const scoreRowsState = selector<ScoreRow[]>({
         const scoreValue = scores.find((v) => v.code === subject.code);
         return {
           ...subject,
-          score: scoreValue?.value || ""
+          score: scoreValue?.value || "",
+          creditAmount: scoreValue?.creditAmount
         }
       });
     }

@@ -11,6 +11,7 @@ export type GradeScoreForm = {
 export type CreditScoreForm = {
   subjectCode: string;
   credit: CreditType;
+  creditAmount: string;
   category: string;
 };
 
@@ -25,6 +26,7 @@ export type CreditScoreValue = {
   id: string;
   code: string;
   value: CreditType;
+  creditAmount: string;
 };
 
 export type GradeScoreValue = {
@@ -33,4 +35,4 @@ export type GradeScoreValue = {
   value: GradeType;
 };
 
-export type ScoreRow = SubjectSummary & {score: string};
+export type ScoreRow = SubjectSummary & {score: string; creditAmount?: string};

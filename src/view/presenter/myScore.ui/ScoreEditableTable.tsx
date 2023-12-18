@@ -19,6 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputBase from '@mui/material/InputBase';
 import Paper from "@mui/material/Paper";
+import { useRef, useState } from "react";
 
 const GradeScoreSelect = ({save, row}: {
   save: (form: GradeScoreForm) => void;
@@ -67,7 +68,8 @@ const CreditScoreSelect = ({save, row}: {
         save({
           subjectCode: row.code,
           credit: event.target.value as CreditType,
-          category: row.subjectCategory
+          category: row.subjectCategory,
+          creditAmount: row.creditAmount as string
         });
       }}
       input={<InputBase sx={{
@@ -85,6 +87,50 @@ const CreditScoreSelect = ({save, row}: {
       <MenuItem value="F">F</MenuItem>
     </Select>
   );
+}
+
+const CreditAmountInput = ({save, row}: {
+  save: (form: CreditScoreForm) => void;
+  row: ScoreRow;
+}) => {
+  const [value, setValue] = useState<string>(row.creditAmount ?? '0');
+
+  const ref = useRef<HTMLInputElement>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+
+  const handleBlur = () => {
+    save({
+      subjectCode: row.code,
+      credit: row.score as CreditType,
+      category: row.subjectCategory,
+      creditAmount: value
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      ref.current?.blur();
+    }
+  }
+
+  return (
+    <InputBase
+      value={value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      inputProps={{
+        className: 'text-center',
+      }}
+      inputRef={ref}
+      onKeyDown={handleKeyDown}
+      sx={{
+        borderBottom: '1px solid'
+      }}
+    />
+  )
 }
 
 const ScoreEditableTable: React.FC<ScoreEditableTableUx> = (ux) => {
@@ -188,8 +234,8 @@ const OptionalSubjectTable: React.FC<TableProps<CreditScoreForm>> = ({rows, onSa
                 <CreditScoreSelect save={onSaveScore} row={row} />    
               </Grid>
               <Grid item xs={1} />
-              <Grid item xs={1}>
-                <CreditScoreSelect save={onSaveScore} row={row} />    
+              <Grid item xs={1} textAlign="center">
+                <CreditAmountInput save={onSaveScore} row={row} />
               </Grid>
             </Grid>
           </div>

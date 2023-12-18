@@ -37,6 +37,7 @@ export interface CreditScore {
   studentId: string;
   subjectCode: string;
   credit: CreditType;
+  creditAmount: number;
   category: string;
 }
 
