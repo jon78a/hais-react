@@ -2,6 +2,8 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
 
 type Profile = {
   id: number;
@@ -16,13 +18,13 @@ type Profile = {
 
 const People = (): JSX.Element => {
   return (
-    <div className="min-w-[1280px] py-16">
-      <Grid container gap={2} justifyContent="center">
+    <Container maxWidth="lg" className="mt-12 py-16">
+      <Stack spacing={8}>
         {
           profileList.map((profile) => (
-            <Grid item xs={5} key={profile.id}>
-              <Stack direction="row" spacing={4}>
-                <div className="w-[200px]">
+            <Stack key={profile.id} spacing={2}>
+              <Stack direction="row" spacing={4} maxWidth={720}>
+                <div className="w-[186px]">
                   <img className="w-full h-full" src={profile.imgPath} alt={`people${profile.id}`} />
                 </div>
                 <Grid container alignItems="center">
@@ -72,11 +74,12 @@ const People = (): JSX.Element => {
                   }
                 </Grid>
               </Stack>
-            </Grid>
+              <Divider orientation="horizontal" />
+            </Stack>
           ))
         }
-      </Grid>
-    </div>
+      </Stack>
+    </Container>
   );
 };
 
