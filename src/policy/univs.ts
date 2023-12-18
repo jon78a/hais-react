@@ -1,3 +1,5 @@
+import { OptionalSubject } from "../domain/subject/school.interface";
+
 export type RequiredCredit = {
   subjectCategory: string[];
   amount: number;
@@ -19,3 +21,14 @@ export const REQUIRED_CREDITS: RequiredCredit[] = [
 ];
 
 Object.freeze(REQUIRED_CREDITS);
+
+export function sortByDifficulty(target: number, items: OptionalSubject[]): OptionalSubject[] {
+  // items를 leftArr과 rightArr로 분리
+  const leftArr = items.filter((value) => value.difficulty <= target).sort((a, b) => b.difficulty - a.difficulty);
+  const rightArr = items.filter((value) => value.difficulty > target).sort((a, b) => a.difficulty - b.difficulty);
+
+  // leftArr과 rightArr을 합쳐서 결과 배열 생성
+  const resultArr = [...leftArr, ...rightArr];
+
+  return resultArr;
+}

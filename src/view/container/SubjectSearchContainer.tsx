@@ -2,6 +2,7 @@ import { MajorRepository, UnivRepository } from "../../domain/subject/univ.inter
 import { OptionalSubjectRepository } from "../../domain/subject/school.interface";
 import { SubjectSearchContext } from "../../service/subject-search";
 import type { SubjectData } from "../../schema/types/SubjectSearch";
+import { sortByDifficulty } from "../../policy/univs";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
@@ -62,12 +63,12 @@ const SubjectSearchContainer = ({
       },
       async readSubjectList(recruit) {
         const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
-        const subjectsByGroup = subjects
-            .filter(
-              (subject) => 
-                recruit.requiredGroups.includes(subject.group) &&
-                subject.difficulty >= parseInt(recruit.difficulty)
-            );
+        const subjectsByGroup = sortByDifficulty(parseInt(recruit.difficulty), subjects
+          .filter(
+            (subject) => 
+              recruit.requiredGroups.includes(subject.group)
+          )
+        );
 
         // let categoryCreditBuffer: {[key: string]: number} = {};
         // let categoryCreditMap: {[key: string]: number} = {};

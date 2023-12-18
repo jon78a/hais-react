@@ -9,6 +9,7 @@ import type { Comparison, SubjectData } from "../../schema/types/SubjectRecommen
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
+import { sortByDifficulty } from "../../policy/univs";
 
 const SubjectRecommendContainer = ({
   children,
@@ -114,12 +115,11 @@ const SubjectRecommendContainer = ({
         },
         async readSubjectList(recruit) {
           const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
-          const subjectsByGroup = subjects
+          const subjectsByGroup = sortByDifficulty(parseInt(recruit.difficulty), subjects
             .filter(
-              (subject) => 
-                recruit.requiredGroups.includes(subject.group) &&
-                subject.difficulty >= parseInt(recruit.difficulty)
-            );
+              (subject) => recruit.requiredGroups.includes(subject.group)
+            )
+          );
 
           // let categoryCreditBuffer: {[key: string]: number} = {};
           // let categoryCreditMap: {[key: string]: number} = {};
