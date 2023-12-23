@@ -143,7 +143,6 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
                   <ListItemButton
                     onClick={() => {
                       ux.clickMajor(value.id);
-                      setIsShowList(false);
                     }}
                     sx={{
                       py: 0,
