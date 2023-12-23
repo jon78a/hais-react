@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { BaseContainer } from "../view/container/BaseContainer";
@@ -6,10 +7,8 @@ import AdminBaseContainer from "../view/container/admin/BaseContainer";
 import authSessionRepository from "../driver/repository/authSessionRepository";
 import authRepository from "../driver/repository/authRepository";
 import userRepository from "../driver/repository/userRepository";
-import studentRepository from "../driver/repository/studentRepository";
-import gradeScoreRepository from "../driver/repository/gradeScoreRepository";
 import { authPermissionRoutes, publicRoutes, routes } from "../routes";
-import commonSubjectRepository from "../driver/repository/commonSubjectRepository";
+import { accountState } from "../schema/states/Account";
 
 import NotFound from "./NotFound";
 import Alert from "../Alert";
@@ -17,8 +16,7 @@ import Batch from "../Batch";
 
 export default function Layout() {
   const [unauthorized, setUnauthorized] = useState<boolean | undefined>(undefined);
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-  const [needScore, setNeedScore] = useState<boolean | undefined>(undefined);
+  const setAccount = useSetRecoilState(accountState);
 
   const {pathname} = useLocation();
   const navigate = useNavigate();
@@ -27,11 +25,6 @@ export default function Layout() {
     setUnauthorized(false);
     navigate(routes.login.path);
   };
-
-  const handleScoreClose = () => {
-    setNeedScore(undefined);
-    navigate(routes.myScore.path);
-  }
 
   useEffect(() => {
     for (let v of Object.values(publicRoutes)) {
@@ -52,7 +45,12 @@ export default function Layout() {
                     setUnauthorized(true);
                     return;
                   }
-                  setUserId(user.id);
+                  setAccount({
+                    userId: user.id,
+                    activated: user.activated,
+                    verified: user.verified,
+                    isAdmin: user.isAdmin
+                  });
                   setUnauthorized(!user.activated);
                 })
             } else { setUnauthorized(true) }
@@ -60,31 +58,9 @@ export default function Layout() {
         return;
       }
     }
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!userId) return;
-    if (pathname === routes.subjectRecommend.path) {
-      studentRepository.findByUser(userId)
-        .then((student) => {
-          Promise.all([
-            gradeScoreRepository.findByStudent(student.id),
-            commonSubjectRepository.findBy({
-              nameKeyword: ''
-            })
-          ])
-            .then((value) => {
-              const [scores, subjects] = value;
-              setNeedScore(scores.length < subjects.length);
-            });
-        });
-    }
-  }, [userId, pathname]);
+  }, [pathname, setAccount]);
 
   if (typeof unauthorized === "undefined") return <></>;
-  if (pathname === routes.subjectRecommend.path && needScore) return (
-    <Alert open={!!needScore} onClose={handleScoreClose} message="공통과목 성적을 등록해주세요."/>
-  );
 
   return !unauthorized ? (
     <BaseContainer

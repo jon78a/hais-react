@@ -2,11 +2,9 @@ import { useReducer } from "react";
 
 import { MyScoreContext } from "../../service/my-score";
 import {
-  CommonSubject,
   CommonSubjectRepository,
   CreditScoreRepository,
   GradeScoreRepository,
-  OptionalSubject,
   OptionalSubjectRepository,
   StudentRepository,
 } from "../../domain/subject/school.interface";
@@ -166,16 +164,9 @@ const MyScoreContainer = ({
         },
         async showSubjectSummaryList(label) {
           if (label === "공통과목") {
-            const localStorageKey = 'my.score.SubjectSummaryList.common'
-            const item = localStorage.getItem(localStorageKey);
-            let localData: CommonSubject[] | undefined;
-            if (item) {
-              localData = JSON.parse(item);
-            }
-            const data = localData ?? await commonSubjectRepository.findBy({
+            const data = await commonSubjectRepository.findBy({
               nameKeyword: "",
             });
-            !localData && localStorage.setItem(localStorageKey, JSON.stringify(data));
 
             return data.map((payload) => {
               return {
@@ -187,16 +178,9 @@ const MyScoreContainer = ({
             });
           }
           if (label === "선택과목") {
-            const localStorageKey = 'my.score.SubjectSummaryList.optional'
-            const item = localStorage.getItem(localStorageKey);
-            let localData: OptionalSubject[] | undefined;
-            if (item) {
-              localData = JSON.parse(item);
-            }
-            const data = localData ?? await optionalSubjectRepository.findBy({
+            const data = await optionalSubjectRepository.findBy({
               nameKeyword: "",
             });
-            !localData && localStorage.setItem(localStorageKey, JSON.stringify(data));
 
             return data.map((payload) => {
               return {

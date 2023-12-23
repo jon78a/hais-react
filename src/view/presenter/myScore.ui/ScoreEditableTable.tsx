@@ -161,16 +161,16 @@ const CommonSubjectTable: React.FC<TableProps<GradeScoreForm>> = ({rows, onSaveS
       <Grid container alignItems="center" component={Paper} sx={{
         height: 48
       }}>
-        <Grid xs={2} textAlign="center">
+        <Grid item xs={2} textAlign="center">
           <Typography>분류</Typography>
         </Grid>
-        <Grid xs={4} textAlign="center">
+        <Grid item xs={4} textAlign="center">
           <Typography>교과명</Typography>
         </Grid>
-        <Grid xs={4} textAlign="center">
+        <Grid item xs={4} textAlign="center">
           <Typography>교과군</Typography>
         </Grid>
-        <Grid xs={2} textAlign="center">
+        <Grid item xs={2} textAlign="center">
           <Typography>성적</Typography>
         </Grid>
       </Grid>
@@ -178,16 +178,16 @@ const CommonSubjectTable: React.FC<TableProps<GradeScoreForm>> = ({rows, onSaveS
         rows.map((row, index) => (
           <div key={index}>
             <Grid container alignItems="center">
-              <Grid xs={2} textAlign="center">
+              <Grid item xs={2} textAlign="center">
                 <Typography>{row.subjectCategory}</Typography>
               </Grid>
-              <Grid xs={4} textAlign="center">
+              <Grid item xs={4} textAlign="center">
                 <Typography>{row.name}</Typography>
               </Grid>
-              <Grid xs={4} textAlign="center">
+              <Grid item xs={4} textAlign="center">
                 <Typography>{row.group}</Typography>
               </Grid>
-              <Grid xs={2}>
+              <Grid item xs={2}>
                 <GradeScoreSelect save={onSaveScore} row={row} />    
               </Grid>
             </Grid>
