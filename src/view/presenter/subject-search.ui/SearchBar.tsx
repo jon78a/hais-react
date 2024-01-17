@@ -60,7 +60,6 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
               sx={{ width: "100%", maxWidth: 400 }}
               options={univSearchList}
               getOptionLabel={(option) => option.name}
-              placeholder={"학교명을 입력해주세요."}
               onChange={(e, newValue) => {
                 if (newValue) return ux.inputKeyword(newValue.name, "univ");
                 return ux.inputKeyword("", "univ");
@@ -69,6 +68,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
                 <TextField
                   {...params}
                   label="대학명 입력"
+                  placeholder={"학교명을 입력해 주세요."}
                   onChange={(e) => {
                     ux.inputKeyword(e.target.value, "univ");
                   }}
@@ -94,7 +94,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
             id="outlined-basic"
             label="학교 또는 학과명"
             variant="outlined"
-            placeholder={"학교 혹은 학과명을 입력해주세요."}
+            placeholder={"학교 혹은 학과명을 입력해 주세요."}
             sx={{ width: "100%", maxWidth: 400 }}
             onChange={(e) => ux.inputKeyword(e.target.value, "full")}
             size={"small"}
