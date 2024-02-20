@@ -23,8 +23,12 @@ const AdminSchoolContainer = ({
           const payload = await schoolRepository.findById(id);
           return payload;
         },
-        async addSchool() {},
+        async addSchool(req) {
+          const payload = await schoolRepository.save(req.data);
+          return payload;
+        },
         async deleteSchool(req) {
+          if (!req.id) return;
           await schoolRepository.delete(req.id);
         },
         async editSchool(req) {

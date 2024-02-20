@@ -11,6 +11,8 @@ export class CollectionName {
   static GradeScoreWeight = "grade_score_weight";
   static CommonSubjectWeight = "common_subject_weight";
   static School = "school";
+  static Year = 'year';
+  static Version = "version";
 }
 
 export class StorageSource {

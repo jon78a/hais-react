@@ -147,10 +147,6 @@ const SchoolTable: React.FC<{
             onRowSelectionModelChange={(rowSelectionModel) => {
               setRowSelections(rowSelectionModel.map((v) => v.toString()));
             }}
-            onRowDoubleClick={(params) => {
-              ux.clickRow(String(params.id));
-              setModalState("UPDATE");
-            }}
             rowSelectionModel={rowSelections}
           />
         </Box>

@@ -10,9 +10,8 @@ import { School } from "../../domain/school/school.interface";
 interface AdminSchoolService {
   getSchoolList: (filter: SubjectFilter) => Promise<School[]>;
   getSchool: (id: string) => Promise<School | null>;
-
   editSchool: (req: EditRequest) => Promise<void>;
-  addSchool: (req: CreateRequest) => Promise<void>;
+  addSchool: (req: CreateRequest) => Promise<{ id: string }>;
   deleteSchool: (req: DeleteRequest) => Promise<void>;
 }
 

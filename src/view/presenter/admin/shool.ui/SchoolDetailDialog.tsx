@@ -41,7 +41,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="학교명"
           fullWidth
-          variant="standard"
           value={form.data?.name}
           disabled
           sx={{ mt: 2 }}
@@ -49,7 +48,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="설명"
           fullWidth
-          variant="standard"
           value={form.data?.description}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -66,7 +64,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="구분"
           fullWidth
-          variant="standard"
           value={form.data?.type}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -105,7 +102,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="관할"
           fullWidth
-          variant="standard"
           value={form.data?.jurisdiction}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -122,7 +118,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="우편번호"
           fullWidth
-          variant="standard"
           value={form.data?.zipcode}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -139,7 +134,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="주소"
           fullWidth
-          variant="standard"
           value={form.data?.address1}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -156,7 +150,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="상세주소"
           fullWidth
-          variant="standard"
           value={form.data?.address2}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -173,7 +166,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="웹사이트 주소1"
           fullWidth
-          variant="standard"
           value={form.data?.web1}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -190,7 +182,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="웹사이트 주소2"
           fullWidth
-          variant="standard"
           value={form.data?.web2}
           sx={{ mt: 2 }}
           onChange={(e) =>
@@ -207,7 +198,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
         <TextField
           label="웹사이트 주소3"
           fullWidth
-          variant="standard"
           value={form.data?.web3}
           sx={{ mt: 2 }}
           onChange={(e) =>

@@ -10,7 +10,6 @@ import {
   schoolState,
   schoolTabState,
 } from "../../../schema/states/AdminSchool";
-import { readExcel } from "../../../policy/file";
 import SchoolTabContent from "../../presenter/admin/shool.ui/SchoolTabContent";
 import SchoolSubjectTabContent from "../../presenter/admin/shool.ui/SchoolSubjectTabContent";
 
@@ -62,8 +61,8 @@ const AdminSchoolInteractor = () => {
               });
             },
             create: (form) => {
-              service.addSchool(form).then(() => {
-                console.log(form);
+              service.addSchool(form).then(({ id }) => {
+                setSchoolList((prev) => [...prev, { ...form.data, id }]);
               });
             },
             delete: (form) => {
@@ -74,11 +73,6 @@ const AdminSchoolInteractor = () => {
                 setSchoolList(newSchoolList);
               });
             },
-            uploadExcel: (e) => {
-              console.log(e);
-              readExcel(e);
-            },
-            sampleExcelLink: "/files/sample.xlsx",
           }}
         />
       );

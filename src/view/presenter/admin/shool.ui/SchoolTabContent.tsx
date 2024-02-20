@@ -3,6 +3,7 @@ import SchoolDetailDialog from "./SchoolDetailDialog";
 import SchoolDeleteDialog from "./SchoolDeleteDialog";
 import SchoolFloatButton from "./SchoolFloatButton";
 import { SchoolTabContentUx } from "../school.ux/SchoolTabContentUx";
+import SchoolCreateDialog from "./SchoolCreateDialog";
 
 const SchoolTabContent: React.FC<{
   ux: SchoolTabContentUx;
@@ -15,13 +16,11 @@ const SchoolTabContent: React.FC<{
           inputKeyword: ux.inputKeyword,
         }}
       >
+        <SchoolCreateDialog create={ux.create} />
         <SchoolDetailDialog modify={ux.modify} />
         <SchoolDeleteDialog delete={ux.delete} />
+        <SchoolFloatButton />
       </SchoolTable>
-      <SchoolFloatButton
-        uploadExcel={ux.uploadExcel}
-        sampleExcelLink={ux.sampleExcelLink}
-      />
     </>
   );
 };

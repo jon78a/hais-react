@@ -1,11 +1,14 @@
-import { SchoolFloatButtonUx } from "../school.ux/SchoolFloatButtonUx";
-import UploadIcon from "@mui/icons-material/Upload";
+import { useContext } from "react";
+
+import { TableContext } from "./TableContext";
+
+import AddIcon from "@mui/icons-material/Add";
 import Tooltip from "@mui/material/Tooltip";
-import DownloadIcon from "@mui/icons-material/Download";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 
-const SchoolFloatButton: React.FC<SchoolFloatButtonUx> = (ux) => {
+const SchoolFloatButton: React.FC = () => {
+  const context = useContext(TableContext);
   return (
     <Box
       sx={{
@@ -17,20 +20,13 @@ const SchoolFloatButton: React.FC<SchoolFloatButtonUx> = (ux) => {
         alignItems: "center",
       }}
     >
-      <Tooltip title="학교 샘플 엑셀 폼 다운로드" placement="top">
-        <Fab href={ux.sampleExcelLink} download>
-          <DownloadIcon />
-        </Fab>
-      </Tooltip>
-      <Tooltip title="학교 엑셀 폼 업로드" placement="top">
-        <Fab tabIndex={-1} component="label">
-          <UploadIcon />
-          <input
-            accept=".xlsx, .xls, .csv"
-            type="file"
-            onChange={ux.uploadExcel}
-            className="absolute overflow-hidden w-1 h-1 bottom-0 left-0 whitespace-nowrap"
-          />
+      <Tooltip title="학교 등록" placement="top">
+        <Fab
+          tabIndex={-1}
+          component="label"
+          onClick={() => context.modal.set("CREATE")}
+        >
+          <AddIcon />
         </Fab>
       </Tooltip>
     </Box>

@@ -30,13 +30,14 @@ export type EditRequest = {
 export type SchoolDto = {
   id: string;
   name: string;
-  description: string;
-  type: string;
+  description?: string;
+  type?: string;
   operation: SchoolOperation;
-  jurisdiction: string;
-  address1: string;
-  address2: string;
+  jurisdiction?: string;
+  address1?: string;
+  address2?: string;
   zipcode?: string;
+  admin: string;
   web1: string;
   web2?: string;
   web3?: string;

@@ -33,8 +33,8 @@ import { Book } from "@mui/icons-material";
 const titleMap = {
   [adminRoutes.adminHome.path]: "교과과목",
   [adminRoutes.adminSubject.path]: "교과과목",
-  [adminRoutes.adminSchool.path]: "학교",
-  [adminRoutes.adminMajor.path]: "학과관리",
+  [adminRoutes.adminSchool.path]: "고등학교",
+  [adminRoutes.adminMajor.path]: "대학교",
   [adminRoutes.adminMeasurement.path]: "가중치 관리",
 }
 
