@@ -1,7 +1,5 @@
 import { useContext } from "react";
-
-import { TableContext } from "./TableContext";
-import { SchoolDeleteDialogUx } from "../school.ux/SchoolDeleteDialogUx";
+import { useRecoilValue } from "recoil";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -10,10 +8,16 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import { schoolState } from "../../../../schema/states/AdminSchool";
 import ListItemText from "@mui/material/ListItemText";
+import { SchoolSubjectDeleteDialogUx } from "../school.ux/SchoolSubjectDeleteDialogUx";
+import { SchoolSubjectTableContext } from "./SchoolSubjectTableContext";
 
-const SchoolDeleteDialog: React.FC<SchoolDeleteDialogUx> = (ux) => {
-  const context = useContext(TableContext);
+const SchoolSubjectDeleteDialog: React.FC<SchoolSubjectDeleteDialogUx> = (
+  ux
+) => {
+  const context = useContext(SchoolSubjectTableContext);
+  const school = useRecoilValue(schoolState);
 
   return (
     <Dialog
@@ -21,14 +25,18 @@ const SchoolDeleteDialog: React.FC<SchoolDeleteDialogUx> = (ux) => {
       onClose={() => context.modal.set(null)}
     >
       <DialogTitle>
-        학교를 삭제하시겠습니까? (아래의 항목이 삭제됩니다)
+        교과목을 삭제하시겠습니까? (아래의 항목이 삭제됩니다)
       </DialogTitle>
       <DialogContent>
         <List sx={{ maxHeight: 280, overflowY: "scroll" }}>
           <ListItem disablePadding>
             <ListItemText
               id={`checkbox-list-label-${context.selection.state?.id}`}
-              primary={context.selection.state?.name}
+              primary={
+                context.selection.state?.name +
+                "/" +
+                context.selection.state?.type
+              }
             />
           </ListItem>
         </List>
@@ -37,8 +45,11 @@ const SchoolDeleteDialog: React.FC<SchoolDeleteDialogUx> = (ux) => {
         <Button onClick={() => context.modal.set(null)}>취소</Button>
         <Button
           onClick={() => {
-            if (!context.selection.state?.id) return;
-            ux.delete({ id: context.selection.state?.id });
+            ux.delete({
+              isCommonSubject: context.selection.state?.type === "공통과목",
+              schoolId: school?.id,
+              subjectId: context.selection?.state?.id,
+            });
             context.modal.set(null);
           }}
         >
@@ -49,4 +60,4 @@ const SchoolDeleteDialog: React.FC<SchoolDeleteDialogUx> = (ux) => {
   );
 };
 
-export default SchoolDeleteDialog;
+export default SchoolSubjectDeleteDialog;

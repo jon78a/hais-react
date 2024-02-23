@@ -1,18 +1,10 @@
+import { SchoolOperation } from "../../policy/school";
 import {
-  SchoolCommonSubjectType,
-  SchoolOperation,
-  SchoolOptionalSubjectType,
-  SchoolSpecialSubjectType,
-} from "../../policy/school";
-import {
+  Credit,
+  Level,
   SchoolFilter,
   SchoolSubjectType,
 } from "../../schema/types/AdminSchool";
-
-export interface Version {
-  version: string;
-  type: "product" | "test";
-}
 
 export interface School {
   id: string;
@@ -24,7 +16,7 @@ export interface School {
   address1?: string;
   address2?: string;
   zipcode?: string;
-  admin: string;
+  admin: string[];
   web1: string;
   web2?: string;
   web3?: string;
@@ -32,30 +24,16 @@ export interface School {
   createdAt?: number;
 }
 
-export interface SchoolCommonSubject
-  extends SchoolSubjectBase<SchoolCommonSubjectType> {}
-export interface SchoolOptionalSubject
-  extends SchoolSubjectBase<SchoolOptionalSubjectType> {}
-export interface SchoolSpecialSubject
-  extends SchoolSubjectBase<SchoolSpecialSubjectType> {}
-
-export interface SchoolSubjectBase<T extends SchoolSubjectType> {
+export interface SchoolSubject {
   id: string;
-  description: string;
   name: string;
-  type: T | "";
+  type: SchoolSubjectType;
   groups: string[];
-  level: number;
-  credit: number;
-  admin?: string;
+  level: Level;
+  credit: Credit;
+  admin: string[];
   updatedAt?: number;
   createdAt?: number;
-}
-
-export interface Year {
-  year: number;
-  school: string;
-  university: string;
 }
 
 // Repositories
@@ -64,4 +42,36 @@ export interface SchoolRepository {
   delete: (key: string) => Promise<void>;
   findBy: (filter: SchoolFilter) => Promise<School[]>;
   findById: (id: string) => Promise<School | null>;
+
+  saveSubject: ({
+    form,
+    schoolId,
+    subjectId,
+  }: {
+    form: SchoolSubject;
+    schoolId: string;
+    subjectId?: string;
+  }) => Promise<{ id: string }>;
+  deleteSubject: ({
+    isCommonSubject,
+    schoolId,
+    subjectId,
+  }: {
+    isCommonSubject: boolean;
+    schoolId?: string;
+    subjectId?: string;
+  }) => Promise<void>;
+  findSubjectBy: (
+    filter: SchoolFilter,
+    schoolId: string
+  ) => Promise<SchoolSubject[]>;
+  findSubjectById: ({
+    isCommonSubject,
+    schoolId,
+    subjectId,
+  }: {
+    isCommonSubject: boolean;
+    schoolId: string;
+    subjectId: string;
+  }) => Promise<SchoolSubject | null>;
 }

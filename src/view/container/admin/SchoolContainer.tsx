@@ -35,6 +35,35 @@ const AdminSchoolContainer = ({
           if (!req.data) return;
           await schoolRepository.save(req.data, req.data.id);
         },
+        async addSubject(req) {
+          const payload = await schoolRepository.saveSubject({
+            form: req.data,
+            schoolId: req.schoolId,
+          });
+          return payload;
+        },
+        async getSubjectList(filter, schoolId) {
+          const payload = await schoolRepository.findSubjectBy(
+            filter,
+            schoolId
+          );
+          return payload;
+        },
+        async getSubject(req) {
+          const payload = await schoolRepository.findSubjectById(req);
+          return payload;
+        },
+        async deleteSubject(req) {
+          await schoolRepository.deleteSubject(req);
+        },
+        async editSubject(req) {
+          if (!req.data) return;
+          await schoolRepository.saveSubject({
+            form: req.data,
+            schoolId: req.schoolId,
+            subjectId: req.subjectId,
+          });
+        },
       }}
     >
       {children}

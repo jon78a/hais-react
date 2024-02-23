@@ -1,10 +1,11 @@
 import { atom } from "recoil";
 
-import type {
-  CommonSubjectDetail,
-  OptionalSubjectDetail,
-} from "../types/AdminSubject";
-import { SchoolTabItem, SchoolFilter, SchoolDto } from "../types/AdminSchool";
+import {
+  SchoolTabItem,
+  SchoolFilter,
+  SchoolDto,
+  SchoolSubjectDto,
+} from "../types/AdminSchool";
 
 export const schoolTabState = atom<SchoolTabItem>({
   key: "/schema/states/AdminSchool/SchoolTab",
@@ -28,14 +29,7 @@ export const schoolState = atom<SchoolDto | undefined>({
   default: undefined,
 });
 
-export const commonSubjectDetailState = atom<CommonSubjectDetail | undefined>({
-  key: "/schema/states/AdminSchool/CommonSubjectDetail",
-  default: undefined,
-});
-
-export const optionalSubjectDetailState = atom<
-  OptionalSubjectDetail | undefined
->({
-  key: "/schema/states/AdminSchool/OptionalSubjectDetail",
-  default: undefined,
+export const schoolSubjectListState = atom<SchoolSubjectDto[]>({
+  key: "/schema/states/AdminSchool/SchoolSubjectList",
+  default: [],
 });

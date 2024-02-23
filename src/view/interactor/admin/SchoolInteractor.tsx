@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { debounce } from "lodash";
 
 import { useAdminSchoolService } from "../../../service/admin/school";
@@ -8,6 +8,7 @@ import {
   schoolFilterState,
   schoolListState,
   schoolState,
+  schoolSubjectListState,
   schoolTabState,
 } from "../../../schema/states/AdminSchool";
 import SchoolTabContent from "../../presenter/admin/shool.ui/SchoolTabContent";
@@ -17,18 +18,40 @@ const AdminSchoolInteractor = () => {
   const [tabItem, setTabItem] = useRecoilState(schoolTabState);
   const [filter, setFilter] = useRecoilState(schoolFilterState);
   const [schoolList, setSchoolList] = useRecoilState(schoolListState);
+  const [school, setSchool] = useRecoilState(schoolState);
+
+  const [schoolSubjectList, setSchoolSubjectList] = useRecoilState(
+    schoolSubjectListState
+  );
 
   const isSchoolTabSelected = tabItem === "SCHOOL";
   const isSubjectTabSelected = tabItem === "SUBJECT";
 
-  const setSchool = useSetRecoilState(schoolState);
   const service = useAdminSchoolService();
 
   useEffect(() => {
-    service.getSchoolList(filter).then((data) => {
-      setSchoolList(data);
-    });
-  }, [filter, service, setSchoolList]);
+    if (isSchoolTabSelected) {
+      service.getSchoolList(filter).then((data) => {
+        setSchoolList(data);
+      });
+      return;
+    }
+
+    if (isSubjectTabSelected) {
+      if (!school?.id) return;
+      service.getSubjectList(filter, school.id).then((data) => {
+        setSchoolSubjectList(data);
+      });
+    }
+  }, [
+    filter,
+    isSchoolTabSelected,
+    service,
+    isSubjectTabSelected,
+    setSchoolList,
+    setSchoolSubjectList,
+    school?.id,
+  ]);
 
   const renderTabContent: React.JSX.Element | undefined = useMemo(() => {
     if (isSchoolTabSelected) {
@@ -65,10 +88,10 @@ const AdminSchoolInteractor = () => {
                 setSchoolList((prev) => [...prev, { ...form.data, id }]);
               });
             },
-            delete: (form) => {
-              service.deleteSchool(form).then(() => {
+            delete: (req) => {
+              service.deleteSchool(req).then(() => {
                 const newSchoolList = schoolList.filter(
-                  (school) => school.id !== form.id
+                  (school) => school.id !== req.id
                 );
                 setSchoolList(newSchoolList);
               });
@@ -81,14 +104,45 @@ const AdminSchoolInteractor = () => {
       return (
         <SchoolSubjectTabContent
           ux={{
-            clickRow(school) {
-              console.log(school);
-            },
             inputKeyword: debounce((value) => {
               setFilter({
                 nameKeyword: value,
               });
             }, 250),
+            create: (req) => {
+              service.addSubject(req).then(({ id }) => {
+                setSchoolSubjectList((prev) => [...prev, { ...req.data, id }]);
+              });
+            },
+            delete: (req) => {
+              service.deleteSubject(req).then(() => {
+                const newSubjectList = schoolSubjectList.filter(
+                  (subject) => subject.id !== req.subjectId
+                );
+                setSchoolSubjectList(newSubjectList);
+              });
+            },
+            modify: (req) => {
+              service.editSubject(req).then(() => {
+                if (req?.data?.id) {
+                  service
+                    .getSubject({
+                      isCommonSubject: req.data.type === "공통과목",
+                      schoolId: req.schoolId,
+                      subjectId: req.subjectId,
+                    })
+                    .then((data): void => {
+                      if (data) {
+                        const newSubjectList = schoolSubjectList.map(
+                          (subject) =>
+                            subject.id === req.subjectId ? data : subject
+                        );
+                        setSchoolSubjectList(newSubjectList);
+                      }
+                    });
+                }
+              });
+            },
           }}
         />
       );
@@ -98,10 +152,12 @@ const AdminSchoolInteractor = () => {
     isSchoolTabSelected,
     isSubjectTabSelected,
     schoolList,
+    schoolSubjectList,
     service,
     setFilter,
     setSchool,
     setSchoolList,
+    setSchoolSubjectList,
   ]);
 
   return (

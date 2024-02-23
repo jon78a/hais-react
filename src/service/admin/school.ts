@@ -4,8 +4,12 @@ import {
   DeleteRequest,
   CreateRequest,
   EditRequest,
+  SchoolSubjectCreateRequest,
+  SchoolSubjectDeleteRequest,
+  SchoolSubjectEditRequest,
+  SchoolSubjectGetRequest,
 } from "../../schema/types/AdminSchool";
-import { School } from "../../domain/school/school.interface";
+import { School, SchoolSubject } from "../../domain/school/school.interface";
 
 interface AdminSchoolService {
   getSchoolList: (filter: SubjectFilter) => Promise<School[]>;
@@ -13,6 +17,19 @@ interface AdminSchoolService {
   editSchool: (req: EditRequest) => Promise<void>;
   addSchool: (req: CreateRequest) => Promise<{ id: string }>;
   deleteSchool: (req: DeleteRequest) => Promise<void>;
+
+  getSubjectList: (
+    filter: SubjectFilter,
+    schoolId: string
+  ) => Promise<SchoolSubject[]>;
+  getSubject: ({
+    isCommonSubject,
+    schoolId,
+    subjectId,
+  }: SchoolSubjectGetRequest) => Promise<SchoolSubject | null>;
+  editSubject: (req: SchoolSubjectEditRequest) => Promise<void>;
+  addSubject: (req: SchoolSubjectCreateRequest) => Promise<{ id: string }>;
+  deleteSubject: (req: SchoolSubjectDeleteRequest) => Promise<void>;
 }
 
 export const AdminSchoolContext = createContext<AdminSchoolService | undefined>(

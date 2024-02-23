@@ -1,8 +1,7 @@
 import { atom } from "recoil";
 
 import type { DataStateType } from "../../types";
-import { School, SchoolSubjectBase } from "./school.interface";
-import { SchoolSubjectType } from "../../policy/school";
+import { School, SchoolSubject } from "./school.interface";
 
 export const defaultSchool: School = {
   id: "",
@@ -14,17 +13,19 @@ export const defaultSchool: School = {
   address1: "",
   address2: "",
   web1: "",
-  admin: "",
+  admin: [],
+  createdAt: new Date().valueOf(),
+  updatedAt: new Date().valueOf(),
 };
 
-export const defaultSubject: SchoolSubjectBase<SchoolSubjectType> = {
+export const defaultSubject: SchoolSubject = {
   id: "",
   name: "",
-  description: "",
-  type: "",
+  type: "공통과목",
   groups: [],
-  level: 0,
+  level: 1,
   credit: 0,
+  admin: [],
 };
 
 export const defaultYear = {

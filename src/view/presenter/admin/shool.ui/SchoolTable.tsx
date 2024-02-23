@@ -16,6 +16,8 @@ import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
+import { userState } from "../../../../schema/states/User";
+import { School } from "../../../../domain/school/school.interface";
 
 const SchoolTable: React.FC<{
   ux: SchoolTableUx;
@@ -27,6 +29,8 @@ const SchoolTable: React.FC<{
 
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const screenHeight = useScreenHeight();
+  const user = useRecoilValue(userState);
+  const [rowSelection, setRowSelection] = useState<School | null>(null);
 
   const schoolList = useRecoilValue(schoolListState);
   const schoolColumns = useMemo<GridColDef[]>(
@@ -55,11 +59,38 @@ const SchoolTable: React.FC<{
         headerName: "관할",
         width: mobile ? 100 : 200,
       },
+      {
+        field: "actions",
+        headerName: "actions",
+        width: 150,
+        renderCell: ({ row }) => {
+          if (!row.admin.includes(user?.email)) return null;
+          return (
+            <>
+              <Button
+                onClick={() => {
+                  setRowSelection(row);
+                  setModalState("UPDATE");
+                }}
+              >
+                수정
+              </Button>
+              <Button
+                onClick={() => {
+                  setRowSelection(row);
+                  setModalState("DELETE");
+                }}
+              >
+                삭제
+              </Button>
+            </>
+          );
+        },
+      },
     ],
-    [mobile]
+    [mobile, user?.email]
   );
 
-  const [rowSelections, setRowSelections] = useState<string[]>([]);
   const [modalState, setModalState] = useState<ModalState>(null);
   const [keywordValue, setKeywordValue] = useState<string>("");
 
@@ -70,9 +101,9 @@ const SchoolTable: React.FC<{
           state: modalState,
           set: setModalState,
         },
-        selections: {
-          state: rowSelections,
-          set: setRowSelections,
+        selection: {
+          state: rowSelection,
+          set: setRowSelection,
         },
       }}
     >
@@ -109,25 +140,6 @@ const SchoolTable: React.FC<{
               <SearchIcon />
             </IconButton>
           </Paper>
-          <Stack direction={"row"}>
-            <Button
-              disabled={rowSelections.length !== 1}
-              onClick={() => {
-                ux.clickRow(String(rowSelections[0]));
-                setModalState("UPDATE");
-              }}
-            >
-              수정
-            </Button>
-            <Button
-              disabled={rowSelections.length < 1}
-              onClick={() => {
-                setModalState("DELETE");
-              }}
-            >
-              삭제
-            </Button>
-          </Stack>
         </Stack>
         <Box height={screenHeight * 0.65}>
           <DataGrid
@@ -143,11 +155,7 @@ const SchoolTable: React.FC<{
                 paginationModel: { page: 0, pageSize: 15 },
               },
             }}
-            checkboxSelection
-            onRowSelectionModelChange={(rowSelectionModel) => {
-              setRowSelections(rowSelectionModel.map((v) => v.toString()));
-            }}
-            rowSelectionModel={rowSelections}
+            disableRowSelectionOnClick
           />
         </Box>
       </Stack>

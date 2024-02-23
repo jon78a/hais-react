@@ -1,5 +1,5 @@
 import type { CreateRequest } from "../../../../schema/types/AdminSchool";
 
 export interface SchoolCreateDialogUx {
-  create: (form: CreateRequest) => void;
+  create: (req: CreateRequest) => void;
 }

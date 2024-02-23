@@ -34,7 +34,7 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
         address1: "",
         address2: "",
         web1: "",
-        admin: "",
+        admin: [],
       },
     });
   }, [context.modal.state]);
@@ -189,6 +189,7 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
         <TextField
           label="관리자"
           fullWidth
+          required
           value={form.data?.admin}
           placeholder="user@site.com,user2@stie.com"
           sx={{ mt: 2 }}
@@ -198,7 +199,7 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
               ...form,
               data: {
                 ...form?.data,
-                admin: e.target.value,
+                admin: e.target.value.split(","),
               },
             })
           }

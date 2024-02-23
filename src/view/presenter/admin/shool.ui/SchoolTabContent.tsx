@@ -9,19 +9,17 @@ const SchoolTabContent: React.FC<{
   ux: SchoolTabContentUx;
 }> = ({ ux }) => {
   return (
-    <>
-      <SchoolTable
-        ux={{
-          clickRow: ux.clickRow,
-          inputKeyword: ux.inputKeyword,
-        }}
-      >
-        <SchoolCreateDialog create={ux.create} />
-        <SchoolDetailDialog modify={ux.modify} />
-        <SchoolDeleteDialog delete={ux.delete} />
-        <SchoolFloatButton />
-      </SchoolTable>
-    </>
+    <SchoolTable
+      ux={{
+        clickRow: ux.clickRow,
+        inputKeyword: ux.inputKeyword,
+      }}
+    >
+      <SchoolCreateDialog create={ux.create} />
+      <SchoolDetailDialog modify={ux.modify} />
+      <SchoolDeleteDialog delete={ux.delete} />
+      <SchoolFloatButton />
+    </SchoolTable>
   );
 };
 

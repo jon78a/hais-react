@@ -1,5 +1,4 @@
 import { useContext, useMemo, useState, useEffect } from "react";
-import { useRecoilValue } from "recoil";
 
 import { SchoolDetailDialogUx } from "../school.ux/SchoolDetailDialogUx";
 import { TableContext } from "./TableContext";
@@ -16,22 +15,20 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import { schoolState } from "../../../../schema/states/AdminSchool";
 
 const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
   const context = useContext(TableContext);
 
   const [form, setForm] = useState<EditRequest | undefined>(undefined);
-  const school = useRecoilValue(schoolState);
 
   useEffect(() => {
-    if (school) {
-      setForm({
-        data: school,
-        id: school.id,
-      });
-    }
-  }, [school]);
+    if (context.modal.state !== "UPDATE") return undefined;
+    if (!context.selection.state?.id) return undefined;
+    setForm({
+      data: context.selection.state,
+      id: context.selection.state.id,
+    });
+  }, [context.modal.state, context.selection.state]);
 
   const detailFields = useMemo(() => {
     if (!form) return undefined;
@@ -164,6 +161,24 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
           }
         />
         <TextField
+          label="관리자"
+          fullWidth
+          required
+          value={form.data?.admin}
+          placeholder="user@site.com,user2@stie.com"
+          sx={{ mt: 2 }}
+          onChange={(e) =>
+            form.data &&
+            setForm({
+              ...form,
+              data: {
+                ...form?.data,
+                admin: e.target.value.split(","),
+              },
+            })
+          }
+        />
+        <TextField
           label="웹사이트 주소1"
           fullWidth
           value={form.data?.web1}
@@ -221,7 +236,7 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
       onClose={() => context.modal.set(null)}
       scroll={"paper"}
     >
-      <DialogTitle>교과상세</DialogTitle>
+      <DialogTitle>고등학교</DialogTitle>
       {detailFields}
       <DialogActions>
         <Button onClick={() => context.modal.set(null)}>취소</Button>

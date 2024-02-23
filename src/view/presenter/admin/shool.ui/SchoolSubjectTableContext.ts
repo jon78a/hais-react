@@ -1,16 +1,16 @@
 import { createContext } from "react";
-import { School } from "../../../../domain/school/school.interface";
+import { SchoolSubject } from "../../../../domain/school/school.interface";
 
 export type ModalState = "CREATE" | "UPDATE" | "DELETE" | null;
 
-export const TableContext = createContext<{
+export const SchoolSubjectTableContext = createContext<{
   modal: {
     state: ModalState;
     set: (value: ModalState) => void;
   };
   selection: {
-    state: School | null;
-    set: (value: School) => void;
+    state: SchoolSubject | null;
+    set: (value: SchoolSubject) => void;
   };
 }>({
   modal: {

@@ -27,6 +27,9 @@ export type EditRequest = {
   data: SchoolDto | null;
 };
 
+export type Level = 1 | 2 | 3;
+export type Credit = 0 | 1 | 2 | 3 | 4 | 5;
+
 export type SchoolDto = {
   id: string;
   name: string;
@@ -37,8 +40,41 @@ export type SchoolDto = {
   address1?: string;
   address2?: string;
   zipcode?: string;
-  admin: string;
+  admin: string[];
   web1: string;
   web2?: string;
   web3?: string;
+};
+
+export type SchoolSubjectCreateRequest = {
+  data: SchoolSubjectDto;
+  schoolId: string;
+};
+
+export type SchoolSubjectGetRequest = {
+  isCommonSubject: boolean;
+  schoolId: string;
+  subjectId: string;
+};
+
+export type SchoolSubjectEditRequest = {
+  data: SchoolSubjectDto | null;
+  schoolId: string;
+  subjectId: string;
+};
+
+export type SchoolSubjectDeleteRequest = {
+  isCommonSubject: boolean;
+  schoolId?: string | undefined;
+  subjectId?: string;
+};
+
+export type SchoolSubjectDto = {
+  id: string;
+  name: string;
+  type: SchoolSubjectType;
+  groups: string[];
+  level: Level;
+  credit: Credit;
+  admin: string[];
 };

@@ -1,135 +1,203 @@
 import { useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-import { SchoolTableUx } from "../school.ux/SchoolTableUx";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
-import { TableContext, ModalState } from "./TableContext";
+import {
+  SchoolSubjectTableContext,
+  ModalState,
+} from "./SchoolSubjectTableContext";
 
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import {
+  schoolListState,
+  schoolState,
+  schoolSubjectListState,
+} from "../../../../schema/states/AdminSchool";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { schoolListState } from "../../../../schema/states/AdminSchool";
-import { Autocomplete, TextField } from "@mui/material";
-import Add from "@mui/icons-material/Add";
+import Paper from "@mui/material/Paper";
+import { SchoolSubjectTableUx } from "../school.ux/SchoolSubjectTableUx";
+import { SchoolSubject } from "../../../../domain/school/school.interface";
+import { userState } from "../../../../schema/states/User";
 
 const SchoolSubjectTable: React.FC<{
-  ux: SchoolTableUx;
-}> = (props) => {
-  const { ux } = props;
-
-  const theme = useTheme();
-
-  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+  ux: SchoolSubjectTableUx;
+  children: React.ReactNode;
+}> = ({ ux, children }) => {
   const screenHeight = useScreenHeight();
 
   const schoolList = useRecoilValue(schoolListState);
-  const schoolColumns = useMemo<GridColDef[]>(
+  const schoolSubjectList = useRecoilValue(schoolSubjectListState);
+  const [school, setSchool] = useRecoilState(schoolState);
+  const user = useRecoilValue(userState);
+
+  const [rowSelection, setRowSelection] = useState<SchoolSubject | null>(null);
+  const [modalState, setModalState] = useState<ModalState>(null);
+  const [keywordValue, setKeywordValue] = useState<string>("");
+  const subjectColumns = useMemo<GridColDef[]>(
     () => [
+      { field: "id" },
       {
         field: "name",
-        headerName: "학교",
-      },
-      {
-        field: "description",
-        headerName: "설명",
-        width: mobile ? 100 : 300,
+        headerName: "과목명",
       },
       {
         field: "type",
-        headerName: "구분",
-        width: mobile ? 100 : 200,
+        headerName: "과목 분류",
       },
       {
-        field: "operation",
-        headerName: "운영 주체",
+        field: "groups",
+        headerName: "그룹",
       },
       {
-        field: "jurisdiction",
-        headerName: "관할",
-        width: mobile ? 100 : 200,
+        field: "level",
+        headerName: "난이도",
+      },
+      {
+        field: "credit",
+        headerName: "학점",
+      },
+      {
+        field: "actions",
+        headerName: "actions",
+        width: 150,
+        renderCell: ({ row }) => {
+          if (!row.admin.includes(user?.email)) return null;
+          return (
+            <>
+              <Button
+                onClick={() => {
+                  setRowSelection(row);
+                  setModalState("UPDATE");
+                }}
+              >
+                수정
+              </Button>
+              <Button
+                onClick={() => {
+                  setRowSelection(row);
+                  setModalState("DELETE");
+                }}
+              >
+                삭제
+              </Button>
+            </>
+          );
+        },
       },
     ],
-    [mobile]
+    [user?.email]
   );
 
-  const [rowSelections, setRowSelections] = useState<string[]>([]);
-  const [modalState, setModalState] = useState<ModalState>(null);
-  const [keywordValue, setKeywordValue] = useState<string>("");
-
   return (
-    <TableContext.Provider
+    <SchoolSubjectTableContext.Provider
       value={{
         modal: {
           state: modalState,
           set: setModalState,
         },
-        selections: {
-          state: rowSelections,
-          set: setRowSelections,
+        selection: {
+          state: rowSelection,
+          set: setRowSelection,
         },
       }}
     >
       <Stack spacing={1} sx={{ mt: 2 }}>
-        <Box height={screenHeight * 0.65}>
-          <Stack direction="row" justifyContent="space-between" paddingY={2}>
-            <Stack direction="row">
-              <Autocomplete
-                disablePortal
-                sx={{
-                  flex: 1,
-                  fontSize: 16,
-                  width: 300,
-                }}
-                getOptionLabel={(option) => option.name}
-                options={schoolList}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    value={keywordValue}
-                    onChange={(e) => {
-                      ux.inputKeyword(e.target.value);
-                      setKeywordValue(e.target.value);
-                    }}
-                    placeholder="교과를 확인할 학교를 선택해주세요"
-                  />
-                )}
-              />
-              <IconButton type="button" aria-label="search" size={"small"}>
-                <SearchIcon />
-              </IconButton>
-            </Stack>
-
-            <Button>
-              <Add />
+        <Stack direction="row" justifyContent="space-between" paddingY={2}>
+          <Stack direction="row" columnGap={1} justifyContent="space-between">
+            <Autocomplete
+              disablePortal
+              sx={{
+                flex: 1,
+                fontSize: 14,
+                width: 300,
+              }}
+              defaultValue={school}
+              getOptionLabel={(option) => option.name}
+              options={schoolList}
+              disableClearable
+              onChange={(_, newValue) => newValue && setSchool(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      p: 0,
+                      height: 36,
+                    },
+                  }}
+                  placeholder="교과를 확인할 학교를 선택해주세요"
+                />
+              )}
+            />
+            <Button
+              sx={{ p: 0, height: 36 }}
+              variant="contained"
+              disabled={!school?.id}
+              onClick={() => setModalState("CREATE")}
+            >
+              교과 등록
             </Button>
           </Stack>
-          {/* <DataGrid
-            getRowId={(school) => school.name}
-            rows={schoolList}
-            columns={schoolColumns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 15 },
-              },
-            }}
-            onRowSelectionModelChange={(rowSelectionModel) => {
-              setRowSelections(rowSelectionModel.map((v) => v.toString()));
-            }}
-            onRowDoubleClick={(params) => {
-              ux.clickRow(String(params.id));
-              setModalState("UPDATE");
-            }}
-            rowSelectionModel={rowSelections}
-          /> */}
-        </Box>
+        </Stack>
+        {school?.id ? (
+          <>
+            <Stack>
+              <Paper
+                component={"form"}
+                sx={{
+                  p: "2px 2px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <InputBase
+                  sx={{
+                    ml: 1,
+                    flex: 1,
+                    fontSize: 14,
+                  }}
+                  placeholder="교과명을 입력해주세요."
+                  inputProps={{ "aria-label": "교과명 검색" }}
+                  value={keywordValue}
+                  onChange={(e) => {
+                    ux.inputKeyword(e.target.value);
+                    setKeywordValue(e.target.value);
+                  }}
+                />
+                <IconButton type="button" aria-label="search" size={"small"}>
+                  <SearchIcon />
+                </IconButton>
+              </Paper>
+            </Stack>
+            <Box height={screenHeight * 0.65}>
+              <DataGrid
+                disableRowSelectionOnClick
+                rows={schoolSubjectList}
+                columns={subjectColumns}
+                initialState={{
+                  columns: {
+                    columnVisibilityModel: {
+                      id: false,
+                    },
+                  },
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 15 },
+                  },
+                }}
+              />
+            </Box>
+          </>
+        ) : null}
       </Stack>
-    </TableContext.Provider>
+      {school?.id ? children : null}
+    </SchoolSubjectTableContext.Provider>
   );
 };
 
