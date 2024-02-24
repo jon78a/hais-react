@@ -23,7 +23,6 @@ export interface OptionalSubject extends SubjectBase {
   suneungInfo: string;
   difficulty: number;
 }
-
 export interface GradeScore {
   id: string;
   studentId: string;
