@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { useRecoilValue } from "recoil";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -8,7 +7,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { schoolState } from "../../../../schema/states/AdminSchool";
 import ListItemText from "@mui/material/ListItemText";
 import { SchoolSubjectDeleteDialogUx } from "../school.ux/SchoolSubjectDeleteDialogUx";
 import { SchoolSubjectTableContext } from "./SchoolSubjectTableContext";
@@ -17,7 +15,6 @@ const SchoolSubjectDeleteDialog: React.FC<SchoolSubjectDeleteDialogUx> = (
   ux
 ) => {
   const context = useContext(SchoolSubjectTableContext);
-  const school = useRecoilValue(schoolState);
 
   return (
     <Dialog
@@ -47,7 +44,6 @@ const SchoolSubjectDeleteDialog: React.FC<SchoolSubjectDeleteDialogUx> = (
           onClick={() => {
             ux.delete({
               isCommonSubject: context.selection.state?.type === "공통과목",
-              schoolId: school?.id,
               subjectId: context.selection?.state?.id,
             });
             context.modal.set(null);

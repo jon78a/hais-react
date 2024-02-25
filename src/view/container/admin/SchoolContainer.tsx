@@ -38,15 +38,11 @@ const AdminSchoolContainer = ({
         async addSubject(req) {
           const payload = await schoolRepository.saveSubject({
             form: req.data,
-            schoolId: req.schoolId,
           });
           return payload;
         },
-        async getSubjectList(filter, schoolId) {
-          const payload = await schoolRepository.findSubjectBy(
-            filter,
-            schoolId
-          );
+        async getSubjectList(filter) {
+          const payload = await schoolRepository.findSubjectBy(filter);
           return payload;
         },
         async getSubject(req) {
@@ -60,7 +56,6 @@ const AdminSchoolContainer = ({
           if (!req.data) return;
           await schoolRepository.saveSubject({
             form: req.data,
-            schoolId: req.schoolId,
             subjectId: req.subjectId,
           });
         },

@@ -2,6 +2,7 @@ import { SchoolSubjectTabContentUx } from "../school.ux/SchoolSubjectTabContentU
 import SchoolSubjectCreateDialog from "./SchoolSubjectCreateDialog";
 import SchoolSubjectDeleteDialog from "./SchoolSubjectDeleteDialog";
 import SchoolSubjectDetailDialog from "./SchoolSubjectDetailDialog";
+import SchoolSubjectFloatButton from "./SchoolSubjectFloatButton";
 import SchoolSubjectTable from "./SchoolSubjectTable";
 
 const SchoolTabContent: React.FC<{
@@ -17,6 +18,7 @@ const SchoolTabContent: React.FC<{
         <SchoolSubjectCreateDialog create={ux.create} />
         <SchoolSubjectDeleteDialog delete={ux.delete} />
         <SchoolSubjectDetailDialog modify={ux.modify} />
+        <SchoolSubjectFloatButton />
       </SchoolSubjectTable>
     </>
   );

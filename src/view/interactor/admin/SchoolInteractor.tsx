@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
 import { useAdminSchoolService } from "../../../service/admin/school";
@@ -18,7 +18,7 @@ const AdminSchoolInteractor = () => {
   const [tabItem, setTabItem] = useRecoilState(schoolTabState);
   const [filter, setFilter] = useRecoilState(schoolFilterState);
   const [schoolList, setSchoolList] = useRecoilState(schoolListState);
-  const [school, setSchool] = useRecoilState(schoolState);
+  const setSchool = useSetRecoilState(schoolState);
 
   const [schoolSubjectList, setSchoolSubjectList] = useRecoilState(
     schoolSubjectListState
@@ -38,9 +38,14 @@ const AdminSchoolInteractor = () => {
     }
 
     if (isSubjectTabSelected) {
-      if (!school?.id) return;
-      service.getSubjectList(filter, school.id).then((data) => {
-        setSchoolSubjectList(data);
+      service.getSubjectList(filter).then((data) => {
+        const subjectHavingSchoolName = data.map((subject) => ({
+          ...subject,
+          schoolName: schoolList.find(
+            (school) => school.id === subject.schoolId
+          )?.name,
+        }));
+        setSchoolSubjectList(subjectHavingSchoolName);
       });
     }
   }, [
@@ -50,7 +55,7 @@ const AdminSchoolInteractor = () => {
     isSubjectTabSelected,
     setSchoolList,
     setSchoolSubjectList,
-    school?.id,
+    schoolList,
   ]);
 
   const renderTabContent: React.JSX.Element | undefined = useMemo(() => {
@@ -128,15 +133,22 @@ const AdminSchoolInteractor = () => {
                   service
                     .getSubject({
                       isCommonSubject: req.data.type === "공통과목",
-                      schoolId: req.schoolId,
                       subjectId: req.subjectId,
                     })
                     .then((data): void => {
                       if (data) {
                         const newSubjectList = schoolSubjectList.map(
                           (subject) =>
-                            subject.id === req.subjectId ? data : subject
+                            subject.id === req.subjectId
+                              ? {
+                                  ...data,
+                                  schoolName: schoolList.find(
+                                    (sc) => sc.id === data.schoolId
+                                  )?.name,
+                                }
+                              : subject
                         );
+
                         setSchoolSubjectList(newSubjectList);
                       }
                     });

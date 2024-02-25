@@ -25,7 +25,8 @@ import {
 import { SchoolSubjectCreateDialogUx } from "../school.ux/SchoolSubjectCreateDialogUx";
 import { defaultSubject } from "../../../../domain/school/school.impl";
 import { useRecoilValue } from "recoil";
-import { schoolState } from "../../../../schema/states/AdminSchool";
+import { schoolListState } from "../../../../schema/states/AdminSchool";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
   ux
@@ -35,16 +36,14 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
   const [form, setForm] = useState<SchoolSubjectCreateRequest | undefined>(
     undefined
   );
-  const school = useRecoilValue(schoolState);
+  const schoolList = useRecoilValue(schoolListState);
 
   useEffect(() => {
     if (context.modal.state !== "CREATE") return undefined;
-    if (!school?.id) return undefined;
     setForm({
       data: defaultSubject,
-      schoolId: school?.id,
     });
-  }, [context.modal.state, school?.id]);
+  }, [context.modal.state]);
 
   const detailFields = useMemo(() => {
     if (!form) return undefined;
@@ -68,10 +67,29 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
             })
           }
         />
-        <FormControl fullWidth sx={{ mt: 2 }}>
+        <Autocomplete
+          disablePortal
+          getOptionLabel={(option) => option.name}
+          options={schoolList}
+          disableClearable
+          sx={{ mt: 2 }}
+          onChange={(_, newValue) =>
+            form.data &&
+            setForm({
+              ...form,
+              data: {
+                ...form.data,
+                schoolId: newValue.id,
+              },
+            })
+          }
+          renderInput={(params) => (
+            <TextField {...params} placeholder="학교를 선택해주세요" />
+          )}
+        />
+        <FormControl fullWidth sx={{ mt: 2 }} required>
           <InputLabel id="과목 분류">과목 분류</InputLabel>
           <Select
-            required
             labelId="과목 분류"
             label={"과목 분류"}
             value={form.data?.type ?? "공통과목"}
@@ -175,7 +193,7 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
         />
       </DialogContent>
     );
-  }, [form]);
+  }, [form, schoolList]);
 
   return (
     <Dialog

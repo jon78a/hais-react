@@ -18,7 +18,6 @@ import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import ArrowBackIosTwoToneIcon from "@mui/icons-material/ArrowBackIosTwoTone";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Drawer from "@mui/material/Drawer";
@@ -31,10 +30,11 @@ import SpeedIcon from "@mui/icons-material/Speed";
 import { Book } from "@mui/icons-material";
 
 const titleMap = {
-  [adminRoutes.adminHome.path]: "교과과목",
-  [adminRoutes.adminSubject.path]: "교과과목",
+  [adminRoutes.adminHome.path]: "고등학교",
+  // [adminRoutes.adminSubject.path]: "교과과목",
   [adminRoutes.adminSchool.path]: "고등학교",
-  [adminRoutes.adminMajor.path]: "대학교",
+  [adminRoutes.adminUniversity.path]: "대학교",
+  // [adminRoutes.adminMajor.path]: "교과과목",
   [adminRoutes.adminMeasurement.path]: "가중치 관리",
 };
 
@@ -87,11 +87,13 @@ const SideNavBar = () => {
           py: 1,
         }}
       >
-        <LinkItem
+        {/*
+          * 과거 교과관리(고등학교)
+         <LinkItem
           icon={<MenuBookIcon />}
           title={titleMap[routes.adminSubject.path]}
           href={routes.adminSubject.path}
-        />
+        /> */}
         <LinkItem
           icon={<SchoolIcon />}
           title={titleMap[routes.adminSchool.path]}
@@ -99,9 +101,17 @@ const SideNavBar = () => {
         />
         <LinkItem
           icon={<Book />}
+          title={titleMap[routes.adminUniversity.path]}
+          href={routes.adminUniversity.path}
+        />
+
+        {/* 
+          * 과거 학과관리(대학교)
+        <LinkItem
+          icon={<Book />}
           title={titleMap[routes.adminMajor.path]}
           href={routes.adminMajor.path}
-        />
+        /> */}
         <LinkItem
           icon={<SpeedIcon />}
           title={titleMap[routes.adminMeasurement.path]}

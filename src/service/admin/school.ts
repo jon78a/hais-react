@@ -18,13 +18,9 @@ interface AdminSchoolService {
   addSchool: (req: CreateRequest) => Promise<{ id: string }>;
   deleteSchool: (req: DeleteRequest) => Promise<void>;
 
-  getSubjectList: (
-    filter: SubjectFilter,
-    schoolId: string
-  ) => Promise<SchoolSubject[]>;
+  getSubjectList: (filter: SubjectFilter) => Promise<SchoolSubject[]>;
   getSubject: ({
     isCommonSubject,
-    schoolId,
     subjectId,
   }: SchoolSubjectGetRequest) => Promise<SchoolSubject | null>;
   editSubject: (req: SchoolSubjectEditRequest) => Promise<void>;

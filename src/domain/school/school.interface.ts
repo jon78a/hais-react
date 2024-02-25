@@ -27,6 +27,7 @@ export interface School {
 export interface SchoolSubject {
   id: string;
   name: string;
+  schoolId: string;
   type: SchoolSubjectType;
   groups: string[];
   level: Level;
@@ -45,33 +46,24 @@ export interface SchoolRepository {
 
   saveSubject: ({
     form,
-    schoolId,
     subjectId,
   }: {
     form: SchoolSubject;
-    schoolId: string;
     subjectId?: string;
   }) => Promise<{ id: string }>;
   deleteSubject: ({
     isCommonSubject,
-    schoolId,
     subjectId,
   }: {
     isCommonSubject: boolean;
-    schoolId?: string;
     subjectId?: string;
   }) => Promise<void>;
-  findSubjectBy: (
-    filter: SchoolFilter,
-    schoolId: string
-  ) => Promise<SchoolSubject[]>;
+  findSubjectBy: (filter: SchoolFilter) => Promise<SchoolSubject[]>;
   findSubjectById: ({
     isCommonSubject,
-    schoolId,
     subjectId,
   }: {
     isCommonSubject: boolean;
-    schoolId: string;
     subjectId: string;
   }) => Promise<SchoolSubject | null>;
 }
