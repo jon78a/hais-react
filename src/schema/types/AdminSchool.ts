@@ -48,30 +48,28 @@ export type SchoolDto = {
 
 export type SchoolSubjectCreateRequest = {
   data: SchoolSubjectDto;
-  schoolId: string;
 };
 
 export type SchoolSubjectGetRequest = {
   isCommonSubject: boolean;
-  schoolId: string;
   subjectId: string;
 };
 
 export type SchoolSubjectEditRequest = {
   data: SchoolSubjectDto | null;
-  schoolId: string;
   subjectId: string;
 };
 
 export type SchoolSubjectDeleteRequest = {
   isCommonSubject: boolean;
-  schoolId?: string | undefined;
   subjectId?: string;
 };
 
 export type SchoolSubjectDto = {
   id: string;
   name: string;
+  schoolId: string;
+  schoolName?: string;
   type: SchoolSubjectType;
   groups: string[];
   level: Level;

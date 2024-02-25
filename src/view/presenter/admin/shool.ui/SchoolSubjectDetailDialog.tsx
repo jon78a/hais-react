@@ -22,9 +22,10 @@ import {
   levels,
   schoolSubjectTypeMap,
 } from "../../../../policy/school";
-import { useRecoilValue } from "recoil";
-import { schoolState } from "../../../../schema/states/AdminSchool";
 import { SchoolSubjectDetailDialogUx } from "../school.ux/SchoolSubjectDetailDialogUx";
+import Autocomplete from "@mui/material/Autocomplete";
+import { schoolListState } from "../../../../schema/states/AdminSchool";
+import { useRecoilValue } from "recoil";
 
 const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
   ux
@@ -34,16 +35,15 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
   const [form, setForm] = useState<SchoolSubjectCreateRequest | undefined>(
     undefined
   );
-  const school = useRecoilValue(schoolState);
+  const schoolList = useRecoilValue(schoolListState);
 
   useEffect(() => {
     if (context.modal.state !== "UPDATE") return undefined;
-    if (!school?.id) return undefined;
+    if (!context.selection.state) return undefined;
     setForm({
-      data: context.selection.state!,
-      schoolId: school?.id,
+      data: context.selection.state,
     });
-  }, [context.modal.state, context.selection.state, school?.id]);
+  }, [context.modal.state, context.selection.state]);
 
   const detailFields = useMemo(() => {
     if (!form) return undefined;
@@ -66,6 +66,27 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
               },
             })
           }
+        />
+        <Autocomplete
+          disablePortal
+          getOptionLabel={(option) => option.name}
+          value={schoolList.find((school) => school.id === form.data.schoolId)}
+          options={schoolList}
+          disableClearable
+          sx={{ mt: 2 }}
+          onChange={(_, newValue) =>
+            form.data &&
+            setForm({
+              ...form,
+              data: {
+                ...form.data,
+                schoolId: newValue.id,
+              },
+            })
+          }
+          renderInput={(params) => (
+            <TextField {...params} placeholder="학교를 선택해주세요" />
+          )}
         />
         <FormControl fullWidth sx={{ mt: 2 }}>
           <InputLabel id="과목 분류">과목 분류</InputLabel>
@@ -174,7 +195,7 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
         />
       </DialogContent>
     );
-  }, [form]);
+  }, [form, schoolList]);
 
   return (
     <Dialog
@@ -189,7 +210,6 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
           e.preventDefault();
           ux.modify({
             data: form?.data!,
-            schoolId: school?.id!,
             subjectId: context.selection.state?.id!,
           });
           context.modal.set(null);
@@ -201,7 +221,6 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
             onClick={() => {
               ux.modify({
                 data: form?.data!,
-                schoolId: school?.id!,
                 subjectId: context.selection.state?.id!,
               });
               context.modal.set(null);

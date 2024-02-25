@@ -17,36 +17,34 @@ import {
   SchoolRepository,
   SchoolSubject,
 } from "../../domain/school/school.interface";
+import { VERSION, YEAR } from "./_constant/constant";
 
 const schoolRef = collection(
   firebaseDb,
-  "version",
-  "1.0",
+  CollectionName.Version,
+  VERSION,
   CollectionName.Year,
-  "2024",
+  YEAR,
   CollectionName.School
 );
 
 const commonSubjectRef = collection(
   firebaseDb,
-  "version",
-  "1.0",
+  CollectionName.Version,
+  VERSION,
   CollectionName.Year,
-  "2024",
-  "common"
+  YEAR,
+  CollectionName.CommonSubject
 );
 
-const getSubjectRef = (schoolId: string) =>
-  collection(
-    firebaseDb,
-    "version",
-    "1.0",
-    CollectionName.Year,
-    "2024",
-    CollectionName.School,
-    schoolId,
-    "subject"
-  );
+const optionalSubjectRef = collection(
+  firebaseDb,
+  CollectionName.Version,
+  VERSION,
+  CollectionName.Year,
+  YEAR,
+  CollectionName.OptionalSubject
+);
 
 const schoolRepository: SchoolRepository = {
   async findBy(filter) {
@@ -92,33 +90,30 @@ const schoolRepository: SchoolRepository = {
   async delete(id) {
     await deleteDoc(doc(schoolRef, id));
   },
-  async findSubjectBy(filter, schoolId) {
+  async findSubjectBy(filter) {
+    let _subjects: SchoolSubject[] = [];
+
     const conds = [];
     conds.push(orderBy("name"));
 
     const commonSubjectQuery = query(commonSubjectRef);
     const commonSubjectsSnapshot = await getDocs(commonSubjectQuery);
-    let _subjects: SchoolSubject[] = [];
     commonSubjectsSnapshot.forEach((doc) => {
       _subjects.push(doc.data() as SchoolSubject);
     });
 
-    const subjectRef = getSubjectRef(schoolId);
-    const subjectsSnapshot = await getDocs(subjectRef);
+    const optionalSubjectQuery = query(optionalSubjectRef);
+    const subjectsSnapshot = await getDocs(optionalSubjectQuery);
     subjectsSnapshot.forEach((doc) => {
       _subjects.push(doc.data() as SchoolSubject);
     });
 
     return _subjects.filter((v) => v.name.includes(filter.nameKeyword));
   },
-  async findSubjectById({ isCommonSubject, schoolId, subjectId }) {
-    const subjectRef = getSubjectRef(schoolId);
-    let docRef = doc(subjectRef, subjectId);
+  async findSubjectById({ isCommonSubject, subjectId }) {
+    const subjectRef = isCommonSubject ? commonSubjectRef : optionalSubjectRef;
 
-    if (isCommonSubject) {
-      docRef = doc(commonSubjectRef, subjectId);
-    }
-
+    const docRef = doc(subjectRef, subjectId);
     const snapshot = await getDoc(docRef);
 
     if (snapshot.exists()) {
@@ -127,23 +122,18 @@ const schoolRepository: SchoolRepository = {
       return null;
     }
   },
-  async deleteSubject({ isCommonSubject, schoolId, subjectId }) {
+  async deleteSubject({ isCommonSubject, subjectId }) {
     // 공통과목
-    if (isCommonSubject) {
-      await deleteDoc(doc(commonSubjectRef, subjectId));
-      return;
-    }
-
-    if (schoolId) {
-      await deleteDoc(doc(getSubjectRef(schoolId)));
-      return;
-    }
+    const subjectRef = isCommonSubject ? commonSubjectRef : optionalSubjectRef;
+    await deleteDoc(doc(subjectRef, subjectId));
   },
-  async saveSubject({ form, schoolId, subjectId }) {
+  async saveSubject({ form, subjectId }) {
+    const subjectRef =
+      form.type === "공통과목" ? commonSubjectRef : optionalSubjectRef;
+
     // update
     if (subjectId) {
-      let docRef = doc(schoolRef, schoolId, "subject", subjectId);
-      if (form.type === "공통과목") docRef = doc(commonSubjectRef, subjectId);
+      const docRef = doc(subjectRef, subjectId);
       try {
         await setDoc(docRef, form);
       } catch (error) {
@@ -153,8 +143,7 @@ const schoolRepository: SchoolRepository = {
     }
     // create
     const newSubjectId = uuidv4();
-    let docRef = doc(schoolRef, schoolId, "subject", newSubjectId);
-    if (form.type === "공통과목") docRef = doc(commonSubjectRef, newSubjectId);
+    const docRef = doc(subjectRef, newSubjectId);
     try {
       await setDoc(docRef, { ...form, id: newSubjectId });
     } catch (error) {

@@ -21,6 +21,7 @@ export const defaultSchool: School = {
 export const defaultSubject: SchoolSubject = {
   id: "",
   name: "",
+  schoolId: "",
   type: "공통과목",
   groups: [],
   level: 1,
