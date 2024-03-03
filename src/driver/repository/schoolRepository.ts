@@ -7,6 +7,7 @@ import {
   getDoc,
   setDoc,
   deleteDoc,
+  where,
 } from "firebase/firestore";
 import { CollectionName } from "../firebase/constants";
 import { firebaseDb } from "../firebase";
@@ -18,6 +19,7 @@ import {
   SchoolSubject,
 } from "../../domain/school/school.interface";
 import { VERSION, YEAR } from "./_constant/constant";
+import { SchoolSubjectType } from "../../policy/school";
 
 const schoolRef = collection(
   firebaseDb,
@@ -109,6 +111,24 @@ const schoolRepository: SchoolRepository = {
     });
 
     return _subjects.filter((v) => v.name.includes(filter.nameKeyword));
+  },
+  async findSubjectByType(type: SchoolSubjectType) {
+    let _subjects: SchoolSubject[] = [];
+
+    const conds = [];
+    conds.push(orderBy("name"));
+    if (!type) return null;
+
+    let subjectQuery = null;
+    if (type === "공통과목") subjectQuery = query(commonSubjectRef);
+    else subjectQuery = query(optionalSubjectRef, where("type", "==", type));
+
+    const commonSubjectsSnapshot = await getDocs(subjectQuery);
+    commonSubjectsSnapshot.forEach((doc) => {
+      _subjects.push(doc.data() as SchoolSubject);
+    });
+
+    return _subjects;
   },
   async findSubjectById({ isCommonSubject, subjectId }) {
     const subjectRef = isCommonSubject ? commonSubjectRef : optionalSubjectRef;

@@ -22,6 +22,7 @@ import AdminMeasurementPage from './pages/admin/Measurement';
 import MyPage from './pages/My';
 import People from './pages/People';
 import AdminSchoolPage from './pages/admin/School';
+import AdminUniversityPage from './pages/admin/Univ';
 
 function App() {
   return (
@@ -40,9 +41,10 @@ function App() {
             <Route path={routes.people.path} element={<People/>}/>
           </Route>
           <Route path="/" element={<AdminLayout/>}>
-            <Route path={adminRoutes.adminHome.path} element={<AdminSubjectPage/>} />
+            <Route path={adminRoutes.adminHome.path} element={<AdminSchoolPage/>} />
             <Route path={adminRoutes.adminSubject.path} element={<AdminSubjectPage/>} />
             <Route path={adminRoutes.adminSchool.path} element={<AdminSchoolPage/>} />
+            <Route path={adminRoutes.adminUniversity.path} element={<AdminUniversityPage/>} />
             <Route path={adminRoutes.adminMajor.path} element={<AdminMajorPage/>} />
             <Route path={adminRoutes.adminMeasurement.path} element={<AdminMeasurementPage/>} />
           </Route>
