@@ -1,63 +1,56 @@
 import { useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { schoolListState } from "../../../../schema/states/AdminSchool";
-import { SchoolTableUx } from "../school.ux/SchoolTableUx";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
-import { TableContext, ModalState } from "./TableContext";
+import { DepartmentTableContext, ModalState } from "./DepartmentTableContext";
 
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import { departmentListState } from "../../../../schema/states/AdminUniv";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
+import Paper from "@mui/material/Paper";
+import { DepartmentTableUx } from "../univ.ux/DepartmentTableUx";
+import { Department } from "../../../../domain/univ/univ.interface";
 import { userState } from "../../../../schema/states/User";
-import { School } from "../../../../domain/school/school.interface";
 
-const SchoolTable: React.FC<{
-  ux: SchoolTableUx;
+const DepartmentTable: React.FC<{
+  ux: DepartmentTableUx;
   children: React.ReactNode;
-}> = (props) => {
-  const { ux, children } = props;
-
-  const theme = useTheme();
-
-  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+}> = ({ ux, children }) => {
   const screenHeight = useScreenHeight();
-  const user = useRecoilValue(userState);
-  const [rowSelection, setRowSelection] = useState<School | null>(null);
 
-  const schoolList = useRecoilValue(schoolListState);
-  const schoolColumns = useMemo<GridColDef[]>(
+  const departmentList = useRecoilValue(departmentListState);
+  const user = useRecoilValue(userState);
+
+  const [rowSelection, setRowSelection] = useState<Department | null>(null);
+  const [modalState, setModalState] = useState<ModalState>(null);
+  const [keywordValue, setKeywordValue] = useState<string>("");
+  const subjectColumns = useMemo<GridColDef[]>(
     () => [
       { field: "id" },
       {
         field: "name",
-        headerName: "학교",
+        headerName: "전공명",
       },
       {
-        field: "description",
-        headerName: "설명",
-        width: mobile ? 100 : 300,
+        field: "keyword",
+        headerName: "키워드",
       },
       {
-        field: "type",
-        headerName: "구분",
-        width: mobile ? 100 : 200,
+        field: "universityName",
+        headerName: "대학교",
       },
       {
-        field: "operation",
-        headerName: "운영 주체",
+        field: "precedences",
+        headerName: "선호도",
       },
       {
-        field: "jurisdiction",
-        headerName: "관할",
-        width: mobile ? 100 : 200,
+        field: "admin",
+        headerName: "관리자",
       },
       {
         field: "actions",
@@ -88,14 +81,11 @@ const SchoolTable: React.FC<{
         },
       },
     ],
-    [mobile, user?.email]
+    [user?.email]
   );
 
-  const [modalState, setModalState] = useState<ModalState>(null);
-  const [keywordValue, setKeywordValue] = useState<string>("");
-
   return (
-    <TableContext.Provider
+    <DepartmentTableContext.Provider
       value={{
         modal: {
           state: modalState,
@@ -107,19 +97,14 @@ const SchoolTable: React.FC<{
         },
       }}
     >
-      <Stack spacing={1} sx={{ mt: 1 }}>
-        <Stack
-          direction={"row"}
-          width={"100%"}
-          justifyContent={"space-between"}
-        >
+      <Stack spacing={1} sx={{ mt: 2 }}>
+        <Stack>
           <Paper
             component={"form"}
             sx={{
               p: "2px 2px",
               display: "flex",
               alignItems: "center",
-              width: "100%",
             }}
           >
             <InputBase
@@ -128,8 +113,8 @@ const SchoolTable: React.FC<{
                 flex: 1,
                 fontSize: 14,
               }}
-              placeholder="학교명을 입력해주세요."
-              inputProps={{ "aria-label": "학교명 검색" }}
+              placeholder="전공명을 입력해주세요."
+              inputProps={{ "aria-label": "전공 검색" }}
               value={keywordValue}
               onChange={(e) => {
                 ux.inputKeyword(e.target.value);
@@ -143,8 +128,9 @@ const SchoolTable: React.FC<{
         </Stack>
         <Box height={screenHeight * 0.65}>
           <DataGrid
-            rows={schoolList}
-            columns={schoolColumns}
+            disableRowSelectionOnClick
+            rows={departmentList}
+            columns={subjectColumns}
             initialState={{
               columns: {
                 columnVisibilityModel: {
@@ -155,13 +141,12 @@ const SchoolTable: React.FC<{
                 paginationModel: { page: 0, pageSize: 15 },
               },
             }}
-            disableRowSelectionOnClick
           />
         </Box>
       </Stack>
       {children}
-    </TableContext.Provider>
+    </DepartmentTableContext.Provider>
   );
 };
 
-export default SchoolTable;
+export default DepartmentTable;

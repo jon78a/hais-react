@@ -14,10 +14,10 @@ const univRepository: UnivRepository = {
         return {
           id: v["id"],
           name: v["name"],
-          sidoCode: v["sido_code"]
-        }
-      })
+          sidoCode: v["sido_code"],
+        };
+      });
   },
-}
+};
 
 export default univRepository;

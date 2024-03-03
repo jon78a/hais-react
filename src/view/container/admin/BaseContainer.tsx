@@ -199,7 +199,7 @@ const AdminBaseContainer = ({
   );
 
   useEffect(() => {
-    if (isAdminHomePath) navigate(routes.adminSubject.path);
+    if (isAdminHomePath) navigate(routes.adminHome.path);
   }, [isAdminHomePath, navigate]);
 
   return (

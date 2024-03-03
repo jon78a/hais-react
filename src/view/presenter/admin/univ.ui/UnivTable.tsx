@@ -3,10 +3,8 @@ import { useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { schoolListState } from "../../../../schema/states/AdminSchool";
-import { SchoolTableUx } from "../school.ux/SchoolTableUx";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
-import { TableContext, ModalState } from "./TableContext";
+import { TableContext, ModalState } from "./UnivContext";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
@@ -17,10 +15,12 @@ import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { userState } from "../../../../schema/states/User";
-import { School } from "../../../../domain/school/school.interface";
+import { Univ } from "../../../../domain/univ/univ.interface";
+import { UnivTableUx } from "../univ.ux/UnivTableUx";
+import { univListState } from "../../../../schema/states/AdminUniv";
 
-const SchoolTable: React.FC<{
-  ux: SchoolTableUx;
+const UnivTable: React.FC<{
+  ux: UnivTableUx;
   children: React.ReactNode;
 }> = (props) => {
   const { ux, children } = props;
@@ -30,10 +30,10 @@ const SchoolTable: React.FC<{
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const screenHeight = useScreenHeight();
   const user = useRecoilValue(userState);
-  const [rowSelection, setRowSelection] = useState<School | null>(null);
+  const [rowSelection, setRowSelection] = useState<Univ | null>(null);
 
-  const schoolList = useRecoilValue(schoolListState);
-  const schoolColumns = useMemo<GridColDef[]>(
+  const univList = useRecoilValue(univListState);
+  const univColumns = useMemo<GridColDef[]>(
     () => [
       { field: "id" },
       {
@@ -41,8 +41,8 @@ const SchoolTable: React.FC<{
         headerName: "학교",
       },
       {
-        field: "description",
-        headerName: "설명",
+        field: "location",
+        headerName: "위치",
         width: mobile ? 100 : 300,
       },
       {
@@ -53,11 +53,6 @@ const SchoolTable: React.FC<{
       {
         field: "operation",
         headerName: "운영 주체",
-      },
-      {
-        field: "jurisdiction",
-        headerName: "관할",
-        width: mobile ? 100 : 200,
       },
       {
         field: "actions",
@@ -143,8 +138,8 @@ const SchoolTable: React.FC<{
         </Stack>
         <Box height={screenHeight * 0.65}>
           <DataGrid
-            rows={schoolList}
-            columns={schoolColumns}
+            rows={univList}
+            columns={univColumns}
             initialState={{
               columns: {
                 columnVisibilityModel: {
@@ -164,4 +159,4 @@ const SchoolTable: React.FC<{
   );
 };
 
-export default SchoolTable;
+export default UnivTable;

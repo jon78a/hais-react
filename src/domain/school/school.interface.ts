@@ -59,6 +59,9 @@ export interface SchoolRepository {
     subjectId?: string;
   }) => Promise<void>;
   findSubjectBy: (filter: SchoolFilter) => Promise<SchoolSubject[]>;
+  findSubjectByType: (
+    type: SchoolSubjectType
+  ) => Promise<SchoolSubject[] | null>;
   findSubjectById: ({
     isCommonSubject,
     subjectId,
