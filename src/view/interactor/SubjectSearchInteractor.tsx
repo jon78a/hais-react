@@ -12,14 +12,17 @@ import {
   univKeywordState,
   univSearchResultListState,
   subjectDataListState,
-  majorResultLoadingState
+  majorResultLoadingState,
 } from "../../schema/states/SubjectSearch";
 import SearchBar from "../presenter/subject-search.ui/SearchBar";
 import SubjectList from "../presenter/subject-search.ui/SubjectList";
-import { SubjectSearchService, useSubjectSearchService } from "../../service/subject-search";
+import {
+  SubjectSearchService,
+  useSubjectSearchService,
+} from "../../service/subject-search";
 
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useChangeKeywordEffect = (service: SubjectSearchService) => {
   const searchMode = useRecoilValue(searchModeState);
@@ -34,8 +37,7 @@ const useChangeKeywordEffect = (service: SubjectSearchService) => {
   const setMajorResultLoading = useSetRecoilState(majorResultLoadingState);
 
   useEffect(() => {
-    service.suggestUniv("")
-      .then((results) => setUnivSearchResultList(results));
+    service.suggestUniv("").then((results) => setUnivSearchResultList(results));
   }, []);
 
   useEffect(() => {
@@ -43,19 +45,23 @@ const useChangeKeywordEffect = (service: SubjectSearchService) => {
       setMajorResultList([]);
     }
 
-    switch(searchMode) {
+    switch (searchMode) {
       case "UNIV":
         if (!isMatchUniv) return clear;
         setMajorResultLoading(true);
-        service.searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
-          .then((results) => setMajorResultList(results))
+        service
+          .getDepartmentOnUniv(majorKeyword, univKeyword)
+          .then((results) => {
+            setMajorResultList(results);
+          })
           .finally(() => setMajorResultLoading(false));
         return clear;
       case "FULL":
         if (!fullNameKeyword) return clear;
         setMajorResultLoading(true);
-        service.searchByUnivOrMajor(fullNameKeyword)
-          .then((results) => setMajorResultList(results))
+        service
+          .searchByUnivOrMajor(fullNameKeyword)
+          // .then((results) => setMajorResultList(results))
           .finally(() => setMajorResultLoading(false));
         return clear;
     }
@@ -68,9 +74,9 @@ const useChangeKeywordEffect = (service: SubjectSearchService) => {
     fullNameKeyword,
     setUnivSearchResultList,
     setMajorResultList,
-    setMajorResultLoading
+    setMajorResultLoading,
   ]);
-}
+};
 
 const SubjectSearchInteractor = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -86,13 +92,15 @@ const SubjectSearchInteractor = () => {
 
   const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
 
-  useEffect(() =>
-    () => {
-      setUnivKeyword('');
-      setFullNameKeyword('');
-      setSearchMode('UNIV');
+  useEffect(
+    () => () => {
+      setUnivKeyword("");
+      setFullNameKeyword("");
+      setSearchMode("UNIV");
       setSelectedMajorCode(null);
-    }, []);
+    },
+    []
+  );
 
   useChangeKeywordEffect(service);
 
@@ -118,25 +126,28 @@ const SubjectSearchInteractor = () => {
           }
         }, 250)}
         clickMajor={(id) => {
-          const major = majorResultList.find((v) => v.id === id);
+          const major = majorResultList.find((v) => v.universityId === id);
           if (!major) {
             return;
           }
-          setLoading(true);
-          setSelectedMajorCode(id);
-          service.readSubjectList({
-            requiredGroups: major.requiredGroups,
-            difficulty: major.difficulty
-          }).then((list) => {
-            setSubjectDataList(list);
-          }).finally(() => setLoading(false));
+          // setLoading(true);
+          // setSelectedMajorCode(id);
+          // service
+          //   .readSubjectList({
+          //     requiredGroups: major.requiredGroups,
+          //     difficulty: major.difficulty,
+          //   })
+          //   .then((list) => {
+          //     setSubjectDataList(list);
+          //   })
+          //   .finally(() => setLoading(false));
         }}
       />
       <div className="mt-4 pb-12">
         <SubjectList />
       </div>
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >
         <CircularProgress color="inherit" />

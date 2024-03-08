@@ -6,6 +6,7 @@ import {
   getDocs,
   query,
   setDoc,
+  where,
 } from "firebase/firestore";
 import { Univ, UnivRepository } from "../../../domain/univ/univ.interface";
 import { v4 as uuidv4 } from "uuid";
@@ -48,14 +49,18 @@ const univRepository: UnivRepository = {
     const conds = [];
     conds.push(orderBy("name"));
 
-    const q = query(univRef);
+    let q = query(univRef);
+
+    if (filter.nameKeyword) {
+      q = query(univRef, where("name", ">=", filter.nameKeyword));
+    }
 
     const snapshot = await getDocs(q);
     let _list: Univ[] = [];
     snapshot.forEach((doc) => {
       _list.push(doc.data() as Univ);
     });
-    return _list.filter((v) => v.name.includes(filter.nameKeyword));
+    return _list;
   },
   async findById(id) {
     const docRef = doc(univRef, id);

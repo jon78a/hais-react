@@ -190,17 +190,10 @@ export function TemporaryDrawer() {
             onKeyDown={toggleDrawer(false)}
           >
             <List>
-              <Link to={routes.subjectSearch.path}>
-                <ListItem key="교과탐색" disablePadding>
-                  <ListItemButton>
-                    <ListItemText primary="교과탐색" />
-                  </ListItemButton>
-                </ListItem>
-              </Link>
               <Link to={routes.subjectRecommend.path}>
-                <ListItem key="성적별 교과탐색" disablePadding>
+                <ListItem key="추천 과목 조회" disablePadding>
                   <ListItemButton>
-                    <ListItemText primary="성적별 교과탐색" />
+                    <ListItemText primary="추천 과목 조회" />
                   </ListItemButton>
                 </ListItem>
               </Link>
@@ -275,17 +268,17 @@ function MyTabs() {
         }
       }}
     >
-      <Tab
+      {/* <Tab
         value={routes.subjectSearch.path}
         label="교과탐색"
         sx={{
           fontSize: "1.25rem",
           color: "black",
         }}
-      />
+      /> */}
       <Tab
         value={routes.subjectRecommend.path}
-        label="성적별 교과탐색"
+        label="추천 과목 조회"
         sx={{
           fontSize: "1.25rem",
           color: "black",

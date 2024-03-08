@@ -2,15 +2,18 @@ import { atom, selector } from "recoil";
 
 import {
   type FullNameKeyword,
-  type MajorResult,
   type SearchMode,
-  type UnivSearchResult,
   type SelectedMajorId,
   type SubjectData,
   type MajorKeyword,
   type UnivKeyword,
-  RecommendStatus
+  RecommendStatus,
 } from "../types/SubjectRecommend";
+import {
+  Department,
+  DepartmentWithSubject,
+  Univ,
+} from "../../domain/univ/univ.interface";
 
 export const searchModeState = atom<SearchMode>({
   key: "schema/states/SubjectRecommend/SearchMode",
@@ -32,14 +35,26 @@ export const fullNameKeywordState = atom<FullNameKeyword>({
   default: "",
 });
 
-export const univSearchResultListState = atom<UnivSearchResult[]>({
+export const univSearchResultListState = atom<Pick<Univ, "id" | "name">[]>({
   key: "schema/states/SubjectRecommend/UnivSearchResultList",
   default: [],
 });
 
-export const majorResultListState = atom<MajorResult[]>({
+export const majorResultListState = atom<Partial<Department>[]>({
   key: "schema/states/SubjectRecommend/MajorResultList",
   default: [],
+});
+
+export const majorResultState = atom<Partial<Department | null>>({
+  key: "schema/states/SubjectRecommend/MajorResult",
+  default: null,
+});
+
+export const majorWithSubjectState = atom<
+  Partial<DepartmentWithSubject | null>
+>({
+  key: "schema/states/SubjectRecommend/MajorWithSubject",
+  default: null,
 });
 
 export const majorResultLoadingState = atom<boolean>({
@@ -56,7 +71,7 @@ export const isMatchUnivState = selector<boolean>({
     const univResults = get(univSearchResultListState);
     const keyword = get(univKeywordState);
 
-    if (univResults.filter((v) => v.name === keyword).length === 1) {
+    if (univResults.filter((v) => v.id === keyword).length === 1) {
       return true;
     }
     return false;
@@ -68,7 +83,7 @@ export const selectedMajorIdState = atom<SelectedMajorId>({
   default: null,
 });
 
-export const selectedMajorState = selector<MajorResult | undefined>({
+export const selectedMajorState = selector<Partial<Department> | undefined>({
   key: "schema/states/SubjectRecommend/selectedMajor",
   get: ({ get }) => {
     const selectedId = get(selectedMajorIdState);
@@ -86,6 +101,6 @@ export const recommendStatusState = atom<RecommendStatus>({
   key: "schema/states/SubjectRecommend/RecommendStatus",
   default: {
     status: 0,
-    comparisons: []
-  }
+    comparisons: [],
+  },
 });

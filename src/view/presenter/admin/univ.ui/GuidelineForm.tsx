@@ -39,6 +39,7 @@ export default function GuidelineForm({
       state.form.get.data?.guidelines?.[index]?.type as SchoolSubjectType
     ).then((subjects) => {
       if (subjects) setSubjectList(subjects);
+    }).finally(()=>{
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only in rendering at first
@@ -148,9 +149,10 @@ export default function GuidelineForm({
                   getSubjectList(e.target.value as SchoolSubjectType).then(
                     (subjects) => {
                       if (subjects) setSubjectList(subjects);
-                      setLoading(false);
                     }
-                  );
+                  ).finally(()=>{
+                    setLoading(false);
+                  });
                 }}
               >
                 {Object.values(schoolSubjectTypeMap).map((subjectType) => (

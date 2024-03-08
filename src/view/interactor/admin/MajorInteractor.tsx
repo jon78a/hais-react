@@ -49,7 +49,7 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
         if (!isMatchUniv) return;
         setMajorResultLoading(true);
         service
-          .searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
+          .getDepartmentOnUniv(majorKeyword, univKeyword)
           .then((results) => setMajorResultList(results))
           .finally(() => setMajorResultLoading(false));
         return;
@@ -58,7 +58,6 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
         setMajorResultLoading(true);
         service
           .searchByUnivOrMajor(fullNameKeyword)
-          .then((results) => setMajorResultList(results))
           .finally(() => setMajorResultLoading(false));
         return;
     }
@@ -71,7 +70,7 @@ const useChangeKeywordEffect = (service: AdminMajorService) => {
     fullNameKeyword,
     setUnivSearchResultList,
     setMajorResultList,
-    setMajorResultLoading
+    setMajorResultLoading,
   ]);
 };
 
@@ -128,17 +127,6 @@ const AdminMajorInteractor = () => {
             if (!selectedMajor) {
               return;
             }
-            setMajorResultList(
-              majorResultList.map((result) => {
-                if (result.id === selectedMajorId) {
-                  return {
-                    ...result,
-                    requiredGroups: [value, ...result.requiredGroups],
-                  };
-                }
-                return result;
-              })
-            );
           }}
           removeGroup={(index) => {
             if (!selectedMajor) {
@@ -146,14 +134,6 @@ const AdminMajorInteractor = () => {
             }
             setMajorResultList(
               majorResultList.map((result) => {
-                if (result.id === selectedMajorId) {
-                  return {
-                    ...result,
-                    requiredGroups: result.requiredGroups.filter(
-                      (_, curr) => curr !== index
-                    ),
-                  };
-                }
                 return result;
               })
             );
@@ -178,16 +158,8 @@ const AdminMajorInteractor = () => {
             if (!selectedMajor) {
               return;
             }
-            setLoading(true);
-            service.submitMajorRecruit({
-              requiredGroups: selectedMajor.requiredGroups,
-              difficulty: selectedMajor.difficulty
-            }, selectedMajorId).finally(() => setLoading(false));
           }}
         />
-        {/* <div className="mt-4 pb-12">
-          <SubjectList/>
-        </div> */}
       </div>
       <Backdrop
         sx={{

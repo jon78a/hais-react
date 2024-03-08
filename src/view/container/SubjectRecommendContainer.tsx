@@ -1,15 +1,24 @@
+import { MajorRepository } from "../../domain/subject/univ.interface";
 import {
-  MajorRepository,
-  UnivRepository,
-} from "../../domain/subject/univ.interface";
-import { CommonSubjectRepository, CommonSubjectWeightRepository, CreditScoreRepository, GradeScoreRepository, GradeScoreWeightRepository, OptionalSubjectRepository, StudentRepository } from "../../domain/subject/school.interface";
+  CommonSubjectRepository,
+  CommonSubjectWeightRepository,
+  CreditScoreRepository,
+  GradeScoreRepository,
+  GradeScoreWeightRepository,
+  OptionalSubjectRepository,
+  StudentRepository,
+} from "../../domain/subject/school.interface";
 import { SubjectRecommendContext } from "../../service/subject-recommend";
 import { AuthSessionRepository } from "../../domain/account/auth.interface";
-import type { Comparison, SubjectData } from "../../schema/types/SubjectRecommend";
+import type { Comparison } from "../../schema/types/SubjectRecommend";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
-import { sortByDifficulty } from "../../policy/univs";
+import {
+  DepartmentRepository,
+  UnivRepository,
+} from "../../domain/univ/univ.interface";
+import { SchoolRepository } from "../../domain/school/school.interface";
 
 const SubjectRecommendContainer = ({
   children,
@@ -17,7 +26,8 @@ const SubjectRecommendContainer = ({
 }: {
   children?: React.ReactNode;
   repositories: {
-    majorRepository: MajorRepository
+    majorRepository: MajorRepository;
+    departmentRepository: DepartmentRepository;
     univRepository: UnivRepository;
     optionalSubjectRepository: OptionalSubjectRepository;
     authSessionRepository: AuthSessionRepository;
@@ -27,34 +37,35 @@ const SubjectRecommendContainer = ({
     commonSubjectRepository: CommonSubjectRepository;
     gradeScoreRepository: GradeScoreRepository;
     creditScoreRepository: CreditScoreRepository;
+    schoolRepository: SchoolRepository;
   };
 }) => {
   const {
     majorRepository,
+    departmentRepository,
     univRepository,
-    optionalSubjectRepository,
     authSessionRepository,
     studentRepository,
     gradeScoreWeightRepository,
     gradeScoreRepository,
-    creditScoreRepository,
     commonSubjectRepository,
-    commonSubjectWeightRepository
+    schoolRepository,
+    commonSubjectWeightRepository,
   } = repositories;
 
   const getStudent = async () => {
     const session = await authSessionRepository.find();
-    if (!session) throw Error('세션이 만료되었습니다.');
-    
+    if (!session) throw Error("세션이 만료되었습니다.");
+
     const userId = session.userId;
     return await studentRepository.findByUser(userId);
-  }
+  };
 
   return (
     <SubjectRecommendContext.Provider
       value={{
-        async suggestUniv(univKeyword) {
-          const univs = await univRepository.findByNameLike(univKeyword);
+        async suggestUniv(nameKeyword) {
+          const univs = await univRepository.findBy({ nameKeyword });
           return univs.map((univ) => {
             return {
               id: univ.id,
@@ -63,7 +74,9 @@ const SubjectRecommendContainer = ({
           });
         },
         async searchByUnivOrMajor(fullNameKeyword) {
-          const majors = await majorRepository.findByUnivOrMajorName(fullNameKeyword);
+          const majors = await majorRepository.findByUnivOrMajorName(
+            fullNameKeyword
+          );
           return majors.map((major) => {
             return {
               id: major.id,
@@ -71,93 +84,77 @@ const SubjectRecommendContainer = ({
               univ: major.univ,
               department: major.department,
               requiredGroups: major.requiredGroups,
-              difficulty: major.difficulty.toString()
-            }
-          })
-        },
-        async searchByMajorKeywordOnUnivName(majorKeyword, univName) {
-          const majors = await majorRepository.findByNameLikeWithUniv(majorKeyword, univName);
-          return majors.map((major) => {
-            return {
-              id: major.id,
-              name: major.name,
-              univ: major.univ,
-              department: major.department,
-              requiredGroups: major.requiredGroups,
-              difficulty: major.difficulty.toString()
-            }
+              difficulty: major.difficulty.toString(),
+            };
           });
+        },
+        async getDepartmentOnUniv(name, univId) {
+          const departments = await departmentRepository.findByUnivId(
+            name,
+            univId
+          );
+
+          return departments.map((department) => ({
+            id: department.id,
+            name: department.name,
+            precedences: department.precedences,
+            keyword: department.keyword,
+            guidelines: department.guidelines,
+          }));
         },
         async recommend(subjects) {
           const student = await getStudent();
           const scores = await gradeScoreRepository.findByStudent(student.id);
           const scoreWeights = await gradeScoreWeightRepository.findAll();
           const subjectWeights = await commonSubjectWeightRepository.findAll();
-          const commonSubjects = await commonSubjectRepository.findBy({nameKeyword: ''});
+          const commonSubjects = await commonSubjectRepository.findBy({
+            nameKeyword: "",
+          });
 
           const comparisons: Comparison[] = [];
 
           let point = 0;
           for (let subject of subjects) {
-            const commonSubjectCode = commonSubjects.find((v) => v.group === subject.group)?.code;
+            const commonSubjectCode = commonSubjects.find(
+              (v) => v.group === subject.group
+            )?.code;
 
-            const subjectWeight = subjectWeights.find((weight) => weight.subjectCode === commonSubjectCode);
-            const studentScore = scores.find((score) => score.subjectCode === commonSubjectCode);
-            const scoreWeight = scoreWeights.find((weight) => weight.scoreType === studentScore?.grade);
+            const subjectWeight = subjectWeights.find(
+              (weight) => weight.subjectCode === commonSubjectCode
+            );
+            const studentScore = scores.find(
+              (score) => score.subjectCode === commonSubjectCode
+            );
+            const scoreWeight = scoreWeights.find(
+              (weight) => weight.scoreType === studentScore?.grade
+            );
             if (!studentScore || !scoreWeight || !subjectWeight) continue;
 
-            point += scoreWeight.weight * subjectWeight.weight * studentScore.grade;
+            point +=
+              scoreWeight.weight * subjectWeight.weight * studentScore.grade;
 
             comparisons.push({
               subjectName: subject.name,
-              score: Number(studentScore)
+              score: Number(studentScore),
             });
           }
 
           return {
             status: point,
-            comparisons
-          }
+            comparisons,
+          };
         },
-        async readSubjectList(recruit) {
-          const student = await getStudent();
-          const creditScores = await creditScoreRepository.findByStudent(student.id);
-          const subjects = await optionalSubjectRepository.findBy({nameKeyword: ''});
-          const subjectsByGroup = sortByDifficulty(parseInt(recruit.difficulty), subjects
-            .filter(
-              (subject) => recruit.requiredGroups.includes(subject.group)
-            )
-            .filter(
-              (subject) => {
-                for (const score of creditScores) {
-                  if (score.subjectCode === subject.code) {
-                    return !score.creditAmount;
-                  }
-                }
-                return true;
-              }
+        async readSubjectList(guidelines) {
+          const promises = guidelines.flatMap((g) =>
+            (g.options || []).map((option) =>
+              schoolRepository.findSubjectById({
+                isCommonSubject: g.type === "공통과목",
+                subjectId: option,
+              })
             )
           );
 
-          // let categoryCreditBuffer: {[key: string]: number} = {};
-          // let categoryCreditMap: {[key: string]: number} = {};
-          let categorySubjectMap: {[key: string]: SubjectData[]} = {};
-
-          subjectsByGroup.forEach((subject) => {
-            const category = subject.subjectCategory;
-
-            // const totalAmount = categoryCreditMap[category];
-            // const currAmount = categoryCreditBuffer[category];
-
-            // if (currAmount + creditAmount > totalAmount) {
-            //   return;
-            // }
-
-            // categoryCreditBuffer[category] += creditAmount;
-            categorySubjectMap[category] = (categorySubjectMap[category] ?? []).concat({...subject});
-          });
-
-          return ([] as SubjectData[]).concat(...Object.values(categorySubjectMap));
+          return Promise.all(promises).then((results) => results!);
         },
       }}
     >

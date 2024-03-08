@@ -30,7 +30,7 @@ const schoolRef = collection(
   CollectionName.School
 );
 
-const commonSubjectRef = collection(
+export const commonSubjectRef = collection(
   firebaseDb,
   CollectionName.Version,
   VERSION,
@@ -39,7 +39,7 @@ const commonSubjectRef = collection(
   CollectionName.CommonSubject
 );
 
-const optionalSubjectRef = collection(
+export const optionalSubjectRef = collection(
   firebaseDb,
   CollectionName.Version,
   VERSION,

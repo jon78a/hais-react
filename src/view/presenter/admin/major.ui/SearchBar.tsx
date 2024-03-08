@@ -17,7 +17,6 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
@@ -50,10 +49,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
   return (
     <Box width="100%">
       <TabContext value={searchMode}>
-        <TabList onChange={handleTabChange}>
-          <Tab label="학교별 검색" id="univ-select-tab" value="UNIV" />
-          <Tab label="통합 검색" id="major-select-tab" value="FULL" />
-        </TabList>
+        <TabList onChange={handleTabChange}></TabList>
         <TabPanel value={"UNIV"} sx={{ p: 0, mt: 4 }}>
           <div className="flex sm:flex-row flex-col sm:space-x-2 sm:space-y-0 space-y-1">
             <Autocomplete
@@ -139,10 +135,10 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
           >
             <List>
               {majorResultList.map((value) => (
-                <ListItem sx={{ p: 0 }}>
+                <ListItem sx={{ p: 0 }} key={value.id}>
                   <ListItemButton
                     onClick={() => {
-                      ux.clickMajor(value.id);
+                      // ux.clickMajor(value.id);
                       setIsShowList(false);
                     }}
                     sx={{
@@ -155,8 +151,8 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
                   >
                     <ListItemText
                       id={`major-text-${value.id}`}
-                      primary={`${value.univ} ${value.name}`}
-                      secondary={`${value.department}`}
+                      // primary={`${value.univ} ${value.name}`}
+                      // secondary={`${value.department}`}
                       primaryTypographyProps={{
                         sx: {
                           color:
