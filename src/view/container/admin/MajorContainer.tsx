@@ -4,10 +4,11 @@ import {
   UnivRepository,
 } from "../../../domain/subject/univ.interface";
 import { OptionalSubjectRepository } from "../../../domain/subject/school.interface";
+import departmentRepository from "../../../driver/repository/v2/departmentRepository";
 
 const AdminMajorContainer = ({
   children,
-  repositories
+  repositories,
 }: {
   children: React.ReactNode;
   repositories: {
@@ -16,68 +17,72 @@ const AdminMajorContainer = ({
     optionalSubjectRepository: OptionalSubjectRepository;
   };
 }) => {
-  const {
-    majorRepository,
-    univRepository,
-    optionalSubjectRepository
-  } = repositories;
+  const { majorRepository, univRepository, optionalSubjectRepository } =
+    repositories;
 
   return (
-    <AdminMajorContext.Provider value={{
-      async suggestUniv(univKeyword) {
-        const univs = await univRepository.findByNameLike(univKeyword);
-        return univs.map((univ) => {
-          return {
-            id: univ.id,
-            name: univ.name
+    <AdminMajorContext.Provider
+      value={{
+        async suggestUniv(univKeyword) {
+          const univs = await univRepository.findByNameLike(univKeyword);
+          return univs.map((univ) => {
+            return {
+              id: univ.id,
+              name: univ.name,
+            };
+          });
+        },
+        async searchByUnivOrMajor(fullNameKeyword) {
+          const majors = await majorRepository.findByUnivOrMajorName(
+            fullNameKeyword
+          );
+          return majors.map((major) => {
+            return {
+              id: major.id,
+              name: major.name,
+              univ: major.univ,
+              department: major.department,
+              requiredGroups: major.requiredGroups,
+              difficulty: major.difficulty.toString(),
+            };
+          });
+        },
+        async getDepartmentOnUniv(name, univId) {
+          const departments = await departmentRepository.findByUnivId(
+            name,
+            univId
+          );
+          return departments.map((department) => ({
+            id: department.id,
+            name: department.name,
+            guidelines: department.guidelines,
+            precedences: department.precedences,
+            universityId: department.universityId,
+            keyword: department.keyword,
+          }));
+        },
+        async readSubjectList(majorId) {
+          const optionalSubjects =
+            await optionalSubjectRepository.findByMajorId(majorId);
+          return [...optionalSubjects];
+        },
+        async submitMajorRecruit(recruit, id) {
+          if (!id) {
+            return;
           }
-        });
-      },
-      async searchByUnivOrMajor(fullNameKeyword) {
-        const majors = await majorRepository.findByUnivOrMajorName(fullNameKeyword);
-        return majors.map((major) => {
-          return {
-            id: major.id,
-            name: major.name,
-            univ: major.univ,
-            department: major.department,
-            requiredGroups: major.requiredGroups,
-            difficulty: major.difficulty.toString()
-          }
-        })
-      },
-      async searchByMajorKeywordOnUnivName(majorKeyword, univName) {
-        const majors = await majorRepository.findByNameLikeWithUniv(majorKeyword, univName);
-        return majors.map((major) => {
-          return {
-            id: major.id,
-            name: major.name,
-            univ: major.univ,
-            department: major.department,
-            requiredGroups: major.requiredGroups,
-            difficulty: major.difficulty.toString()
-          }
-        });
-      },
-      async readSubjectList(majorId) {
-        const optionalSubjects = await optionalSubjectRepository.findByMajorId(majorId);
-        return [...optionalSubjects];
-      },
-      async submitMajorRecruit(recruit, id) {
-        if (!id) {
-          return;
-        }
-        await majorRepository.updateRecruit({
-          requiredGroups: recruit.requiredGroups,
-          difficulty: parseInt(recruit.difficulty)
-        }, id);
-      },
-    }}>
-      <div className="max-w-[600px] min-w-[550px]">
-        {children}
-      </div>
+          await majorRepository.updateRecruit(
+            {
+              requiredGroups: recruit.requiredGroups,
+              difficulty: parseInt(recruit.difficulty),
+            },
+            id
+          );
+        },
+      }}
+    >
+      <div className="max-w-[600px] min-w-[550px]">{children}</div>
     </AdminMajorContext.Provider>
-  )
-}
+  );
+};
 
 export default AdminMajorContainer;

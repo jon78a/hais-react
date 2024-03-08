@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import SubjectRecommendInteractor from "../view/interactor/SubjectRecommendInteractor";
 import majorRepository from "../driver/repository/majorRepository";
-import univRepository from "../driver/repository/univRepository";
+import univRepository from "../driver/repository/v2/univRepository";
 import optionalSubjectRepository from "../driver/repository/optionalSubjectRepository";
 import authSessionRepository from "../driver/repository/authSessionRepository";
 import studentRepository from "../driver/repository/studentRepository";
@@ -14,10 +14,11 @@ import SubjectRecommendContainer from "../view/container/SubjectRecommendContain
 import commonSubjectRepository from "../driver/repository/commonSubjectRepository";
 import creditScoreRepository from "../driver/repository/creditScoreRepository";
 import { routes } from "../routes";
-
 import Alert from "../Alert";
 import { useRecoilValue } from "recoil";
 import { accountState } from "../schema/states/Account";
+import departmentRepository from "../driver/repository/v2/departmentRepository";
+import schoolRepository from "../driver/repository/schoolRepository";
 
 const SubjectRecommendPage = (): JSX.Element => {
   const account = useRecoilValue(accountState);
@@ -27,35 +28,32 @@ const SubjectRecommendPage = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!account) { return }
-    studentRepository.findByUser(account.userId)
-      .then((student) => {
-        Promise.all([
-          gradeScoreRepository.findByStudent(student.id),
-          commonSubjectRepository.findBy({
-            nameKeyword: ''
-          })
-        ])
-          .then((value) => {
-            const [scores, subjects] = value;
-            setHasScore(scores.length >= subjects.length);
-          });
+    if (!account) {
+      return;
+    }
+    studentRepository.findByUser(account?.userId).then((student) => {
+      Promise.all([
+        gradeScoreRepository.findByStudent(student.id),
+        commonSubjectRepository.findBy({
+          nameKeyword: "",
+        }),
+      ]).then((value) => {
+        const [scores, subjects] = value;
+        setHasScore(scores.length >= subjects.length);
       });
+    });
   }, [account]);
 
   const handleScoreClose = () => {
     setHasScore(undefined);
     navigate(routes.myScore.path);
-  }
+  };
 
-  if (typeof hasScore === 'undefined') {
-    return <></>;
-  }
-
-  return hasScore ? (
+  return !account || hasScore ? (
     <SubjectRecommendContainer
       repositories={{
         majorRepository,
+        departmentRepository,
         univRepository,
         optionalSubjectRepository,
         authSessionRepository,
@@ -65,11 +63,18 @@ const SubjectRecommendPage = (): JSX.Element => {
         creditScoreRepository,
         commonSubjectWeightRepository,
         commonSubjectRepository,
+        schoolRepository,
       }}
     >
       <SubjectRecommendInteractor />
     </SubjectRecommendContainer>
-  ) : <Alert open={true} onClose={handleScoreClose} message="공통과목 성적을 등록해주세요."/>;
+  ) : (
+    <Alert
+      open={true}
+      onClose={handleScoreClose}
+      message="공통과목 성적을 등록해주세요."
+    />
+  );
 };
 
 export default SubjectRecommendPage;

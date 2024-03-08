@@ -2,21 +2,33 @@ import { useContext, createContext } from "react";
 
 import {
   UnivKeyword,
-  MajorKeyword,
   FullNameKeyword,
   UnivSearchResult,
   MajorResult,
   SubjectData,
-  MajorRecruit
+  MajorRecruit,
 } from "../schema/types/SubjectSearch";
+import { Department } from "../domain/univ/univ.interface";
 
 export interface SubjectSearchService {
   suggestUniv: (univKeyword: UnivKeyword) => Promise<UnivSearchResult[]>;
-  searchByMajorKeywordOnUnivName: (majorKeyword: MajorKeyword, univName: string) => Promise<MajorResult[]>;
-  searchByUnivOrMajor: (fullNameKeyword: FullNameKeyword) => Promise<MajorResult[]>;
+  getDepartmentOnUniv: (
+    name: string,
+    univId: string
+  ) => Promise<
+    Pick<
+      Department,
+      "guidelines" | "id" | "name" | "keyword" | "precedences" | "universityId"
+    >[]
+  >;
+  searchByUnivOrMajor: (
+    fullNameKeyword: FullNameKeyword
+  ) => Promise<MajorResult[]>;
   readSubjectList: (recruit: MajorRecruit) => Promise<SubjectData[]>;
 }
 
-export const SubjectSearchContext = createContext<SubjectSearchService | undefined>(undefined);
+export const SubjectSearchContext = createContext<
+  SubjectSearchService | undefined
+>(undefined);
 
 export const useSubjectSearchService = () => useContext(SubjectSearchContext)!;

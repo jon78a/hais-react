@@ -30,6 +30,16 @@ export interface Department {
   createdAt?: number;
 }
 
+export interface DepartmentWithSubject extends Omit<Department, "guidelines"> {
+  guidelines: {
+    id: string;
+    required: boolean;
+    type?: SchoolSubjectType;
+    options: { id?: string; name?: string; groups?: string[] }[];
+    condition: number;
+  }[];
+}
+
 export interface Guideline {
   id: string;
   required: boolean;
@@ -50,4 +60,5 @@ export interface DepartmentRepository {
   findBy: (filter: UnivFilter) => Promise<Department[]>;
   save: (form: Department, id?: string) => Promise<{ id: string }>;
   delete: (key: string) => Promise<void>;
+  findByUnivId: (name: string, univId: string) => Promise<Department[]>;
 }

@@ -5,6 +5,7 @@ import {
   getDocs,
   query,
   setDoc,
+  where,
 } from "firebase/firestore";
 import {
   Department,
@@ -30,14 +31,39 @@ const departmentRepository: DepartmentRepository = {
     const conds = [];
     conds.push(orderBy("name"));
 
-    const q = query(departmentRef);
+    let q = query(departmentRef);
+    if (filter.nameKeyword) {
+      q = query(departmentRef, where("name", ">=", filter.nameKeyword));
+    }
 
     const snapshot = await getDocs(q);
     let _list: Department[] = [];
     snapshot.forEach((doc) => {
       _list.push(doc.data() as Department);
     });
-    return _list.filter((v) => v.name.includes(filter.nameKeyword));
+    return _list;
+  },
+  async findByUnivId(name, univId) {
+    const conds = [];
+    conds.push(orderBy("name"));
+
+    let q = query(departmentRef, where("universityId", "==", univId));
+
+    if (name) {
+      q = query(
+        departmentRef,
+        where("name", ">=", name),
+        where("universityId", "==", univId)
+      );
+    }
+
+    const snapshot = await getDocs(q);
+    let _list: Department[] = [];
+    snapshot.forEach((doc) => {
+      _list.push(doc.data() as Department);
+    });
+
+    return _list;
   },
   async save(form, id) {
     // update

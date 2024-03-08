@@ -6,17 +6,23 @@ import {
   orderBy,
   getDocs,
   getDoc,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore";
 
 import { firebaseDb } from "../firebase";
 import { CollectionName } from "../firebase/constants";
-import { CommonSubjectRepository, CommonSubject } from "../../domain/subject/school.interface"
+import {
+  CommonSubjectRepository,
+  CommonSubject,
+} from "../../domain/subject/school.interface";
 
 const commonSubjectRepository: CommonSubjectRepository = {
   async save(commonSubject, key) {
-    if (!key) { // create
-      const snapshot = await getDocs(collection(firebaseDb, CollectionName.CommonSubject));
+    if (!key) {
+      // create
+      const snapshot = await getDocs(
+        collection(firebaseDb, CollectionName.CommonSubject)
+      );
       let maxCode = "0";
       snapshot.forEach((doc) => {
         if (Number(doc.data()["code"]) > Number(maxCode)) {
@@ -27,20 +33,23 @@ const commonSubjectRepository: CommonSubjectRepository = {
       const docRef = doc(firebaseDb, CollectionName.CommonSubject, nextCode);
       await setDoc(docRef, {
         ...commonSubject,
-        code: nextCode
+        code: nextCode,
       });
-    }
-    else { // update
+    } else {
+      // update
       const docRef = doc(firebaseDb, CollectionName.CommonSubject, key);
-      await setDoc(docRef, {...commonSubject});
+      await setDoc(docRef, { ...commonSubject });
     }
   },
   async findBy(filter) {
     const conds = [];
     conds.push(orderBy("code"));
 
-    const q = query(collection(firebaseDb, CollectionName.CommonSubject), ...conds);
-  
+    const q = query(
+      collection(firebaseDb, CollectionName.CommonSubject),
+      ...conds
+    );
+
     const snapshot = await getDocs(q);
     let _list: CommonSubject[] = [];
     snapshot.forEach((doc) => {
@@ -57,6 +66,6 @@ const commonSubjectRepository: CommonSubjectRepository = {
   async delete(key) {
     await deleteDoc(doc(firebaseDb, CollectionName.CommonSubject, key));
   },
-}
+};
 
 export default commonSubjectRepository;

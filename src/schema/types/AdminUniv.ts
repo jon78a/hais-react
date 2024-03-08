@@ -1,4 +1,3 @@
-import { Department } from "../../domain/univ/univ.interface";
 import { UnivOperation } from "../../policy/v2/univ";
 import { SchoolSubjectType } from "./AdminSchool";
 

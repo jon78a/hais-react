@@ -7,12 +7,11 @@ import {
   majorResultListState,
   isMatchUnivState,
   majorKeywordState,
-  searchModeState,
   selectedMajorIdState,
   univKeywordState,
   univSearchResultListState,
-  subjectDataListState,
   majorResultLoadingState,
+  majorWithSubjectState,
 } from "../../schema/states/SubjectRecommend";
 import SearchBar from "../presenter/subject-recommend.ui/SearchBar";
 import SubjectList from "../presenter/subject-recommend.ui/SubjectList";
@@ -25,7 +24,6 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const useChangeKeywordEffect = (service: SubjectRecommendService) => {
-  const searchMode = useRecoilValue(searchModeState);
   const isMatchUniv = useRecoilValue(isMatchUnivState);
 
   const univKeyword = useRecoilValue(univKeywordState);
@@ -45,34 +43,24 @@ const useChangeKeywordEffect = (service: SubjectRecommendService) => {
       setMajorResultList([]);
     }
 
-    switch (searchMode) {
-      case "UNIV":
-        if (!isMatchUniv) return clear;
-        setMajorResultLoading(true);
-        service
-          .searchByMajorKeywordOnUnivName(majorKeyword, univKeyword)
-          .then((results) => setMajorResultList(results))
-          .finally(() => setMajorResultLoading(false));
-        return clear;
-      case "FULL":
-        if (!fullNameKeyword) return clear;
-        setMajorResultLoading(true);
-        service
-          .searchByUnivOrMajor(fullNameKeyword)
-          .then((results) => setMajorResultList(results))
-          .finally(() => setMajorResultLoading(true));
-        return clear;
-    }
+    if (!isMatchUniv) return clear;
+    setMajorResultLoading(true);
+    service
+      .getDepartmentOnUniv(majorKeyword, univKeyword)
+      .then((results) => {
+        setMajorResultList(results);
+      })
+      .finally(() => setMajorResultLoading(false));
+    return clear;
   }, [
     service,
-    searchMode,
     isMatchUniv,
     univKeyword,
     majorKeyword,
     fullNameKeyword,
     setUnivSearchResultList,
     setMajorResultList,
-    setMajorResultLoading
+    setMajorResultLoading,
   ]);
 };
 
@@ -84,33 +72,26 @@ const SubjectRecommendInteractor = () => {
   const setUnivKeyword = useSetRecoilState(univKeywordState);
   const setMajorKeyword = useSetRecoilState(majorKeywordState);
   const setFullNameKeyword = useSetRecoilState(fullNameKeywordState);
-  const setSearchMode = useSetRecoilState(searchModeState);
 
   const majorResultList = useRecoilValue(majorResultListState);
 
   const setSelectedMajorCode = useSetRecoilState(selectedMajorIdState);
+  const setMajorResult = useSetRecoilState(majorWithSubjectState);
 
   useEffect(
     () => () => {
       setUnivKeyword("");
       setFullNameKeyword("");
-      setSearchMode("UNIV");
       setSelectedMajorCode(null);
     },
-    [setUnivKeyword, setFullNameKeyword, setSearchMode, setSelectedMajorCode]
+    [setUnivKeyword, setFullNameKeyword, setSelectedMajorCode]
   );
 
   useChangeKeywordEffect(service);
 
-  const setSubjectDataList = useSetRecoilState(subjectDataListState);
-  // const setRecommendStatus = useSetRecoilState(recommendStatusState);
-
   return (
     <div className="mt-6">
       <SearchBar
-        selectSearchMode={(mode) => {
-          setSearchMode(mode);
-        }}
         inputKeyword={debounce((value: string, type) => {
           switch (type) {
             case "univ":
@@ -129,14 +110,30 @@ const SubjectRecommendInteractor = () => {
           if (!major) {
             return;
           }
+          if (id) setSelectedMajorCode(id);
           setLoading(true);
-          setSelectedMajorCode(id);
-          service.readSubjectList({
-            requiredGroups: major.requiredGroups,
-            difficulty: major.difficulty
-          }).then((list) => {
-            setSubjectDataList(list);
-          }).finally(() => setLoading(false));
+
+          service
+            .readSubjectList(major.guidelines || [])
+            .then((list) => {
+              const result = {
+                ...major,
+                guidelines: major.guidelines?.map((g) => ({
+                  ...g,
+                  options: g.options.map((id) => {
+                    const item = list.find((item) => item?.id === id);
+                    return {
+                      id: item?.id,
+                      name: item?.name,
+                      groups: item?.groups,
+                    };
+                  }),
+                })),
+              };
+
+              setMajorResult(result);
+            })
+            .finally(() => setLoading(false));
         }}
       />
       <div className="mt-4 pb-12">

@@ -48,6 +48,7 @@ interface PublicRoutesType {
   findCredentialPw: RouteExp;
   oauth: RouteExp;
   subjectSearch: RouteExp;
+  subjectRecommend: RouteExp;
   people: RouteExp;
 }
 
@@ -81,6 +82,10 @@ export const publicRoutes: PublicRoutesType = {
     path: "/subject/search",
     re: new RegExp("^/subject/search"),
   },
+  subjectRecommend: {
+    path: "/subject/recommend",
+    re: new RegExp("^/subject/recommend"),
+  },
   people: {
     path: "/people",
     re: new RegExp("^/people"),
@@ -90,7 +95,6 @@ export const publicRoutes: PublicRoutesType = {
 interface AuthPermissionRoutesType {
   my: RouteExp;
   myScore: RouteExp;
-  subjectRecommend: RouteExp;
 }
 
 export const authPermissionRoutes: AuthPermissionRoutesType = {
@@ -101,10 +105,6 @@ export const authPermissionRoutes: AuthPermissionRoutesType = {
   myScore: {
     path: "/my/score",
     re: new RegExp("^/my/score$"),
-  },
-  subjectRecommend: {
-    path: "/subject/recommend",
-    re: new RegExp("^/subject/recommend"),
   },
 };
 
