@@ -139,14 +139,7 @@ const AdminSchoolInteractor = () => {
                       if (data) {
                         const newSubjectList = schoolSubjectList.map(
                           (subject) =>
-                            subject.id === req.subjectId
-                              ? {
-                                  ...data,
-                                  schoolName: schoolList.find(
-                                    (sc) => sc.id === data.schoolId
-                                  )?.name,
-                                }
-                              : subject
+                            subject.id === req.subjectId ? data : subject
                         );
 
                         setSchoolSubjectList(newSubjectList);

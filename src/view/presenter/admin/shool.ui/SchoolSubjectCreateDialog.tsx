@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { SchoolSubjectTableContext } from "./SchoolSubjectTableContext";
 import type {
   Level,
+  SchoolDto,
   SchoolSubjectCreateRequest,
 } from "../../../../schema/types/AdminSchool";
 import Dialog from "@mui/material/Dialog";
@@ -67,26 +68,6 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
             })
           }
         />
-        <Autocomplete
-          disablePortal
-          getOptionLabel={(option) => option.name}
-          options={schoolList}
-          disableClearable
-          sx={{ mt: 2 }}
-          onChange={(_, newValue) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form.data,
-                schoolId: newValue.id,
-              },
-            })
-          }
-          renderInput={(params) => (
-            <TextField {...params} placeholder="학교를 선택해주세요" />
-          )}
-        />
         <FormControl fullWidth sx={{ mt: 2 }} required>
           <InputLabel id="과목 분류">과목 분류</InputLabel>
           <Select
@@ -105,10 +86,35 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
             }
           >
             {Object.values(schoolSubjectTypeMap).map((e) => (
-              <MenuItem value={e}>{e}</MenuItem>
+              <MenuItem key={e} value={e}>
+                {e}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
+        <Autocomplete
+          disablePortal
+          getOptionLabel={(option) => option.name}
+          value={schoolList?.find((school) => school.id === form.data.schoolId)}
+          options={schoolList}
+          disableClearable
+          sx={{ mt: 2 }}
+          disabled={form.data.type === "공통과목"}
+          onChange={(_, newValue: SchoolDto) =>
+            form.data &&
+            setForm({
+              ...form,
+              data: {
+                ...form.data,
+                schoolId: newValue ? newValue.id : "",
+                schoolName: newValue ? newValue.name : "",
+              },
+            })
+          }
+          renderInput={(params) => (
+            <TextField {...params} placeholder="학교를 선택해주세요" />
+          )}
+        />
         <TextField
           label="그룹"
           fullWidth
@@ -146,7 +152,9 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
             }
           >
             {levels.map((level) => (
-              <MenuItem value={level}>{level}</MenuItem>
+              <MenuItem key={level} value={level}>
+                {level}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -169,7 +177,9 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
             }
           >
             {credits.map((credit) => (
-              <MenuItem value={credit}>{credit}</MenuItem>
+              <MenuItem key={credit} value={credit}>
+                {credit}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
