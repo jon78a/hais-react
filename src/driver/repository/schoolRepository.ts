@@ -148,14 +148,15 @@ const schoolRepository: SchoolRepository = {
     await deleteDoc(doc(subjectRef, subjectId));
   },
   async saveSubject({ form, subjectId }) {
-    const subjectRef =
-      form.type === "공통과목" ? commonSubjectRef : optionalSubjectRef;
-
+    const isCommonSubject = form.type === "공통과목";
+    const subjectRef = isCommonSubject ? commonSubjectRef : optionalSubjectRef;
+    let updatedForm = { ...form };
+    if (isCommonSubject) updatedForm.schoolId = "";
     // update
     if (subjectId) {
       const docRef = doc(subjectRef, subjectId);
       try {
-        await setDoc(docRef, form);
+        await setDoc(docRef, updatedForm);
       } catch (error) {
         console.error(error);
       }
@@ -165,7 +166,7 @@ const schoolRepository: SchoolRepository = {
     const newSubjectId = uuidv4();
     const docRef = doc(subjectRef, newSubjectId);
     try {
-      await setDoc(docRef, { ...form, id: newSubjectId });
+      await setDoc(docRef, { ...updatedForm, id: newSubjectId });
     } catch (error) {
       console.error(error);
     }
