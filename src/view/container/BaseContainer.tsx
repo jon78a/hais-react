@@ -85,17 +85,12 @@ export const BaseContainer = ({
 };
 
 export function TopNavBarXl() {
-  const [screenWidth, setScreenWidth] = useState(0);
-  useEffect(() => {
-    setScreenWidth(window.screen.width);
-  }, []);
   const matchesDesktopXl = useMediaQuery("(min-width: 450px)"); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
   return (
     <div
-      className={`flex justify-center ${matchesDesktopXl ? `` : "hidden"} `}
-      style={{
-        width: `${screenWidth}px`,
-      }}
+      className={`px-6 flex justify-center ${
+        matchesDesktopXl ? `` : "hidden"
+      } `}
     >
       <AppBar
         position={"static"}
@@ -104,12 +99,7 @@ export function TopNavBarXl() {
           boxShadow: "none",
         }}
       >
-        <div
-          className="flex flex-row items-center justify-between py-4 mx-auto"
-          style={{
-            width: `${screenWidth * 0.8}px`,
-          }}
-        >
+        <div className="flex flex-row items-center justify-between py-4 mx-auto w-full">
           <Link to={"/"} className="w-[60px] h-[60px]">
             <img src="/logo-main.png" alt="logo" />
           </Link>
