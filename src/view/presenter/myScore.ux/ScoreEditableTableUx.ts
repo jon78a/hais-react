@@ -1,15 +1,12 @@
-import type {
-  GradeScoreForm,
-  CreditScoreForm,
-} from "../../../schema/types/MyScore";
+import { StudentGrade } from "../../../schema/types/MyScore";
 
 export interface ScoreEditableTableUx {
-  saveGradeScore: (form: GradeScoreForm) => void;
-  saveCreditScore: (form: CreditScoreForm) => void;
+  saveGradeScore: (form: StudentGrade) => void;
+  loading: boolean;
 }
 
-export function isValidForm(form: GradeScoreForm | CreditScoreForm) {
-  if (!form.subjectCode) {
+export function isValidForm(form: StudentGrade) {
+  if (!form.subjectId) {
     return false;
   }
   return true;

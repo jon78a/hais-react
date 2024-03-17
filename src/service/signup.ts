@@ -1,11 +1,9 @@
 import { createContext, useContext } from "react";
 
-import type {
-  StudentProfile,
-  SignupRequest
-} from "../schema/types/Signup";
+import type { StudentProfile, SignupRequest } from "../schema/types/Signup";
 import type { ExceptionDetail } from "../types";
 import { SocialType } from "../policy/auth";
+import { School } from "../domain/school/school.interface";
 
 interface SignupService {
   submitStudentInfo: (form: StudentProfile) => void;
@@ -20,8 +18,11 @@ interface SignupService {
     passwordConfirm: string
   ) => ExceptionDetail | null;
   checkName: (value: string) => ExceptionDetail | null;
+  getSchoolList: () => Promise<School[]>;
 }
 
-export const SignupContext = createContext<SignupService | undefined>(undefined);
+export const SignupContext = createContext<SignupService | undefined>(
+  undefined
+);
 
 export const useSignupService = () => useContext(SignupContext)!;

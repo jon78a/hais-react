@@ -69,4 +69,6 @@ export interface SchoolRepository {
     isCommonSubject: boolean;
     subjectId: string;
   }) => Promise<SchoolSubject | null>;
+  getCommonSubjects: () => Promise<SchoolSubject[]>;
+  getOptionalSubjects: (schoolId: string) => Promise<SchoolSubject[]>;
 }

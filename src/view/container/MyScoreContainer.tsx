@@ -12,9 +12,9 @@ import {
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { AuthSessionRepository } from "../../domain/account/auth.interface";
-import studentRepository from "../../driver/repository/studentRepository";
 import Alert from "../../Alert";
 import { routes } from "../../routes";
+import { SchoolRepository } from "../../domain/school/school.interface";
 
 type ErrorType = "PERMISSION" | "MODIFY";
 
@@ -61,6 +61,7 @@ const MyScoreContainer = ({
     creditScoreRepository: CreditScoreRepository;
     authSessionRepository: AuthSessionRepository;
     studentRepository: StudentRepository;
+    schoolRepository: SchoolRepository;
   };
 }) => {
   const [errorState, dispatchError] = useReducer(errorReducer, {
@@ -70,15 +71,36 @@ const MyScoreContainer = ({
   const {
     commonSubjectRepository,
     optionalSubjectRepository,
-    gradeScoreRepository,
-    creditScoreRepository,
     authSessionRepository,
+    schoolRepository,
+    studentRepository,
   } = repositories;
 
   return (
     <MyScoreContext.Provider
       value={{
-        async saveCreditScore(form) {
+        async getSubjectGrade(studentId: string, isCommonSubject?: boolean) {
+          const grade = await studentRepository.getSubjectGrade(
+            studentId,
+            isCommonSubject
+          );
+          return grade;
+        },
+        async getStudent() {
+          const session = await authSessionRepository.find();
+          const userId = session?.userId;
+          if (!userId) {
+            dispatchError({ type: "PERMISSION" });
+            return;
+          }
+          const student = await studentRepository.findByUser(userId);
+          return student;
+        },
+        async getSchoolList() {
+          const schools = await schoolRepository.findBy({ nameKeyword: "" });
+          return schools;
+        },
+        async saveMySchool(schoolId) {
           const session = await authSessionRepository.find();
           const userId = session?.userId;
           if (!userId) {
@@ -86,81 +108,36 @@ const MyScoreContainer = ({
             return;
           }
           try {
-            const { id: studentId } = await studentRepository.findByUser(
-              userId
-            );
-            await creditScoreRepository.save({
-              ...form,
+            const student = await studentRepository.findByUser(userId);
+            await studentRepository.update(student.id, { schoolId });
+          } catch {
+            dispatchError({ type: "MODIFY" });
+          }
+        },
+        async saveGradeScore(studentId, isCommonSubject, form) {
+          const session = await authSessionRepository.find();
+          const userId = session?.userId;
+          if (!userId) {
+            dispatchError({ type: "PERMISSION" });
+            return;
+          }
+          try {
+            await studentRepository.updateSubjectScore(
               studentId,
-              creditAmount: parseInt(form.creditAmount)
-            });
-          } catch {
-            dispatchError({ type: "MODIFY" });
-          }
-        },
-        async saveGradeScore(form) {
-          const session = await authSessionRepository.find();
-          const userId = session?.userId;
-          if (!userId) {
-            dispatchError({ type: "PERMISSION" });
-            return;
-          }
-          try {
-            const { id: studentId } = await studentRepository.findByUser(
-              userId
-            );
-            await gradeScoreRepository.save({
-              ...form,
-              studentId,
-            });
-          } catch {
-            dispatchError({ type: "MODIFY" });
-          }
-        },
-        async updateCreditScore(form, scoreId) {
-          const session = await authSessionRepository.find();
-          const userId = session?.userId;
-          if (!userId) {
-            dispatchError({ type: "PERMISSION" });
-            return;
-          }
-          try {
-            const { id: studentId } = await studentRepository.findByUser(
-              userId
-            );
-            await creditScoreRepository.save(
-              {
-                ...form,
-                studentId,
-                creditAmount: parseInt(form.creditAmount)
-              },
-              scoreId
+              isCommonSubject,
+              form
             );
           } catch {
             dispatchError({ type: "MODIFY" });
           }
         },
-        async updateGradeScore(form, scoreId) {
-          const session = await authSessionRepository.find();
-          const userId = session?.userId;
-          if (!userId) {
-            dispatchError({ type: "PERMISSION" });
-            return;
-          }
-          try {
-            const { id: studentId } = await studentRepository.findByUser(
-              userId
-            );
-            await gradeScoreRepository.save(
-              {
-                ...form,
-                studentId,
-              },
-              scoreId
-            );
-          } catch {
-            dispatchError({ type: "MODIFY" });
-          }
+        async getCommonSubjects() {
+          const data = await schoolRepository.getCommonSubjects();
+          return data;
+        },
+        async getOptionalSubjects(schoolId) {
+          const data = await schoolRepository.getOptionalSubjects(schoolId);
+          return data;
         },
         async showSubjectSummaryList(label) {
           if (label === "공통과목") {
@@ -173,8 +150,8 @@ const MyScoreContainer = ({
                 code: payload.code,
                 group: payload.group,
                 subjectCategory: label,
-                name: payload.name
-              }
+                name: payload.name,
+              };
             });
           }
           if (label === "선택과목") {
@@ -187,54 +164,11 @@ const MyScoreContainer = ({
                 code: payload.code,
                 group: payload.group,
                 subjectCategory: payload.subjectCategory,
-                name: payload.name
-              }
+                name: payload.name,
+              };
             });
           }
           return [];
-        },
-        async readCreditScoreList() {
-          const session = await authSessionRepository.find();
-          const userId = session?.userId!;
-
-          if (!userId) {
-            dispatchError({ type: "PERMISSION" });
-            return [];
-          }
-
-          const { id: studentId } = await studentRepository.findByUser(
-            userId
-          );
-          const data = await creditScoreRepository.findByStudent(studentId);
-          return data.map((score) => {
-            return {
-              id: score.id,
-              code: score.subjectCode,
-              value: score.credit,
-              creditAmount: score.creditAmount.toString()
-            }
-          });
-        },
-        async readGradeScoreList() {
-          const session = await authSessionRepository.find();
-          const userId = session?.userId!;
-
-          if (!userId) {
-            dispatchError({ type: "PERMISSION" });
-            return [];
-          }
-
-          const { id: studentId } = await studentRepository.findByUser(
-            userId
-          );
-          const data = await gradeScoreRepository.findByStudent(studentId);
-          return data.map((score) => {
-            return {
-              id: score.id,
-              code: score.subjectCode,
-              value: score.grade
-            }
-          });
         },
       }}
     >
@@ -244,7 +178,7 @@ const MyScoreContainer = ({
           sx={{
             fontWeight: "bold",
             color: "primary.main",
-            marginTop: 5
+            marginTop: 5,
           }}
         >
           교과 성적 입력

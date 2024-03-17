@@ -1,18 +1,12 @@
 import { CreditType, GradeType } from "../../policy/score";
+import { SchoolSubjectDto } from "./AdminSchool";
 
 export type SubjectLabel = "공통과목" | "선택과목";
 
-export type GradeScoreForm = {
-  subjectCode: string;
-  grade: GradeType;
-  category: string;
-};
-
-export type CreditScoreForm = {
-  subjectCode: string;
-  credit: CreditType;
-  creditAmount: string;
-  category: string;
+export type SubjectForm = {
+  type: string;
+  name: string;
+  groups: string;
 };
 
 export type SubjectSummary = {
@@ -29,10 +23,17 @@ export type CreditScoreValue = {
   creditAmount: string;
 };
 
+export type StudentGrade = {
+  subjectId: string;
+  grade: GradeType;
+};
+
 export type GradeScoreValue = {
   id: string;
   code: string;
   value: GradeType;
 };
 
-export type ScoreRow = SubjectSummary & {score: string; creditAmount?: string};
+export type ScoreRow = SchoolSubjectDto & {
+  score: string;
+};
