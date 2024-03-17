@@ -1,52 +1,52 @@
 import { useRecoilValue } from "recoil";
 import { useState, useMemo } from "react";
 
-import { studentProfileState } from "../../../schema/states/Signup";
+import {
+  schoolListState,
+  studentProfileState,
+} from "../../../schema/states/Signup";
 import { StudentProfileStepUx } from "../signup.ux/StudentProfileStep";
 import type { ExceptionDetail } from "../../../types";
 
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 import InputLabel from "@mui/material/InputLabel";
-import Select from '@mui/material/Select';
+import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
+import Autocomplete from "@mui/material/Autocomplete";
 
 export const StudentProfileStep: React.FC<StudentProfileStepUx> = (ux) => {
-  const studentProfile = useRecoilValue(studentProfileState)
+  const studentProfile = useRecoilValue(studentProfileState);
+  const schoolList = useRecoilValue(schoolListState);
 
-  const [nameException, setNameException] = useState<ExceptionDetail | null>(null);
+  const [nameException, setNameException] = useState<ExceptionDetail | null>(
+    null
+  );
 
   const [clicked, setClicked] = useState<boolean>(false);
 
   const isDisabled = useMemo(() => {
-    const hasException = (
-      !!nameException
-    );
-    const hasBlank = (
-      !studentProfile.name
-    );
-    return (
-      hasException
-    ) || (
-      !hasException && hasBlank
-    )
-  }, [
-    nameException,
-    studentProfile
-  ]);
+    const hasException = !!nameException;
+    const hasBlank = !studentProfile.name;
+    return hasException || (!hasException && hasBlank);
+  }, [nameException, studentProfile]);
 
   return (
-    <Paper sx={{
-      width: 350,
-      py: 3,
-      px: 2
-    }}>
+    <Paper
+      sx={{
+        width: 350,
+        py: 3,
+        px: 2,
+      }}
+    >
       <div className="flex flex-row w-full justify-between">
-        <Button variant="text" sx={{textDecoration: "underline"}}
+        <Button
+          variant="text"
+          sx={{ textDecoration: "underline" }}
           onClick={() => {
             ux.back();
           }}
@@ -58,11 +58,7 @@ export const StudentProfileStep: React.FC<StudentProfileStepUx> = (ux) => {
         </Typography>
         <em></em>
       </div>
-      <Box
-        component={"form"}
-        autoComplete="off"
-        className="flex flex-col"
-      >
+      <Box component={"form"} autoComplete="off" className="flex flex-col">
         <Stack spacing={1}>
           <div className="flex flex-col">
             <InputLabel>
@@ -119,9 +115,29 @@ export const StudentProfileStep: React.FC<StudentProfileStepUx> = (ux) => {
               <MenuItem value={"C"}>예체능</MenuItem>
             </Select>
           </div>
+          <div className="flex flex-col">
+            <InputLabel>
+              <Typography variant="overline" component={"h2"}>
+                내 학교
+              </Typography>
+            </InputLabel>
+            <Autocomplete
+              disablePortal
+              onChange={(_, value) => {
+                if (value?.id) ux.selectSchool(value.id);
+              }}
+              options={schoolList}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField {...params} label="대학명 입력" size={"small"} />
+              )}
+            ></Autocomplete>
+          </div>
         </Stack>
         <Button
-          variant="contained" sx={{mt: 4}} onClick={() => {
+          variant="contained"
+          sx={{ mt: 4 }}
+          onClick={() => {
             setClicked(true);
             ux.clickSignupDone();
           }}
@@ -132,4 +148,4 @@ export const StudentProfileStep: React.FC<StudentProfileStepUx> = (ux) => {
       </Box>
     </Paper>
   );
-}
+};

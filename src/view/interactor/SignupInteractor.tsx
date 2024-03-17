@@ -1,10 +1,14 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 
 import { useSignupService } from "../../service/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
-import { signupRequestState, studentProfileState } from "../../schema/states/Signup";
+import {
+  schoolListState,
+  signupRequestState,
+  studentProfileState,
+} from "../../schema/states/Signup";
 import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
 import type { StudentCategoryCode } from "../../policy/school";
 import { studentState } from "../../domain/subject/school.impl";
@@ -14,9 +18,16 @@ const SignupInteractor: React.FC = () => {
   const [searchParams, __setSearchParams] = useSearchParams();
 
   const [signupRequest, setSignupRequest] = useRecoilState(signupRequestState);
-  const [studentProfile, setStudentProfile] = useRecoilState(studentProfileState);
-
+  const [studentProfile, setStudentProfile] =
+    useRecoilState(studentProfileState);
+  const setSelectedSchool = useSetRecoilState(schoolListState);
   const studentSnapshot = useRecoilValue(studentState);
+
+  useEffect(() => {
+    service.getSchoolList().then((data) => {
+      setSelectedSchool(data);
+    });
+  }, [service, setSelectedSchool]);
 
   useEffect(() => {
     if (studentSnapshot.loading) {
@@ -24,34 +35,34 @@ const SignupInteractor: React.FC = () => {
     }
   }, [studentSnapshot, service]);
 
-  switch(searchParams.get("step") || "1") {
+  switch (searchParams.get("step") || "1") {
     case "1":
       return (
         <SignupMain
           clickMarketingAgreementToggle={() => {
             setSignupRequest({
               ...signupRequest,
-              isAgreeMarketing: !signupRequest.isAgreeMarketing
-            })
+              isAgreeMarketing: !signupRequest.isAgreeMarketing,
+            });
           }}
           inputEmail={(value) => {
             setSignupRequest({
               ...signupRequest,
-              email: value
+              email: value,
             });
             return service.checkEmail(value);
           }}
           inputPassword={(value) => {
             setSignupRequest({
               ...signupRequest,
-              password: value
+              password: value,
             });
             return service.checkPassword(value);
           }}
           inputPasswordConfirm={(value) => {
             setSignupRequest({
               ...signupRequest,
-              passwordConfirm: value
+              passwordConfirm: value,
             });
             return service.checkPasswordConfirm(signupRequest.password, value);
           }}
@@ -69,34 +80,41 @@ const SignupInteractor: React.FC = () => {
           inputName={(value) => {
             setStudentProfile({
               ...studentProfile,
-              name: value
+              name: value,
             });
             return service.checkName(value);
           }}
           selectSchoolYear={(value) => {
             setStudentProfile({
               ...studentProfile,
-              schoolYear: value
+              schoolYear: value,
             });
           }}
           selectSubjectCategory={(value) => {
             setStudentProfile({
               ...studentProfile,
-              subjectCategory: value as StudentCategoryCode
-            })
+              subjectCategory: value as StudentCategoryCode,
+            });
           }}
-          inputTargetMajors={(values) => {
-
+          inputTargetMajors={(values) => {}}
+          clickSignupDone={() => {
+            service.submitStudentInfo(studentProfile);
           }}
-          clickSignupDone={() => { service.submitStudentInfo(studentProfile) }}
           back={() => {
             service.resetRequest();
           }}
+          selectSchool={(value) => {
+            console.log("value", value);
+            setStudentProfile({
+              ...studentProfile,
+              schoolId: value,
+            });
+          }}
         />
-      )
+      );
     default:
       throw new Error("step invalid");
   }
-}
+};
 
 export default SignupInteractor;

@@ -1,54 +1,45 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
-import { SubjectSummary, type SubjectLabel, ScoreRow, CreditScoreValue, GradeScoreValue } from "../types/MyScore";
+import {
+  SubjectSummary,
+  type SubjectLabel,
+  StudentGrade,
+} from "../types/MyScore";
+import { School } from "../../domain/school/school.interface";
+import { Student } from "../../domain/subject/school.interface";
+import { SchoolSubjectDto } from "../types/AdminSchool";
+
+export const subjectListState = atom<SchoolSubjectDto[]>({
+  key: "schema/states/MyScore/SchoolSubject",
+  default: [],
+});
+
+export const studentState = atom<Student | undefined>({
+  key: "schema/states/MyScore/Student",
+  default: undefined,
+});
+
+export const gradeListState = atom<StudentGrade[]>({
+  key: "schema/states/MyScore/GradeList",
+  default: [],
+});
 
 export const subjectLabelState = atom<SubjectLabel>({
   key: "schema/states/MyScore/SubjectLabel",
-  default: "공통과목"
+  default: "공통과목",
 });
 
 export const subjectSummaryListState = atom<SubjectSummary[]>({
   key: "schema/states/MyScore/SubjectSummary",
-  default: []
+  default: [],
 });
 
-export const creditScoreValueListState = atom<CreditScoreValue[]>({
-  key: "schema/states/MyScore/CreditScoreValueList",
-  default: []
+export const schoolListState = atom<School[]>({
+  key: "schema/states/MyScore/SchoolList",
+  default: [],
 });
 
-export const gradeScoreValueListState = atom<GradeScoreValue[]>({
-  key: "schema/states/MyScore/GradeScoreValueList",
-  default: []
-});
-
-export const scoreRowsState = selector<ScoreRow[]>({
-  key: "schema/states/MyScore/ScoreRows",
-  get: ({get}) => {
-    const subjects = get(subjectSummaryListState);
-    const label = get(subjectLabelState);
-    if (label === "공통과목") {
-      const scores = get(gradeScoreValueListState);
-      return subjects.map((subject) => {
-        const scoreValue = scores.find((v) => v.code === subject.code);
-        return {
-          ...subject,
-          score: scoreValue ? `${scoreValue.value}` : ""
-        }
-      });
-    }
-    if (label === "선택과목") {
-      const scores = get(creditScoreValueListState);
-      return subjects.map((subject) => {
-        const scoreValue = scores.find((v) => v.code === subject.code);
-        return {
-          ...subject,
-          score: scoreValue?.value || "",
-          creditAmount: scoreValue?.creditAmount
-        }
-      });
-    }
-
-    return [];
-  }
+export const selectedSchoolIdState = atom<string>({
+  key: "schema/states/MyScore/SelectedSchoolId",
+  default: undefined,
 });

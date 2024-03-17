@@ -1,23 +1,32 @@
 import { createContext, useContext } from "react";
 import type {
-  GradeScoreForm,
-  CreditScoreForm,
   SubjectLabel,
   SubjectSummary,
-  GradeScoreValue,
-  CreditScoreValue
+  StudentGrade,
 } from "../schema/types/MyScore";
+import { School, SchoolSubject } from "../domain/school/school.interface";
+import { Student } from "../domain/subject/school.interface";
 
 interface MyScoreService {
-  saveGradeScore: (form: GradeScoreForm) => Promise<void>;
-  saveCreditScore: (form: CreditScoreForm) => Promise<void>;
-  updateGradeScore: (form: GradeScoreForm, scoreId: string) => Promise<void>;
-  updateCreditScore: (form: CreditScoreForm, scoreId: string) => Promise<void>;
+  saveGradeScore: (
+    studentId: string,
+    isCommonSubject: boolean,
+    form: StudentGrade
+  ) => Promise<void>;
   showSubjectSummaryList: (label: SubjectLabel) => Promise<SubjectSummary[]>;
-  readGradeScoreList: () => Promise<GradeScoreValue[]>;
-  readCreditScoreList: () => Promise<CreditScoreValue[]>;
+  getSchoolList: () => Promise<School[]>;
+  saveMySchool: (schoolId: string) => Promise<void>;
+  getStudent: () => Promise<Student | undefined>;
+  getCommonSubjects: () => Promise<SchoolSubject[]>;
+  getOptionalSubjects: (schoolId: string) => Promise<SchoolSubject[]>;
+  getSubjectGrade: (
+    studentId: string,
+    isCommonSubject?: boolean
+  ) => Promise<StudentGrade[]>;
 }
 
-export const MyScoreContext = createContext<MyScoreService | undefined>(undefined);
+export const MyScoreContext = createContext<MyScoreService | undefined>(
+  undefined
+);
 
 export const useMyScoreService = () => useContext(MyScoreContext)!;

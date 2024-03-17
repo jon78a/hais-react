@@ -6,7 +6,8 @@ export type StudentProfile = {
   schoolYear: number;
   subjectCategory: StudentCategoryCode;
   targetMajor: string[];
-}
+  schoolId: string;
+};
 
 export type SignupRequest = {
   isAgreeMarketing: boolean;
@@ -14,4 +15,4 @@ export type SignupRequest = {
   password: string;
   passwordConfirm: string;
   authChoice: AuthChoiceType;
-}
+};

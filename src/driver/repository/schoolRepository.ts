@@ -112,6 +112,37 @@ const schoolRepository: SchoolRepository = {
 
     return _subjects.filter((v) => v.name.includes(filter.nameKeyword));
   },
+  async getCommonSubjects() {
+    let _subjects: SchoolSubject[] = [];
+
+    const conds = [];
+    conds.push(orderBy("name"));
+
+    const commonSubjectQuery = query(commonSubjectRef);
+    const commonSubjectsSnapshot = await getDocs(commonSubjectQuery);
+    commonSubjectsSnapshot.forEach((doc) => {
+      _subjects.push(doc.data() as SchoolSubject);
+    });
+
+    return _subjects;
+  },
+  async getOptionalSubjects(schoolId) {
+    let _subjects: SchoolSubject[] = [];
+
+    const conds = [];
+    conds.push(orderBy("name"));
+
+    const optionalSubjectQuery = query(
+      optionalSubjectRef,
+      where("schoolId", "==", schoolId)
+    );
+    const subjectsSnapshot = await getDocs(optionalSubjectQuery);
+    subjectsSnapshot.forEach((doc) => {
+      _subjects.push(doc.data() as SchoolSubject);
+    });
+
+    return _subjects;
+  },
   async findSubjectByType(type: SchoolSubjectType) {
     let _subjects: SchoolSubject[] = [];
 

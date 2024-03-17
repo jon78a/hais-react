@@ -1,84 +1,147 @@
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
-import { creditScoreValueListState, gradeScoreValueListState, subjectLabelState, subjectSummaryListState } from "../../schema/states/MyScore";
+import {
+  gradeListState,
+  schoolListState,
+  selectedSchoolIdState,
+  studentState,
+  subjectLabelState,
+  subjectListState,
+} from "../../schema/states/MyScore";
 import FilterSelect from "../presenter/myScore.ui/FilterSelect";
 import ScoreEditableTable from "../presenter/myScore.ui/ScoreEditableTable";
 import { useMyScoreService } from "../../service/my-score";
 
 import Divider from "@mui/material/Divider";
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import SchoolSelect from "../presenter/myScore.ui/SchoolSelect";
 
 const MyScoreInteractor = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [subjectLabel, setSubjectLabel] = useRecoilState(subjectLabelState);
+  const setSubjectList = useSetRecoilState(subjectListState);
   const service = useMyScoreService();
 
-  const setSubjectSummaryList = useSetRecoilState(subjectSummaryListState);
-  const [creditScoreValueList, setCreditScoreValueList] = useRecoilState(creditScoreValueListState);
-  const [gradeScoreValueList, setGradeScoreValueList] = useRecoilState(gradeScoreValueListState);
-
+  const setSchoolList = useSetRecoilState(schoolListState);
+  const setGradeList = useSetRecoilState(gradeListState);
+  const [student, setStudent] = useRecoilState(studentState);
+  const selectedSchoolId = useRecoilValue(selectedSchoolIdState);
   const refetch = useCallback(() => {
+    setLoading(true);
+
     Promise.all([
-      service.showSubjectSummaryList(subjectLabel),
-      service.readCreditScoreList(),
-      service.readGradeScoreList(),
-    ])
-      .then((dataList) => {
-        const [subjectSummaryList, creditScoreList, gradeScoreList] = dataList;
-        setSubjectSummaryList(subjectSummaryList);
-        setCreditScoreValueList(creditScoreList);
-        setGradeScoreValueList(gradeScoreList);
-        setLoading(false);
-      });
-  }, [
-    subjectLabel,
-    service,
-    setSubjectSummaryList,
-    setCreditScoreValueList,
-    setGradeScoreValueList
-  ]);
+      service.getSchoolList(),
+      service.getStudent(),
+      service.getCommonSubjects(),
+    ]).then((dataList) => {
+      const [schoolList, student, subjectList] = dataList;
+      setSchoolList(schoolList);
+      setStudent(student);
+      setSubjectList(subjectList);
+      setLoading(false);
+    });
+  }, [service, setSchoolList, setStudent, setSubjectList]);
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
+  useEffect(() => {
+    if (!student) return;
+    if (subjectLabel) {
+      setLoading(true);
+      service
+        .getSubjectGrade(
+          student?.id,
+          subjectLabel === "공통과목" ? true : false
+        )
+        .then((data) => {
+          setGradeList(data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [service, setGradeList, student, subjectLabel]);
+
+  const fetchCommonSubject = () => {
+    setLoading(true);
+    service
+      .getCommonSubjects()
+      .then((data) => {
+        setSubjectList(data);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const fetchOptionalSubject = (id: string) => {
+    setLoading(true);
+    service
+      .getOptionalSubjects(id)
+      .then((data) => {
+        setSubjectList(data);
+      })
+      .finally(() => setLoading(false));
+  };
+
   return (
     <>
       <div className="flex flex-col">
-        <div className="w-full flex justify-end my-4">
-          <div className="mr-16">
-            <FilterSelect selectSubjectLabel={(label) => setSubjectLabel(label)}/>
-          </div>
-        </div>
-        <Divider sx={{mt: 1}} />
-        <div className="py-12">
-          <ScoreEditableTable
-            saveCreditScore={(form) => {
-              setLoading(true);
-              const prevScore = creditScoreValueList.find((v) => v.code === form.subjectCode);
-              if (prevScore) {
-                service.updateCreditScore(form, prevScore.id).then(() => refetch());
-              } else {
-                service.saveCreditScore(form).then(() => refetch());
+        <div className="w-full flex my-4 justify-between">
+          <SchoolSelect
+            loading={loading}
+            onChangeSchool={(id) => {
+              void service.saveMySchool(id);
+              setSubjectList([]);
+              if (subjectLabel === "공통과목") {
+                fetchCommonSubject();
+              }
+              if (subjectLabel === "선택과목") {
+                fetchOptionalSubject(id);
               }
             }}
-            saveGradeScore={(form) => {
-              setLoading(true);
-              const prevScore = gradeScoreValueList.find((v) => v.code === form.subjectCode);
-              if (prevScore) {
-                service.updateGradeScore(form, prevScore.id).then(() => refetch());
-              } else {
-                service.saveGradeScore(form).then(() => refetch());
+          />
+          <FilterSelect
+            loading={loading}
+            selectSubjectLabel={(label) => {
+              setSubjectList([]);
+              if (label === "공통과목") {
+                fetchCommonSubject();
               }
+
+              if (label === "선택과목") {
+                if (!student?.schoolId) return alert("학교를 선택해주세요.");
+                fetchOptionalSubject(
+                  selectedSchoolId ? selectedSchoolId : student?.schoolId
+                );
+              }
+              setSubjectLabel(label);
+            }}
+          />
+        </div>
+        <Divider sx={{ mt: 1 }} />
+        <div className="py-12">
+          <ScoreEditableTable
+            loading={loading}
+            saveGradeScore={(form) => {
+              if (!student?.id) return;
+
+              setLoading(true);
+
+              service
+                .saveGradeScore(student.id, subjectLabel === "공통과목", form)
+                .finally(() => {
+                  setLoading(false);
+                });
             }}
           />
         </div>
       </div>
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >
         <CircularProgress color="inherit" />

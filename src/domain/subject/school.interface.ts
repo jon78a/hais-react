@@ -1,6 +1,7 @@
 import type { CreditType, GradeType } from "../../policy/score";
 import type { StudentCategoryCode } from "../../policy/school";
 import type { ExceptionDetail } from "../../types";
+import { StudentGrade } from "../../schema/types/MyScore";
 
 export interface SubjectBase {
   code: string;
@@ -52,11 +53,19 @@ export interface CommonSubjectWeight {
 
 export interface Student {
   userId: string;
+  schoolId?: string;
   id: string;
   category: StudentCategoryCode | null;
   name: string;
   schoolYear: number;
   targetMajor: string[];
+  commonSubject?: StudentScore[];
+  optionalSubject?: StudentScore[];
+}
+
+export interface StudentScore {
+  subjectId: string;
+  score: string;
 }
 
 export interface StudentExceptionMap {
@@ -65,9 +74,19 @@ export interface StudentExceptionMap {
 
 // Repositories
 export interface StudentRepository {
+  getSubjectGrade: (
+    studentId: string,
+    isCommonSubject?: boolean
+  ) => Promise<StudentGrade[]>;
   findByUser: (userId: string) => Promise<Student>;
   // findAll: () => Promise<Student[]>;
   save: (student: Student) => Promise<void>;
+  update: (studentId: string, form: Partial<Student>) => Promise<void>;
+  updateSubjectScore: (
+    studentId: string,
+    isCommonSubject: boolean,
+    form: StudentGrade
+  ) => Promise<void>;
 }
 
 export interface GradeScoreRepository {

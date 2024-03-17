@@ -7,6 +7,7 @@ import optionalSubjectRepository from "../driver/repository/optionalSubjectRepos
 import studentRepository from "../driver/repository/studentRepository";
 import gradeScoreRepository from "../driver/repository/gradeScoreRepository";
 import creditScoreRepository from "../driver/repository/creditScoreRepository";
+import schoolRepository from "../driver/repository/schoolRepository";
 
 const MyScorePage = () => {
   return (
@@ -17,10 +18,11 @@ const MyScorePage = () => {
         optionalSubjectRepository,
         studentRepository,
         gradeScoreRepository,
-        creditScoreRepository
+        creditScoreRepository,
+        schoolRepository,
       }}
     >
-      <MyScoreInteractor/>
+      <MyScoreInteractor />
     </MyScoreContainer>
   );
 };
