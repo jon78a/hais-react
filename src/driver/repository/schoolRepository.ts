@@ -161,6 +161,31 @@ const schoolRepository: SchoolRepository = {
 
     return _subjects;
   },
+  async findSubjectByGroups(groups: string[], schoolId: string) {
+    let _subjects: SchoolSubject[] = [];
+
+    const commonSubjectQuery = query(
+      commonSubjectRef,
+      where("groups", "array-contains-any", groups),
+      where("schoolId", "==", schoolId)
+    );
+    const commonSubjectsSnapshot = await getDocs(commonSubjectQuery);
+    commonSubjectsSnapshot.forEach((doc) => {
+      _subjects.push(doc.data() as SchoolSubject);
+    });
+
+    const optionalSubjectQuery = query(
+      optionalSubjectRef,
+      where("groups", "array-contains-any", groups),
+      where("schoolId", "==", schoolId)
+    );
+    const optionalSubjectSnapshot = await getDocs(optionalSubjectQuery);
+    optionalSubjectSnapshot.forEach((doc) => {
+      _subjects.push(doc.data() as SchoolSubject);
+    });
+
+    return _subjects;
+  },
   async findSubjectById({ isCommonSubject, subjectId }) {
     const subjectRef = isCommonSubject ? commonSubjectRef : optionalSubjectRef;
 

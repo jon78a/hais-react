@@ -14,6 +14,7 @@ import {
   DepartmentWithSubject,
   Univ,
 } from "../../domain/univ/univ.interface";
+import { StudentGrade } from "../types/MyScore";
 
 export const searchModeState = atom<SearchMode>({
   key: "schema/states/SubjectRecommend/SearchMode",
@@ -37,6 +38,16 @@ export const fullNameKeywordState = atom<FullNameKeyword>({
 
 export const univSearchResultListState = atom<Pick<Univ, "id" | "name">[]>({
   key: "schema/states/SubjectRecommend/UnivSearchResultList",
+  default: [],
+});
+
+export const studentCommonSubjectScoreState = atom<StudentGrade[]>({
+  key: "schema/states/SubjectRecommend/studentCommonSubjectScore",
+  default: [],
+});
+
+export const studentOptionalSubjectScoreState = atom<StudentGrade[]>({
+  key: "schema/states/SubjectRecommend/studentOptionalSubjectScore",
   default: [],
 });
 

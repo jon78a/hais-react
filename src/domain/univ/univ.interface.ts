@@ -35,7 +35,12 @@ export interface DepartmentWithSubject extends Omit<Department, "guidelines"> {
     id: string;
     required: boolean;
     type?: SchoolSubjectType;
-    options: { id?: string; name?: string; groups?: string[] }[];
+    options: {
+      id?: string;
+      name?: string;
+      groups?: string[];
+      credit: number;
+    }[];
     condition: number;
   }[];
 }
