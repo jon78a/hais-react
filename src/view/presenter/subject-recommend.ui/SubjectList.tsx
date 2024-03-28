@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { memo } from "react";
 import { useRecoilValue } from "recoil";
 
 import {
@@ -9,13 +9,11 @@ import {
 import Typography from "@mui/material/Typography";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import {
-  DataGrid,
-  GridCallbackDetails,
-  GridColDef,
-  GridRowId,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Stack } from "@mui/material";
+import { Link } from "react-router-dom";
+import { SubjectListUx } from "../subject-recommend.ux/SubjectListUx";
+import { orderBy } from "lodash";
 
 const columns: GridColDef[] = [
   {
@@ -34,32 +32,32 @@ const columns: GridColDef[] = [
     valueGetter: (params) =>
       params.row.groups ? params.row.groups.join(", ") : "",
   },
+  {
+    field: "credit",
+    headerName: "학점",
+    valueGetter: (params) => params.row.credit,
+  },
 ];
 
-const SubjectList: React.FC = () => {
+const SubjectList: React.FC<SubjectListUx> = (ux) => {
   const selectedMajorId = useRecoilValue(selectedMajorIdState);
   const majorResult = useRecoilValue(majorWithSubjectState);
-  const [selectionModel, setSelectionModel] = useState<GridRowId[][]>([]);
 
-  const handleSelectionModelChange = useCallback(
-    (
-      newSelection: GridRowId[],
-      detail: GridCallbackDetails<any>,
-      guidelineIndex: number
-    ) => {
-      setSelectionModel((prevSelectionModel) => {
-        const updatedModel = [...prevSelectionModel]; // Create a copy of the previous selection model
-        updatedModel[guidelineIndex] = newSelection; // Update the selection model for the specific guideline
-        return updatedModel; // Return the updated selection model
-      });
-    },
-    []
-  );
+  if (!selectedMajorId) return null;
 
-  return !!selectedMajorId ? (
-    <div>
+  return (
+    <>
+      <Typography variant="body2" sx={{ mb: 1 }} fontWeight="bold">
+        *
+        <Link to="/login" className="text-indigo-600 font-normal">
+          로그인
+        </Link>
+        하면 성적을 입력하면 추천 과목을 확인할 수 있어요.
+      </Typography>
+
       <Typography variant="body1" sx={{ mb: 1 }} fontWeight="bold">
-        우선순위: {majorResult?.precedences?.join(" > ")}
+        해당 학과의 모집요강은 다음과 같습니다.
+        <br /> 우선순위: {majorResult?.precedences?.join(" > ")}
       </Typography>
       {majorResult?.guidelines?.map((guideline, i) => (
         <Stack key={guideline.id} marginY={i === 0 ? 2 : 4}>
@@ -67,10 +65,11 @@ const SubjectList: React.FC = () => {
             variant="body1"
             sx={{ display: "flex", alignItems: "center", mb: 1 }}
           >
-            {`${guideline.type}에서 ${
-              guideline.required ? "필수" : "선택사항으"
-            }로 ${guideline.condition}개 이상 과목이 선택되어야 합니다.`}{" "}
-            {(selectionModel[i]?.length ?? 0) >= guideline.condition ||
+            <strong>{`${guideline.type}`}</strong>
+            {`에서 ${guideline.required ? "필수" : "선택사항으"}로 ${
+              guideline.condition
+            }개 이상 과목이 선택되어야 합니다.`}{" "}
+            {(ux.selectionModel[i]?.length ?? 0) >= guideline.condition ||
             !guideline.required ? (
               <CheckCircleOutlineIcon color="success" />
             ) : (
@@ -79,29 +78,30 @@ const SubjectList: React.FC = () => {
           </Typography>
           <DataGrid
             columns={columns}
-            rows={guideline.options.map((option) => ({
-              ...option,
-              guideline,
-            }))}
+            rows={orderBy(
+              guideline.options.map((option) => ({
+                ...option,
+                guideline,
+              })),
+              [
+                (row) =>
+                  majorResult?.precedences?.map((precedence) =>
+                    row.groups?.indexOf(precedence)
+                  ),
+              ],
+              ["desc"]
+            )}
             checkboxSelection
             disableRowSelectionOnClick
-            rowSelectionModel={selectionModel[i]}
+            rowSelectionModel={ux.selectionModel[i]}
             onRowSelectionModelChange={(newSelection, detail) =>
-              handleSelectionModelChange(newSelection, detail, i)
+              ux.handleSelectionModelChange(newSelection, detail, i)
             }
-            sortModel={[
-              {
-                field: "groups",
-                sort: "desc",
-              },
-            ]}
           />
         </Stack>
       ))}
-    </div>
-  ) : (
-    <></>
+    </>
   );
 };
 
-export default SubjectList;
+export default memo(SubjectList);

@@ -154,7 +154,14 @@ const SubjectRecommendContainer = ({
             )
           );
 
-          return Promise.all(promises).then((results) => results!);
+          return Promise.all(promises).then((results) => results);
+        },
+        async findSubjectByGroups(groups, schoolId) {
+          const subjects = await schoolRepository.findSubjectByGroups(
+            groups,
+            schoolId
+          );
+          return subjects;
         },
       }}
     >

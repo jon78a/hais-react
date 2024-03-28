@@ -34,9 +34,10 @@ const AdminSchoolInteractor = () => {
       service.getSchoolList(filter).then((data) => {
         setSchoolList(data);
       });
-      return;
     }
+  }, [filter, isSchoolTabSelected, service, setSchoolList]);
 
+  useEffect(() => {
     if (isSubjectTabSelected) {
       service.getSubjectList(filter).then((data) => {
         const subjectHavingSchoolName = data.map((subject) => ({
@@ -48,15 +49,7 @@ const AdminSchoolInteractor = () => {
         setSchoolSubjectList(subjectHavingSchoolName);
       });
     }
-  }, [
-    filter,
-    isSchoolTabSelected,
-    service,
-    isSubjectTabSelected,
-    setSchoolList,
-    setSchoolSubjectList,
-    schoolList,
-  ]);
+  }, [filter, isSubjectTabSelected, schoolList, service, setSchoolSubjectList]);
 
   const renderTabContent: React.JSX.Element | undefined = useMemo(() => {
     if (isSchoolTabSelected) {

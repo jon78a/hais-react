@@ -3,6 +3,7 @@ import DepartmentCreateDialog from "./DepartmentCreateDialog";
 import DepartmentDeleteDialog from "./DepartmentDeleteDialog";
 import DepartmentDetailDialog from "./DepartmentDetailDialog";
 import DepartmentFloatButton from "./DepartmentFloatButton";
+import DepartmentGuidelineDialog from "./DepartmentGuidelineDialog";
 import DepartmentTable from "./DepartmentTable";
 
 const DepartmentTabContent: React.FC<{
@@ -22,6 +23,11 @@ const DepartmentTabContent: React.FC<{
       <DepartmentDetailDialog
         modify={ux.modify}
         getSubjectList={ux.getSubjectList}
+      />
+      <DepartmentGuidelineDialog
+        guidelineFormSubmit={ux.guidelineFormSubmit}
+        getSubjectList={ux.getSubjectList}
+        onClickDeleteGuideline={ux.onClickDeleteGuideline}
       />
       <DepartmentFloatButton />
     </DepartmentTable>

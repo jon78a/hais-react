@@ -20,7 +20,7 @@ export const defaultDepartment: Department = {
   keyword: "",
   universityId: "",
   precedences: [],
-  guidelines: [],
+  // guidelines: [],
   admin: [],
   createdAt: new Date().valueOf(),
   updatedAt: new Date().valueOf(),

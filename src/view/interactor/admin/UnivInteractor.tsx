@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
 import {
   departmentListState,
+  guideLineFormState,
   univFilterState,
   univListState,
   univState,
@@ -22,6 +23,8 @@ const AdminUnivInteractor = () => {
   const [departmentList, setDepartmentList] =
     useRecoilState(departmentListState);
 
+  const guidelineForm = useRecoilValue(guideLineFormState);
+
   const isUnivTabSelected = tabItem === "UNIV";
   const isSubjectTabSelected = tabItem === "DEPARTMENT";
 
@@ -31,7 +34,9 @@ const AdminUnivInteractor = () => {
     service.getUnivList(filter).then((data) => {
       setUnivList(data);
     });
+  }, [filter, service, setUnivList]);
 
+  useEffect(() => {
     if (isSubjectTabSelected) {
       service.getDepartmentList(filter).then((data) => {
         const departmentListHavingUnivName = data.map((department) => ({
@@ -42,15 +47,7 @@ const AdminUnivInteractor = () => {
         setDepartmentList(departmentListHavingUnivName);
       });
     }
-  }, [
-    filter,
-    isSubjectTabSelected,
-    isUnivTabSelected,
-    service,
-    setDepartmentList,
-    setUnivList,
-    univList,
-  ]);
+  }, [filter, isSubjectTabSelected, service, setDepartmentList, univList]);
 
   const renderTabContent: React.JSX.Element | undefined = useMemo(() => {
     if (isUnivTabSelected) {
@@ -131,8 +128,48 @@ const AdminUnivInteractor = () => {
             },
             getSubjectList(type) {
               return service.getSubjectList(type).then((data) => {
-                return data;
+                const subjectList = (data || [])?.map((d) => ({
+                  id: d.id,
+                  name: d.name,
+                  schoolId: d.schoolId,
+                  type: d.type,
+                  groups: d.groups,
+                  level: d.level,
+                  credit: d.credit,
+                  admin: d.admin,
+                }));
+                return subjectList;
               });
+            },
+            async guidelineFormSubmit(e, departmentId) {
+              e.preventDefault();
+              if (!guidelineForm) return;
+              try {
+                const { id } = await service.createGuideline({
+                  data: {
+                    condition: guidelineForm.condition ?? 0,
+                    options: guidelineForm.options ?? [],
+                    required: guidelineForm.required ?? false,
+                    id: guidelineForm.id,
+                    type: guidelineForm.type,
+                  },
+                  departmentId,
+                });
+                return id;
+              } catch (e) {
+                console.error(e);
+              }
+            },
+            async onClickDeleteGuideline({ guidelineId, departmentId }) {
+              try {
+                const { id } = await service.deleteGuideline({
+                  guidelineId,
+                  departmentId,
+                });
+                return id;
+              } catch (e) {
+                console.error(e);
+              }
             },
           }}
         />
@@ -141,6 +178,7 @@ const AdminUnivInteractor = () => {
     return undefined;
   }, [
     departmentList,
+    guidelineForm,
     isSubjectTabSelected,
     isUnivTabSelected,
     service,

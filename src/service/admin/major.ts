@@ -18,7 +18,7 @@ export interface AdminMajorService {
   ) => Promise<
     Pick<
       Department,
-      "guidelines" | "id" | "name" | "keyword" | "precedences" | "universityId"
+      "id" | "name" | "keyword" | "precedences" | "universityId"
     >[]
   >;
   searchByUnivOrMajor: (

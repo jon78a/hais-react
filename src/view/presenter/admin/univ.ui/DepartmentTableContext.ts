@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { Department } from "../../../../domain/univ/univ.interface";
 
-export type ModalState = "CREATE" | "UPDATE" | "DELETE" | null;
+export type ModalState = "GUIDELINE" | "CREATE" | "UPDATE" | "DELETE" | null;
 
 export const DepartmentTableContext = createContext<{
   modal: {

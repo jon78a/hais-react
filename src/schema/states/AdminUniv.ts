@@ -5,6 +5,7 @@ import {
   UnivFilter,
   UnivDto,
   DepartmentDto,
+  GuidelineDto,
 } from "../types/AdminUniv";
 import { SchoolSubjectDto } from "../types/AdminSchool";
 
@@ -38,4 +39,14 @@ export const departmentListState = atom<DepartmentDto[]>({
 export const departmentState = atom<DepartmentDto | null>({
   key: "/schema/states/AdminUniv/Department",
   default: null,
+});
+
+export const guideLineFormState = atom<Partial<GuidelineDto> | null>({
+  key: "/schema/states/AdminUniv/GuidelineForm",
+  default: null,
+});
+
+export const subjectListState = atom<SchoolSubjectDto[]>({
+  key: "/schema/states/AdminUniv/subjectList",
+  default: [],
 });

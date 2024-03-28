@@ -36,6 +36,16 @@ export type UnivDto = {
   updatedAt?: number;
 };
 
+export type CreateGuidelineRequest = {
+  departmentId: string;
+  data: GuidelineDto;
+};
+
+export type DeleteGuidelineRequest = {
+  departmentId: string;
+  guidelineId: string;
+};
+
 export type DepartmentCreateRequest = {
   data: DepartmentDto;
 };
@@ -60,15 +70,15 @@ export type DepartmentDto = {
   universityName?: string;
   universityId: string;
   precedences: string[];
-  guidelines: (GuidelineDto | undefined)[];
+  guidelines?: (GuidelineDto | undefined)[];
   admin: string[];
   updatedAt?: number;
   createdAt?: number;
 };
 
 export type GuidelineDto = {
-  id: string;
-  required: boolean;
+  id?: string;
+  required?: boolean;
   type?: SchoolSubjectType;
   options: string[];
   condition: number;

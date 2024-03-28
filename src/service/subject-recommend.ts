@@ -6,7 +6,6 @@ import {
   SubjectData,
   FullNameKeyword,
   RecommendStatus,
-  MajorRecruit,
 } from "../schema/types/SubjectRecommend";
 import { Department, Guideline, Univ } from "../domain/univ/univ.interface";
 import { SchoolSubject } from "../domain/school/school.interface";
@@ -28,6 +27,10 @@ export interface SubjectRecommendService {
   readSubjectList: (
     guidelines: Partial<Guideline>[]
   ) => Promise<(SchoolSubject | null)[]>;
+  findSubjectByGroups: (
+    groups: string[],
+    schoolId: string
+  ) => Promise<SchoolSubject[]>;
 }
 
 export const SubjectRecommendContext = createContext<
