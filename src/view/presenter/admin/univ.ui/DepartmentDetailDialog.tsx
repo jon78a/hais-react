@@ -1,10 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 
 import { DepartmentTableContext } from "./DepartmentTableContext";
-import type {
-  DepartmentCreateRequest,
-  GuidelineDto,
-} from "../../../../schema/types/AdminUniv";
+import type { DepartmentCreateRequest } from "../../../../schema/types/AdminUniv";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -17,14 +14,8 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { useRecoilValue } from "recoil";
-import { univListState, univState } from "../../../../schema/states/AdminUniv";
+import { univListState } from "../../../../schema/states/AdminUniv";
 import { DepartmentDetailDialogUx } from "../univ.ux/DepartmentDetailDialogUx";
-import GuidelineForm from "./GuidelineForm";
-import Stack from "@mui/material/Stack/Stack";
-import Card from "@mui/material/Card/Card";
-import FormLabel from "@mui/material/FormLabel/FormLabel";
-import IconButton from "@mui/material/IconButton/IconButton";
-import { AddCircle } from "@mui/icons-material";
 
 const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
   const context = useContext(DepartmentTableContext);
@@ -33,15 +24,14 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
     undefined
   );
   const univList = useRecoilValue(univListState);
-  const univ = useRecoilValue(univState);
-  const [guidelines, setGuidelines] = useState<boolean[]>([]);
 
   useEffect(() => {
     if (context.modal.state !== "UPDATE") return undefined;
     setForm({
       data: context.selection.state!,
     });
-  }, [context.modal.state, context.selection.state, univ?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.modal.state]);
 
   const detailFields = useMemo(() => {
     if (!form) return undefined;
@@ -89,7 +79,7 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
             required
             labelId="대학교"
             label={"대학교"}
-            value={form.data?.universityId}
+            value={form.data?.universityId ?? ""}
             onChange={(e) =>
               form.data &&
               setForm({
@@ -126,49 +116,6 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
             })
           }
         />
-        <Card sx={{ my: 2, p: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <FormLabel>모집요강</FormLabel>
-            <IconButton
-              aria-label="add"
-              color="primary"
-              size="small"
-              onClick={() => {
-                form.data &&
-                  setForm({
-                    ...form,
-                    data: {
-                      ...form?.data,
-                      guidelines: [...form.data.guidelines, {} as GuidelineDto],
-                    },
-                  });
-              }}
-            >
-              <AddCircle fontSize="inherit" />
-            </IconButton>
-          </Box>
-          <Stack>
-            {form.data.guidelines?.map((guideline, index) => {
-              return (
-                <GuidelineForm
-                  key={index}
-                  state={{
-                    form: {
-                      get: form,
-                      set: setForm,
-                    },
-                    guideline: {
-                      get: guidelines,
-                      set: setGuidelines,
-                    },
-                  }}
-                  getSubjectList={ux.getSubjectList}
-                  index={index}
-                />
-              );
-            })}
-          </Stack>
-        </Card>
         <TextField
           label="관리자"
           fullWidth
@@ -189,7 +136,7 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
         />
       </DialogContent>
     );
-  }, [form, guidelines, univList, ux.getSubjectList]);
+  }, [form, univList]);
 
   return (
     <Dialog

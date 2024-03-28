@@ -245,8 +245,6 @@ const SubjectRecommendInteractor = () => {
       else findIndex = index + 1;
     });
 
-    console.log("findIndex", findIndex);
-
     const recommendModel: GridRowId[] = orderedRows
       .slice(0, findIndex)
       .map((row) => row.id!);

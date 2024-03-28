@@ -112,11 +112,11 @@ const SideNavBar = () => {
           title={titleMap[routes.adminMajor.path]}
           href={routes.adminMajor.path}
         /> */}
-        <LinkItem
+        {/* <LinkItem
           icon={<SpeedIcon />}
           title={titleMap[routes.adminMeasurement.path]}
           href={routes.adminMeasurement.path}
-        />
+        /> */}
       </Stack>
     </Drawer>
   );

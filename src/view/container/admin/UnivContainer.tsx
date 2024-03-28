@@ -54,9 +54,9 @@ const AdminUnivContainer = ({
             keyword: req.data.keyword,
             universityId: req.data.universityId,
             precedences: req.data.precedences,
-            guidelines: req.data.guidelines.filter(
-              (value): value is Guideline => Boolean(value)
-            ),
+            // guidelines: req.data.guidelines.filter(
+            //   (value): value is Guideline => Boolean(value)
+            // ),
             admin: req.data.admin,
           });
           return payload;
@@ -70,9 +70,9 @@ const AdminUnivContainer = ({
               keyword: req.data.keyword,
               universityId: req.data.universityId,
               precedences: req.data.precedences,
-              guidelines: req.data.guidelines.filter(
-                (value): value is Guideline => Boolean(value)
-              ),
+              // guidelines: req.data.guidelines.filter(
+              //   (value): value is Guideline => Boolean(value)
+              // ),
               admin: req.data.admin,
             },
             req.data.id
@@ -84,6 +84,14 @@ const AdminUnivContainer = ({
         },
         async getSubjectList(type) {
           const payload = await schoolRepository.findSubjectByType(type);
+          return payload;
+        },
+        async createGuideline(req) {
+          const payload = await departmentRepository.createGuideline(req);
+          return payload;
+        },
+        async deleteGuideline(req) {
+          const payload = await departmentRepository.deleteGuideline(req);
           return payload;
         },
       }}

@@ -1,6 +1,10 @@
 import { SchoolSubjectType } from "../../policy/school";
 import { UnivOperation } from "../../policy/v2/univ";
-import { UnivFilter } from "../../schema/types/AdminUniv";
+import {
+  CreateGuidelineRequest,
+  DeleteGuidelineRequest,
+  UnivFilter,
+} from "../../schema/types/AdminUniv";
 
 export interface Univ {
   id: string;
@@ -24,7 +28,7 @@ export interface Department {
   keyword: string;
   universityId: string;
   precedences: string[];
-  guidelines: Guideline[];
+  guidelines?: Guideline[];
   admin: string[];
   updatedAt?: number;
   createdAt?: number;
@@ -66,4 +70,7 @@ export interface DepartmentRepository {
   save: (form: Department, id?: string) => Promise<{ id: string }>;
   delete: (key: string) => Promise<void>;
   findByUnivId: (name: string, univId: string) => Promise<Department[]>;
+
+  createGuideline: (req: CreateGuidelineRequest) => Promise<{ id: string }>;
+  deleteGuideline: (req: DeleteGuidelineRequest) => Promise<{ id: string }>;
 }

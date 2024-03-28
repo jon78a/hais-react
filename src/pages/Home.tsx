@@ -27,8 +27,8 @@ export const Carousel = () => {
     <div className="mx-auto w-full">
       <div className="relative p-1">
         <img src="/Hais_Banner1.png" alt="banner3" width={`100%`} />
-        <Link to="/subject/search">
-          <button className=" z-50 absolute text-white bg-[#4E9E65] font-bold left-[20%] top-[80%] w-[15%] h-[15%] rounded-xl ">
+        <Link to="/subject/recommend">
+          <button className="z-50 absolute text-white bg-[#4E9E65] font-bold left-[20%] top-[80%] w-[15%] h-[15%] rounded-xl ">
             <p className={`${isMobile ? `text-[8px]` : `text-xl`}`}>교과탐색</p>
           </button>
         </Link>

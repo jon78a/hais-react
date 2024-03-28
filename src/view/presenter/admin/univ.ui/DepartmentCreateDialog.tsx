@@ -16,9 +16,6 @@ import { DepartmentCreateDialogUx } from "../univ.ux/DepartmentCreateDialogUx";
 import { useRecoilValue } from "recoil";
 import { univListState, univState } from "../../../../schema/states/AdminUniv";
 import { DepartmentTableContext } from "./DepartmentTableContext";
-import GuidelineForm from "./GuidelineForm";
-import { Card, FormLabel, IconButton, Stack } from "@mui/material";
-import { AddCircle } from "@mui/icons-material";
 
 const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
   const context = useContext(DepartmentTableContext);
@@ -28,7 +25,6 @@ const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
   );
   const univList = useRecoilValue(univListState);
   const univ = useRecoilValue(univState);
-  const [guidelines, setGuidelines] = useState<boolean[]>([]);
 
   useEffect(() => {
     if (context.modal.state !== "CREATE") return undefined;
@@ -131,50 +127,6 @@ const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
             })
           }
         />
-        <Card sx={{ my: 2, p: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <FormLabel>모집요강</FormLabel>
-            <IconButton
-              aria-label="add"
-              color="primary"
-              size="small"
-              onClick={() => {
-                if (form.data && form.data.guidelines) {
-                  setForm((prevForm) => ({
-                    ...prevForm,
-                    data: {
-                      ...prevForm!.data,
-                      guidelines: [...prevForm!.data.guidelines, undefined],
-                    },
-                  }));
-                }
-              }}
-            >
-              <AddCircle fontSize="inherit" />
-            </IconButton>
-          </Box>
-          <Stack>
-            {form.data.guidelines?.map((_, index) => {
-              return (
-                <GuidelineForm
-                  key={index}
-                  state={{
-                    form: {
-                      get: form,
-                      set: setForm,
-                    },
-                    guideline: {
-                      get: guidelines,
-                      set: setGuidelines,
-                    },
-                  }}
-                  getSubjectList={ux.getSubjectList}
-                  index={index}
-                />
-              );
-            })}
-          </Stack>
-        </Card>
         <TextField
           label="관리자"
           fullWidth
@@ -195,7 +147,7 @@ const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
         />
       </DialogContent>
     );
-  }, [form, guidelines, univList, ux.getSubjectList]);
+  }, [form, univList]);
 
   return (
     <Dialog

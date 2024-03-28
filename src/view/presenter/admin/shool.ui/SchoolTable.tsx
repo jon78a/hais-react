@@ -152,7 +152,7 @@ const SchoolTable: React.FC<{
                 },
               },
               pagination: {
-                paginationModel: { page: 0, pageSize: 15 },
+                paginationModel: { page: 0, pageSize: 25 },
               },
             }}
             disableRowSelectionOnClick

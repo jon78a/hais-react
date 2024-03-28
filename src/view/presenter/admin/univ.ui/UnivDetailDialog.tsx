@@ -107,7 +107,9 @@ const UnivDetailDialog: React.FC<UnivDetailDialogUx> = (ux) => {
             }
           >
             {Object.values(univOperationMap).map((e) => (
-              <MenuItem value={e}>{e}</MenuItem>
+              <MenuItem key={e} value={e}>
+                {e}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

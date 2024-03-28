@@ -49,13 +49,29 @@ const DepartmentTable: React.FC<{
         headerName: "선호도",
       },
       {
+        field: "department",
+        headerName: "모집요강",
+        renderCell: ({ row }) => {
+          return (
+            <Button
+              onClick={() => {
+                setRowSelection(row);
+                setModalState("GUIDELINE");
+              }}
+            >
+              모집요강
+            </Button>
+          );
+        },
+      },
+      {
         field: "admin",
         headerName: "관리자",
       },
       {
         field: "actions",
         headerName: "actions",
-        width: 150,
+        width: 300,
         renderCell: ({ row }) => {
           if (!row.admin.includes(user?.email)) return null;
           return (
@@ -138,7 +154,7 @@ const DepartmentTable: React.FC<{
                 },
               },
               pagination: {
-                paginationModel: { page: 0, pageSize: 15 },
+                paginationModel: { page: 0, pageSize: 25 },
               },
             }}
           />

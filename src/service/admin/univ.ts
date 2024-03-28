@@ -7,6 +7,8 @@ import {
   DepartmentCreateRequest,
   DepartmentDeleteRequest,
   DepartmentEditRequest,
+  CreateGuidelineRequest,
+  DeleteGuidelineRequest,
 } from "../../schema/types/AdminUniv";
 import { Department, Univ } from "../../domain/univ/univ.interface";
 import { SchoolSubject } from "../../domain/school/school.interface";
@@ -24,6 +26,9 @@ interface AdminUnivService {
   deleteDepartment: (req: DepartmentDeleteRequest) => Promise<void>;
   editDepartment: (req: DepartmentEditRequest) => Promise<void>;
   getSubjectList: (req: SchoolSubjectType) => Promise<SchoolSubject[] | null>;
+
+  createGuideline: (req: CreateGuidelineRequest) => Promise<{ id: string }>;
+  deleteGuideline: (req: DeleteGuidelineRequest) => Promise<{ id: string }>;
 }
 
 export const AdminUnivContext = createContext<AdminUnivService | undefined>(

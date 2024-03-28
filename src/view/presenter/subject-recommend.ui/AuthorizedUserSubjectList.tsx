@@ -27,22 +27,6 @@ const columns: GridColDef[] = [
     headerName: "그룹명",
     valueGetter: (params) =>
       params.row.groups ? params.row.groups.join(", ") : "",
-    sortComparator: (a, b, _) => {
-      const groupsA = a.groups;
-      const groupsB = b.groups;
-
-      for (let i = 0; i < Math.min(groupsA.length, groupsB.length); i++) {
-        const comparison = groupsA[i].localeCompare(groupsB[i]);
-        if (comparison !== 0) {
-          return comparison;
-        }
-      }
-
-      console.log("groupsA", groupsA);
-      console.log("groupsB", groupsB);
-
-      return groupsA.length - groupsB.length;
-    },
   },
   {
     field: "credit",
@@ -53,18 +37,11 @@ const columns: GridColDef[] = [
     field: "level",
     headerName: "난이도",
     valueGetter: (params) => params.row.level,
-    sortComparator: (a, b, params1, params2) => {
-      return b.level - a.level;
-    },
   },
   {
     field: "description",
     headerName: "참고사항",
     valueGetter: (params) => params.row.description,
-    sortComparator: (a, b, _) => {
-      console.log(a);
-      return b.description.localeCompare(a.description);
-    },
   },
 ];
 

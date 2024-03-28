@@ -1,10 +1,14 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -84,6 +88,36 @@ const departmentRepository: DepartmentRepository = {
   },
   async delete(id) {
     await deleteDoc(doc(departmentRef, id));
+  },
+  async createGuideline({ data, departmentId }) {
+    const guidelineId = uuidv4();
+    const docRef = doc(departmentRef, departmentId);
+    try {
+      await updateDoc(docRef, {
+        guidelines: arrayUnion({ ...data, id: guidelineId }),
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+    return { id: guidelineId };
+  },
+  async deleteGuideline({ departmentId, guidelineId }) {
+    const docRef = doc(departmentRef, departmentId);
+    const department = await getDoc(docRef);
+    const departmentRecord = department.data() as Department;
+    const removeTarget = departmentRecord.guidelines?.find(
+      (item) => item.id === guidelineId
+    );
+    try {
+      await updateDoc(docRef, {
+        guidelines: arrayRemove(removeTarget),
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+    return { id: guidelineId };
   },
 };
 
