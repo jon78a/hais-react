@@ -45,7 +45,9 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
   const [guidelineForm, setGuidelineForm] = useRecoilState(guideLineFormState);
 
   const [subjectList, setSubjectList] = useRecoilState(subjectListState);
-  const [subjectNames, setSubjectNames] = useState<string[]>([]);
+  const [subjectNames, setSubjectNames] = useState<Record<string, string[]>>(
+    {}
+  );
   const user = useRecoilValue(userState);
 
   const isAdmin: boolean = Boolean(
@@ -64,7 +66,7 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
   useEffect(() => {
     const fetchSubjectNames = async () => {
       if (context.selection.state?.guidelines) {
-        let updatedSubjectNames: string[] = [];
+        const updatedSubjectNames: Record<string, string[]> = {};
         await Promise.all(
           context.selection.state.guidelines.map(async (guideline) => {
             const names = await Promise.all(
@@ -76,7 +78,7 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
                 return subject?.name || "";
               }) || []
             );
-            updatedSubjectNames = [...names];
+            updatedSubjectNames[guideline!.id!] = names;
           })
         );
         setSubjectNames(updatedSubjectNames);
@@ -84,7 +86,7 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
     };
 
     fetchSubjectNames();
-  }, [context.selection.state?.guidelines, subjectNames, ux]);
+  }, [context.selection.state?.guidelines, ux]);
 
   if (context.modal.state !== "GUIDELINE") return null;
 
@@ -162,7 +164,6 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
                       <Select
                         id="type"
                         label="과목"
-                        defaultValue="공통과목"
                         onChange={(e) => {
                           const type = e.target.value as SchoolSubjectType;
                           setGuidelineForm((prev) => ({
@@ -242,7 +243,8 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
                 </Typography>
 
                 <Typography sx={{ fontSize: 14 }} gutterBottom>
-                  모집요강: {subjectNames?.join(", ") || "Loading..."}
+                  모집요강:{" "}
+                  {subjectNames[guideline!.id!]?.join(", ") || "Loading..."}
                 </Typography>
 
                 <Typography sx={{ fontSize: 14 }} gutterBottom>
