@@ -18,7 +18,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import { SchoolSubjectTableUx } from "../school.ux/SchoolSubjectTableUx";
 import { SchoolSubject } from "../../../../domain/school/school.interface";
-import { userState } from "../../../../schema/states/User";
 
 const SchoolSubjectTable: React.FC<{
   ux: SchoolSubjectTableUx;
@@ -27,7 +26,6 @@ const SchoolSubjectTable: React.FC<{
   const screenHeight = useScreenHeight();
 
   const schoolSubjectList = useRecoilValue(schoolSubjectListState);
-  const user = useRecoilValue(userState);
 
   const [rowSelection, setRowSelection] = useState<SchoolSubject | null>(null);
   const [modalState, setModalState] = useState<ModalState>(null);
@@ -64,7 +62,6 @@ const SchoolSubjectTable: React.FC<{
         headerName: "actions",
         width: 150,
         renderCell: ({ row }) => {
-          if (!row.admin.includes(user?.email)) return null;
           return (
             <>
               <Button
@@ -88,7 +85,7 @@ const SchoolSubjectTable: React.FC<{
         },
       },
     ],
-    [user?.email]
+    []
   );
 
   return (

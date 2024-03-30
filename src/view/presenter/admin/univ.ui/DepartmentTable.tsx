@@ -15,7 +15,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import { DepartmentTableUx } from "../univ.ux/DepartmentTableUx";
 import { Department } from "../../../../domain/univ/univ.interface";
-import { userState } from "../../../../schema/states/User";
 
 const DepartmentTable: React.FC<{
   ux: DepartmentTableUx;
@@ -24,7 +23,6 @@ const DepartmentTable: React.FC<{
   const screenHeight = useScreenHeight();
 
   const departmentList = useRecoilValue(departmentListState);
-  const user = useRecoilValue(userState);
 
   const [rowSelection, setRowSelection] = useState<Department | null>(null);
   const [modalState, setModalState] = useState<ModalState>(null);
@@ -65,15 +63,10 @@ const DepartmentTable: React.FC<{
         },
       },
       {
-        field: "admin",
-        headerName: "관리자",
-      },
-      {
         field: "actions",
         headerName: "actions",
         width: 300,
         renderCell: ({ row }) => {
-          if (!row.admin.includes(user?.email)) return null;
           return (
             <>
               <Button
@@ -97,7 +90,7 @@ const DepartmentTable: React.FC<{
         },
       },
     ],
-    [user?.email]
+    []
   );
 
   return (

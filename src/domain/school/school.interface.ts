@@ -11,13 +11,13 @@ export interface School {
   name: string;
   description?: string;
   type?: string;
-  operation: SchoolOperation;
+  operation?: SchoolOperation;
   jurisdiction?: string;
   address1?: string;
   address2?: string;
   zipcode?: string;
-  admin: string[];
-  web1: string;
+  admin?: string[];
+  web1?: string;
   web2?: string;
   web3?: string;
   updatedAt?: number;
@@ -32,7 +32,7 @@ export interface SchoolSubject {
   groups: string[];
   level: Level;
   credit: Credit;
-  admin: string[];
+  admin?: string[];
   updatedAt?: number;
   createdAt?: number;
 }

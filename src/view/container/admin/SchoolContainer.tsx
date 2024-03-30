@@ -24,7 +24,7 @@ const AdminSchoolContainer = ({
           return payload;
         },
         async addSchool(req) {
-          const payload = await schoolRepository.save(req.data);
+          const payload = await schoolRepository.save({ ...req.data });
           return payload;
         },
         async deleteSchool(req) {

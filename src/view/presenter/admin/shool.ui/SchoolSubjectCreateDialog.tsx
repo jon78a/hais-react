@@ -183,24 +183,6 @@ const SchoolSubjectCreateDialog: React.FC<SchoolSubjectCreateDialogUx> = (
             ))}
           </Select>
         </FormControl>
-        <TextField
-          label="관리자"
-          fullWidth
-          required
-          value={form.data?.admin}
-          placeholder="user@site.com,user2@stie.com"
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form?.data,
-                admin: e.target.value.split(","),
-              },
-            })
-          }
-        />
       </DialogContent>
     );
   }, [form, schoolList]);

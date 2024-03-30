@@ -27,14 +27,6 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
       data: {
         id: "",
         name: "",
-        description: "",
-        type: "",
-        operation: "사립학교",
-        jurisdiction: "",
-        address1: "",
-        address2: "",
-        web1: "",
-        admin: [],
       },
     });
   }, [context.modal.state]);
@@ -61,6 +53,27 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
             })
           }
         />
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="운영주체">사립학교/공립학교</InputLabel>
+          <Select
+            labelId="운영주체"
+            value={form.data?.operation}
+            onChange={(e) =>
+              form.data &&
+              setForm({
+                ...form,
+                data: {
+                  ...form.data,
+                  operation: e.target.value as SchoolOperation,
+                },
+              })
+            }
+          >
+            {Object.values(schoolOperationMap).map((e) => (
+              <MenuItem value={e}>{e}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           label="설명"
           fullWidth
@@ -78,7 +91,6 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="구분"
           fullWidth
           value={form.data?.type}
@@ -95,29 +107,6 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
             })
           }
         />
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel id="운영주체">운영주체</InputLabel>
-          <Select
-            required
-            labelId="운영주체"
-            label={"운영주체"}
-            value={form.data?.operation ?? "NONE"}
-            onChange={(e) =>
-              form.data &&
-              setForm({
-                ...form,
-                data: {
-                  ...form.data,
-                  operation: e.target.value as SchoolOperation,
-                },
-              })
-            }
-          >
-            {Object.values(schoolOperationMap).map((e) => (
-              <MenuItem value={e}>{e}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <TextField
           label="관할"
           fullWidth
@@ -136,7 +125,6 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="우편번호"
           fullWidth
           value={form.data?.zipcode}
@@ -153,7 +141,6 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="주소"
           fullWidth
           value={form.data?.address1}
@@ -170,7 +157,6 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="상세주소"
           fullWidth
           value={form.data?.address2}
@@ -187,27 +173,8 @@ const SchoolCreateDialog: React.FC<SchoolCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          label="관리자"
-          fullWidth
-          required
-          value={form.data?.admin}
-          placeholder="user@site.com,user2@stie.com"
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form?.data,
-                admin: e.target.value.split(","),
-              },
-            })
-          }
-        />
-        <TextField
           label="웹사이트 주소1"
           fullWidth
-          required
           value={form.data?.web1}
           placeholder="https://www.whimoon.hs.kr/"
           sx={{ mt: 2 }}

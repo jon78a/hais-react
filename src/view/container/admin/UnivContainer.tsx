@@ -53,10 +53,7 @@ const AdminUnivContainer = ({
             name: req.data.name,
             keyword: req.data.keyword,
             universityId: req.data.universityId,
-            precedences: req.data.precedences,
-            // guidelines: req.data.guidelines.filter(
-            //   (value): value is Guideline => Boolean(value)
-            // ),
+            precedences: req.data?.precedences,
             admin: req.data.admin,
           });
           return payload;

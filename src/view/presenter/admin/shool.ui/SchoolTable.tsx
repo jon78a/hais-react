@@ -64,7 +64,6 @@ const SchoolTable: React.FC<{
         headerName: "actions",
         width: 150,
         renderCell: ({ row }) => {
-          if (!row.admin.includes(user?.email)) return null;
           return (
             <>
               <Button

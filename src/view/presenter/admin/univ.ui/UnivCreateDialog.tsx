@@ -63,7 +63,6 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="위치"
           fullWidth
           placeholder="서울"
@@ -81,7 +80,6 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="구분"
           fullWidth
           value={form.data?.type}
@@ -101,10 +99,9 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
         <FormControl fullWidth sx={{ mt: 2 }}>
           <InputLabel id="대학구분">대학구분</InputLabel>
           <Select
-            required
             labelId="대학구분"
             label={"대학구분"}
-            value={form.data?.operation ?? "NONE"}
+            value={form.data?.operation}
             onChange={(e) =>
               form.data &&
               setForm({
@@ -122,7 +119,6 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
           </Select>
         </FormControl>
         <TextField
-          required
           label="주소"
           fullWidth
           placeholder="서울특별시 성북구"
@@ -140,7 +136,6 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
           }
         />
         <TextField
-          required
           label="상세주소"
           fullWidth
           placeholder="안암로 145"
@@ -160,7 +155,6 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
         <TextField
           label="웹사이트 주소1"
           fullWidth
-          required
           value={form.data?.web1}
           placeholder="https://www.whimoon.hs.kr/"
           sx={{ mt: 2 }}
@@ -203,24 +197,6 @@ const UnivCreateDialog: React.FC<UnivCreateDialogUx> = (ux) => {
               data: {
                 ...form?.data,
                 web3: e.target.value,
-              },
-            })
-          }
-        />
-        <TextField
-          label="관리자"
-          fullWidth
-          required
-          value={form.data?.admin}
-          placeholder="user@site.com,user2@stie.com"
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form?.data,
-                admin: e.target.value.split(","),
               },
             })
           }

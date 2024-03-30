@@ -73,9 +73,9 @@ const SubjectRecommendPage = (): JSX.Element => {
 
     studentRepository.findByUser(account?.userId).then((student) => {
       if (!student.schoolId) {
-        if (window.confirm("학교를 선택해주세요.")) {
-          window.location.replace(routes.my.path);
-        }
+        // if (window.confirm("학교를 선택해주세요.")) {
+        //   window.location.replace(routes.my.path);
+        // }
         return;
       }
 
@@ -90,8 +90,8 @@ const SubjectRecommendPage = (): JSX.Element => {
         const [
           commonSubjectScores,
           optionalSubjectsScores,
-          // commonSubjects,
-          // optionalSubjects,
+          commonSubjects,
+          optionalSubjects,
         ] = value;
         setCommonSubjectScore(commonSubjectScores);
         setOptionalCommonSubjectScore(optionalSubjectsScores);

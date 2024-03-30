@@ -14,7 +14,6 @@ import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { userState } from "../../../../schema/states/User";
 import { Univ } from "../../../../domain/univ/univ.interface";
 import { UnivTableUx } from "../univ.ux/UnivTableUx";
 import { univListState } from "../../../../schema/states/AdminUniv";
@@ -29,7 +28,6 @@ const UnivTable: React.FC<{
 
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const screenHeight = useScreenHeight();
-  const user = useRecoilValue(userState);
   const [rowSelection, setRowSelection] = useState<Univ | null>(null);
 
   const univList = useRecoilValue(univListState);
@@ -59,7 +57,6 @@ const UnivTable: React.FC<{
         headerName: "actions",
         width: 150,
         renderCell: ({ row }) => {
-          if (!row.admin.includes(user?.email)) return null;
           return (
             <>
               <Button
@@ -83,7 +80,7 @@ const UnivTable: React.FC<{
         },
       },
     ],
-    [mobile, user?.email]
+    [mobile]
   );
 
   const [modalState, setModalState] = useState<ModalState>(null);

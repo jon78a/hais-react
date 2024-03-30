@@ -35,13 +35,13 @@ export type SchoolDto = {
   name: string;
   description?: string;
   type?: string;
-  operation: SchoolOperation;
+  operation?: SchoolOperation;
   jurisdiction?: string;
   address1?: string;
   address2?: string;
   zipcode?: string;
-  admin: string[];
-  web1: string;
+  admin?: string[];
+  web1?: string;
   web2?: string;
   web3?: string;
 };
@@ -74,5 +74,5 @@ export type SchoolSubjectDto = {
   groups: string[];
   level: Level;
   credit: Credit;
-  admin: string[];
+  admin?: string[];
 };

@@ -69,9 +69,9 @@ export type DepartmentDto = {
   keyword: string;
   universityName?: string;
   universityId: string;
-  precedences: string[];
+  precedences?: string[];
   guidelines?: (GuidelineDto | undefined)[];
-  admin: string[];
+  admin?: string[];
   updatedAt?: number;
   createdAt?: number;
 };

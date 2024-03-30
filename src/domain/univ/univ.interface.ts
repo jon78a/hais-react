@@ -27,9 +27,9 @@ export interface Department {
   name: string;
   keyword: string;
   universityId: string;
-  precedences: string[];
+  precedences?: string[];
   guidelines?: Guideline[];
-  admin: string[];
+  admin?: string[];
   updatedAt?: number;
   createdAt?: number;
 }

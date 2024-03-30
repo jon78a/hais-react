@@ -187,24 +187,6 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
             ))}
           </Select>
         </FormControl>
-        <TextField
-          label="관리자"
-          fullWidth
-          required
-          value={form.data?.admin}
-          placeholder="user@site.com,user2@stie.com"
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form?.data,
-                admin: e.target.value.split(","),
-              },
-            })
-          }
-        />
       </DialogContent>
     );
   }, [form, schoolList]);
@@ -215,7 +197,7 @@ const SchoolSubjectDetailDialog: React.FC<SchoolSubjectDetailDialogUx> = (
       scroll={"paper"}
       open={context.modal.state === "UPDATE"}
     >
-      <DialogTitle>교과목 추가</DialogTitle>
+      <DialogTitle>교과목 수정</DialogTitle>
       <Box
         component="form"
         onSubmit={(e) => {

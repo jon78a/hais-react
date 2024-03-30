@@ -163,24 +163,6 @@ const SchoolDetailDialog: React.FC<SchoolDetailDialogUx> = (ux) => {
           }
         />
         <TextField
-          label="관리자"
-          fullWidth
-          required
-          value={form.data?.admin}
-          placeholder="user@site.com,user2@stie.com"
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form?.data,
-                admin: e.target.value.split(","),
-              },
-            })
-          }
-        />
-        <TextField
           label="웹사이트 주소1"
           fullWidth
           value={form.data?.web1}

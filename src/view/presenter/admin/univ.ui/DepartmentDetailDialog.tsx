@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { DepartmentTableContext } from "./DepartmentTableContext";
 import type { DepartmentCreateRequest } from "../../../../schema/types/AdminUniv";
@@ -24,6 +24,7 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
     undefined
   );
   const univList = useRecoilValue(univListState);
+  const univNameRef = useRef("");
 
   useEffect(() => {
     if (context.modal.state !== "UPDATE") return undefined;
@@ -87,12 +88,19 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
                 data: {
                   ...form.data,
                   universityId: e.target.value as string,
+                  universityName: univNameRef.current,
                 },
               })
             }
           >
             {Object.values(univList).map((e) => (
-              <MenuItem key={e.id} value={e.id}>
+              <MenuItem
+                key={e.id}
+                value={e.id}
+                onClick={() => {
+                  univNameRef.current = e.name;
+                }}
+              >
                 {e.name}
               </MenuItem>
             ))}
@@ -112,24 +120,6 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
               data: {
                 ...form?.data,
                 precedences: e.target.value.split(","),
-              },
-            })
-          }
-        />
-        <TextField
-          label="관리자"
-          fullWidth
-          required
-          value={form.data?.admin}
-          placeholder="user@site.com,user2@stie.com"
-          sx={{ mt: 2 }}
-          onChange={(e) =>
-            form.data &&
-            setForm({
-              ...form,
-              data: {
-                ...form?.data,
-                admin: e.target.value.split(","),
               },
             })
           }

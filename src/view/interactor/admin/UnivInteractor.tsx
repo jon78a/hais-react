@@ -14,6 +14,7 @@ import { useAdminUnivService } from "../../../service/admin/univ";
 import UnivTabContent from "../../presenter/admin/univ.ui/UnivTabContent";
 import UnivTabs from "../../presenter/admin/univ.ui/UnivTabs";
 import DepartmentTabContent from "../../presenter/admin/univ.ui/DepartmentTabContent";
+import { userState } from "../../../schema/states/User";
 
 const AdminUnivInteractor = () => {
   const [tabItem, setTabItem] = useRecoilState(univTabState);
@@ -22,6 +23,7 @@ const AdminUnivInteractor = () => {
   const setUniv = useSetRecoilState(univState);
   const [departmentList, setDepartmentList] =
     useRecoilState(departmentListState);
+  const user = useRecoilValue(userState);
 
   const guidelineForm = useRecoilValue(guideLineFormState);
 
@@ -63,7 +65,15 @@ const AdminUnivInteractor = () => {
               });
             }, 250),
             modify: (form) => {
-              service.editUniv(form).then(() => {
+              if (!form.data) return;
+              const updatedForm = {
+                ...form,
+                data: {
+                  ...form.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.editUniv(updatedForm).then(() => {
                 if (form?.data?.id) {
                   service.getUniv(form?.data?.id).then((data): void => {
                     if (data) {
@@ -78,7 +88,14 @@ const AdminUnivInteractor = () => {
               });
             },
             create: (form) => {
-              service.addUniv(form).then(({ id }) => {
+              const updatedForm = {
+                ...form,
+                data: {
+                  ...form.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.addUniv(updatedForm).then(({ id }) => {
                 setUnivList((prev) => [...prev, { ...form.data, id }]);
               });
             },
@@ -104,7 +121,14 @@ const AdminUnivInteractor = () => {
               });
             }, 250),
             create(req) {
-              service.addDepartment(req).then(({ id }) => {
+              const updatedReq = {
+                ...req,
+                data: {
+                  ...req.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.addDepartment(updatedReq).then(({ id }) => {
                 setDepartmentList((prev) => [...prev, { ...req.data, id }]);
               });
             },
@@ -117,7 +141,15 @@ const AdminUnivInteractor = () => {
               });
             },
             modify(form) {
-              service.editDepartment(form).then(() => {
+              if (!form.data) return;
+              const updatedForm = {
+                ...form,
+                data: {
+                  ...form.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.editDepartment(updatedForm).then(() => {
                 if (form?.data?.id) {
                   const newDepartmentList = departmentList.map((department) =>
                     department.id === form.data?.id ? form.data : department

@@ -26,7 +26,7 @@ import {
   schoolSubjectTypeMap,
 } from "../../../../policy/school";
 import { DepartmentGuidelineDialogUx } from "../univ.ux/DepartmentGuidelineDialogUx";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   guideLineFormState,
   subjectListState,
@@ -34,7 +34,6 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Department } from "../../../../domain/univ/univ.interface";
-import { userState } from "../../../../schema/states/User";
 
 const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
   ux
@@ -48,19 +47,15 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
   const [subjectNames, setSubjectNames] = useState<Record<string, string[]>>(
     {}
   );
-  const user = useRecoilValue(userState);
-
-  const isAdmin: boolean = Boolean(
-    user?.email && context.selection.state?.admin.includes(user?.email)
-  );
 
   const prev: Department = { ...context.selection.state! };
   const prevGuidelines = prev.guidelines ? prev.guidelines : [];
 
-  const filteredTypes = schoolSubjectTypes.filter((type) =>
-    context.selection.state?.guidelines
-      ?.map((guideline) => guideline.type as string)
-      ?.includes(type)
+  const filteredTypes = schoolSubjectTypes.filter(
+    (type) =>
+      !context.selection.state?.guidelines
+        ?.map((guideline) => guideline.type as string)
+        ?.includes(type)
   );
 
   useEffect(() => {
@@ -139,96 +134,94 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
         }}
         className="flex flex-col gap-4"
       >
-        {isAdmin ? (
-          <Card>
-            <DialogContent>
-              <Card sx={{ p: 2 }}>
-                <Stack>
-                  <Box className="flex flex-col space-y-4">
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          onChange={(e) => {
-                            setGuidelineForm((prev) => ({
-                              ...prev,
-                              required: e.target.checked,
-                            }));
-                          }}
-                        />
-                      }
-                      label="필수"
-                    />
-
-                    <FormControl fullWidth required>
-                      <InputLabel id="type">과목</InputLabel>
-                      <Select
-                        id="type"
-                        label="과목"
-                        onChange={(e) => {
-                          const type = e.target.value as SchoolSubjectType;
-                          setGuidelineForm((prev) => ({
-                            ...prev,
-                            type,
-                          }));
-
-                          ux.getSubjectList(type).then((response) => {
-                            setSubjectList(response ? response : []);
-                          });
-                        }}
-                      >
-                        {filteredTypes.map((subjectType) => (
-                          <MenuItem key={subjectType} value={subjectType}>
-                            {subjectType}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl fullWidth required>
-                      <InputLabel id="options">모집요강</InputLabel>
-                      <Select
-                        required
-                        id="options"
-                        placeholder={"모집요강"}
-                        multiple
-                        defaultValue={[]}
+        <Card>
+          <DialogContent>
+            <Card sx={{ p: 2 }}>
+              <Stack>
+                <Box className="flex flex-col space-y-4">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
                         onChange={(e) => {
                           setGuidelineForm((prev) => ({
                             ...prev,
-                            options: e.target.value as string[],
+                            required: e.target.checked,
                           }));
                         }}
-                      >
-                        {subjectList?.map((subject) => (
-                          <MenuItem value={subject.id}>{subject.name}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                      />
+                    }
+                    label="필수"
+                  />
 
-                    <TextField
-                      id="condition"
-                      label="수강해야할 과목 갯수"
-                      fullWidth
+                  <FormControl fullWidth required>
+                    <InputLabel id="type">과목</InputLabel>
+                    <Select
+                      id="type"
+                      label="과목"
+                      onChange={(e) => {
+                        const type = e.target.value as SchoolSubjectType;
+                        setGuidelineForm((prev) => ({
+                          ...prev,
+                          type,
+                        }));
+
+                        ux.getSubjectList(type).then((response) => {
+                          setSubjectList(response ? response : []);
+                        });
+                      }}
+                    >
+                      {filteredTypes.map((subjectType) => (
+                        <MenuItem key={subjectType} value={subjectType}>
+                          {subjectType}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth required>
+                    <InputLabel id="options">모집요강</InputLabel>
+                    <Select
                       required
-                      type="number"
-                      inputProps={{ min: 0 }}
-                      sx={{ mt: 2 }}
+                      id="options"
+                      placeholder={"모집요강"}
+                      multiple
+                      defaultValue={[]}
                       onChange={(e) => {
                         setGuidelineForm((prev) => ({
                           ...prev,
-                          condition: e.target.value as unknown as number,
+                          options: e.target.value as string[],
                         }));
                       }}
-                    />
-                  </Box>
-                </Stack>
-              </Card>
-            </DialogContent>
-            <DialogActions>
-              <Button type="submit">저장</Button>
-            </DialogActions>
-          </Card>
-        ) : null}
+                    >
+                      {subjectList?.map((subject) => (
+                        <MenuItem value={subject.id}>{subject.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <TextField
+                    id="condition"
+                    label="수강해야할 과목 갯수"
+                    fullWidth
+                    required
+                    type="number"
+                    inputProps={{ min: 0 }}
+                    sx={{ mt: 2 }}
+                    onChange={(e) => {
+                      setGuidelineForm((prev) => ({
+                        ...prev,
+                        condition: e.target.value as unknown as number,
+                      }));
+                    }}
+                  />
+                </Box>
+              </Stack>
+            </Card>
+          </DialogContent>
+          <DialogActions>
+            <Button type="submit">저장</Button>
+          </DialogActions>
+        </Card>
 
         <Box className="grid grid-cols-4 px-5">
           {context.selection.state?.guidelines?.map((guideline) => (
@@ -252,31 +245,29 @@ const DepartmentGuidelineDialog: React.FC<DepartmentGuidelineDialogUx> = (
                 </Typography>
               </CardContent>
 
-              {isAdmin ? (
-                <Button
-                  onClick={async () => {
-                    const id = await ux.onClickDeleteGuideline({
-                      departmentId: context.selection.state?.id!,
-                      guidelineId: guideline!.id!,
+              <Button
+                onClick={async () => {
+                  const id = await ux.onClickDeleteGuideline({
+                    departmentId: context.selection.state?.id!,
+                    guidelineId: guideline!.id!,
+                  });
+
+                  if (id) {
+                    const updatedGuidelines = prevGuidelines.filter(
+                      (guideline) => guideline.id !== id
+                    );
+
+                    context.selection.set({
+                      ...prev,
+                      guidelines: updatedGuidelines,
                     });
-
-                    if (id) {
-                      const updatedGuidelines = prevGuidelines.filter(
-                        (guideline) => guideline.id !== id
-                      );
-
-                      context.selection.set({
-                        ...prev,
-                        guidelines: updatedGuidelines,
-                      });
-                    }
-                  }}
-                  color="error"
-                  className="ml-auto"
-                >
-                  삭제
-                </Button>
-              ) : null}
+                  }
+                }}
+                color="error"
+                className="ml-auto"
+              >
+                삭제
+              </Button>
             </Card>
           ))}
         </Box>

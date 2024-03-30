@@ -64,7 +64,7 @@ const AuthorizedUserSubjectList: React.FC<AuthorizedUserSubjectListUx> = (
         우선순위: {majorResult?.precedences?.join(" > ")}
       </Typography>
       <Typography variant="body1" sx={{ mb: 1 }} fontWeight="bold">
-        내 평균 점수: {ux.avgScore}
+        내 등급(평균): {ux.avgScore}
       </Typography>
 
       <Stack>

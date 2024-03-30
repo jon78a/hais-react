@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
 import { useAdminSchoolService } from "../../../service/admin/school";
@@ -13,11 +13,13 @@ import {
 } from "../../../schema/states/AdminSchool";
 import SchoolTabContent from "../../presenter/admin/shool.ui/SchoolTabContent";
 import SchoolSubjectTabContent from "../../presenter/admin/shool.ui/SchoolSubjectTabContent";
+import { userState } from "../../../schema/states/User";
 
 const AdminSchoolInteractor = () => {
   const [tabItem, setTabItem] = useRecoilState(schoolTabState);
   const [filter, setFilter] = useRecoilState(schoolFilterState);
   const [schoolList, setSchoolList] = useRecoilState(schoolListState);
+  const user = useRecoilValue(userState);
   const setSchool = useSetRecoilState(schoolState);
 
   const [schoolSubjectList, setSchoolSubjectList] = useRecoilState(
@@ -67,7 +69,15 @@ const AdminSchoolInteractor = () => {
               });
             }, 250),
             modify: (form) => {
-              service.editSchool(form).then(() => {
+              if (!form.data) return;
+              const updatedForm = {
+                ...form,
+                data: {
+                  ...form.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.editSchool(updatedForm).then(() => {
                 if (form?.data?.id) {
                   service.getSchool(form?.data?.id).then((data): void => {
                     if (data) {
@@ -82,7 +92,14 @@ const AdminSchoolInteractor = () => {
               });
             },
             create: (form) => {
-              service.addSchool(form).then(({ id }) => {
+              const updatedForm = {
+                ...form,
+                data: {
+                  ...form.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.addSchool(updatedForm).then(({ id }) => {
                 setSchoolList((prev) => [...prev, { ...form.data, id }]);
               });
             },
@@ -108,7 +125,14 @@ const AdminSchoolInteractor = () => {
               });
             }, 250),
             create: (req) => {
-              service.addSubject(req).then(({ id }) => {
+              const updatedReq = {
+                ...req,
+                data: {
+                  ...req.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.addSubject(updatedReq).then(({ id }) => {
                 setSchoolSubjectList((prev) => [...prev, { ...req.data, id }]);
               });
             },
@@ -121,7 +145,15 @@ const AdminSchoolInteractor = () => {
               });
             },
             modify: (req) => {
-              service.editSubject(req).then(() => {
+              if (!req.data) return;
+              const updatedReq = {
+                ...req,
+                data: {
+                  ...req.data,
+                  admin: [user?.email!],
+                },
+              };
+              service.editSubject(updatedReq).then(() => {
                 if (req?.data?.id) {
                   service
                     .getSubject({
