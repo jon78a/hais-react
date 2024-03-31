@@ -1,16 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import _, { debounce, orderBy, uniqBy } from "lodash";
 
 import {
   fullNameKeywordState,
   majorResultListState,
-  isMatchUnivState,
   majorKeywordState,
   selectedMajorIdState,
   univKeywordState,
   univSearchResultListState,
-  majorResultLoadingState,
   majorWithSubjectState,
   studentCommonSubjectScoreState,
   studentOptionalSubjectScoreState,
@@ -30,16 +28,16 @@ import { GridColOption } from "../presenter/subject-recommend.ux/AuthorizedUserS
 import { GridCallbackDetails, GridRowId } from "@mui/x-data-grid";
 import { studentState } from "../../schema/states/MyScore";
 import { creditState } from "../../schema/states/Year";
+import { useNavigate } from "react-router-dom";
+import { authPermissionRoutes } from "../../routes";
+import { DepartmentWithSubject } from "../../domain/univ/univ.interface";
 
 const useChangeKeywordEffect = (service: SubjectRecommendService) => {
   // Recoil States
-  const isMatchUniv = useRecoilValue(isMatchUnivState);
   const univKeyword = useRecoilValue(univKeywordState);
   const majorKeyword = useRecoilValue(majorKeywordState);
-  const fullNameKeyword = useRecoilValue(fullNameKeywordState);
   const setUnivSearchResultList = useSetRecoilState(univSearchResultListState);
   const setMajorResultList = useSetRecoilState(majorResultListState);
-  const setMajorResultLoading = useSetRecoilState(majorResultLoadingState);
 
   // Effect
   useEffect(() => {
@@ -47,29 +45,10 @@ const useChangeKeywordEffect = (service: SubjectRecommendService) => {
   }, [service, setUnivSearchResultList]);
 
   useEffect(() => {
-    function clear() {
-      setMajorResultList([]);
-    }
-
-    if (!isMatchUniv) return clear;
-    setMajorResultLoading(true);
-    service
-      .getDepartmentOnUniv(majorKeyword, univKeyword)
-      .then((results) => {
-        setMajorResultList(results);
-      })
-      .finally(() => setMajorResultLoading(false));
-    return clear;
-  }, [
-    service,
-    isMatchUniv,
-    univKeyword,
-    majorKeyword,
-    fullNameKeyword,
-    setUnivSearchResultList,
-    setMajorResultList,
-    setMajorResultLoading,
-  ]);
+    service.getDepartmentOnUniv(majorKeyword, univKeyword).then((results) => {
+      setMajorResultList(results);
+    });
+  }, [majorKeyword, service, setMajorResultList, univKeyword]);
 };
 
 const SubjectRecommendInteractor = () => {
@@ -92,17 +71,9 @@ const SubjectRecommendInteractor = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectionModel, setSelectionModel] = useState<GridRowId[][]>([]);
   const [totalCredit, setTotalCredit] = useState(0);
-  const [unSelectedModel, setUnSelectedModel] = useState<GridColOption[]>([]);
-  const [precedencesSubjectList, setPrecedencesSubjectList] = useState<
-    GridColOption[]
-  >([]);
+  const [rows, setRows] = useState<GridColOption[]>([]);
 
   // Computed Values
-  const rows = useMemo(
-    () => uniqBy([...unSelectedModel, ...precedencesSubjectList], "id"),
-    [precedencesSubjectList, unSelectedModel]
-  );
-
   const guidelineLength: number = majorResult?.guidelines?.length ?? 0;
   const avgScore = Number(
     _.mean([
@@ -110,7 +81,11 @@ const SubjectRecommendInteractor = () => {
       ...optionalSubjectScore.map((o) => Number(o.grade)),
     ]).toFixed(2)
   );
-  const isNeedToRecommendDifficultSubject: boolean = Boolean(avgScore <= 2);
+
+  const levelStandard = 2;
+  const isNeedToRecommendDifficultSubject: boolean = Boolean(
+    avgScore <= levelStandard
+  );
 
   const orderedRows = useMemo(
     () =>
@@ -130,13 +105,15 @@ const SubjectRecommendInteractor = () => {
   );
 
   // Methods
-  const calculateTotalAndUnselected = useCallback(() => {
+  const calculateTotalAndUnselected = () => {
     let total = 0;
     let unselected: GridColOption[] = [];
 
-    if (!majorResult?.guidelines?.length) return { total, unselected };
+    const guidelines = majorResult?.guidelines;
 
-    majorResult.guidelines.forEach((g, j) => {
+    if (!guidelines?.length) return { total, unselected };
+
+    guidelines.forEach((g, j) => {
       g.options.forEach((option) => {
         if (!option.id) return;
         if (selectionModel[j]?.includes(option.id)) {
@@ -160,53 +137,51 @@ const SubjectRecommendInteractor = () => {
     });
 
     return { total, unselected };
-  }, [majorResult?.guidelines, selectionModel, rows, guidelineLength]);
+  };
 
-  const updateTotalCredit = useCallback(() => {
+  const updateTotalCredit = () => {
     const { total, unselected } = calculateTotalAndUnselected();
-    setUnSelectedModel(unselected);
     setTotalCredit(total);
-  }, [setUnSelectedModel, setTotalCredit, calculateTotalAndUnselected]);
+    return unselected;
+  };
 
-  const handleSelectionModelChange = useCallback(
-    (
-      newSelection: GridRowId[],
-      _: GridCallbackDetails<any>,
-      guidelineIndex: number
-    ) => {
-      setSelectionModel((prevSelectionModel) => {
-        const updatedModel = [...prevSelectionModel]; // Create a copy of the previous selection model
-        updatedModel[guidelineIndex] = newSelection; // Update the selection model for the specific guideline
-        return updatedModel; // Return the updated selection model
+  const handleSelectionModelChange = (
+    newSelection: GridRowId[],
+    _: GridCallbackDetails<any>,
+    guidelineIndex: number
+  ) => {
+    setSelectionModel((prevSelectionModel) => {
+      const updatedModel = [...prevSelectionModel]; // Create a copy of the previous selection model
+      updatedModel[guidelineIndex] = newSelection; // Update the selection model for the specific guideline
+      return updatedModel; // Return the updated selection model
+    });
+    updateTotalCredit();
+  };
+
+  const getPrecedenceSubjects = async (
+    precedences: string[],
+    schoolId: string
+  ) => {
+    const list: GridColOption[] = [];
+
+    const subjects = await service.findSubjectByGroups(precedences, schoolId);
+
+    subjects.forEach((subject) => {
+      list.push({
+        id: subject.id,
+        credit: subject.credit,
+        level: subject.level,
+        groups: subject.groups,
+        guideline: { type: subject.type },
+        name: subject.name,
+        description: "선호교과",
       });
-    },
-    []
-  );
+    });
 
-  const getPrecedenceSubjects = useCallback(
-    async (precedences: string[], schoolId: string) => {
-      const list: GridColOption[] = [];
+    return list;
+  };
 
-      const subjects = await service.findSubjectByGroups(precedences, schoolId);
-
-      subjects.forEach((subject) => {
-        list.push({
-          id: subject.id,
-          credit: subject.credit,
-          level: subject.level,
-          groups: subject.groups,
-          guideline: { type: subject.type },
-          name: subject.name,
-          description: "선호교과",
-        });
-      });
-
-      return list;
-    },
-    [service]
-  );
-
-  const savePrecedenceSubjectsDataGridFormat = useCallback(async () => {
+  const savePrecedenceSubjectsDataGridFormat = async () => {
     if (!majorResult?.precedences) return;
     if (!student?.schoolId) return;
 
@@ -215,70 +190,121 @@ const SubjectRecommendInteractor = () => {
       student?.schoolId
     );
 
-    setPrecedencesSubjectList(list);
-  }, [getPrecedenceSubjects, majorResult?.precedences, student?.schoolId]);
+    return list;
+  };
 
-  const initializeSelectionModel = useCallback(() => {
+  const getSubjectsHaveTaken = (): GridRowId[] | undefined => {
     if (!commonSubjectScore.length || !optionalSubjectScore.length) return;
-    const initialSelectionModel: GridRowId[] = commonSubjectScore
+    return commonSubjectScore
       .map((subject) => subject.subjectId)
       .concat(optionalSubjectScore.map((subject) => subject.subjectId));
+  };
 
-    majorResult?.guidelines?.forEach((guideline, index) => {
-      handleSelectionModelChange(initialSelectionModel, {}, index);
-    });
-  }, [
-    commonSubjectScore,
-    handleSelectionModelChange,
-    majorResult?.guidelines,
-    optionalSubjectScore,
-  ]);
-
-  const selectAllRecommendSubjects = useCallback(() => {
+  const selectAllRecommendSubjects = () => {
     if (!orderedRows.length) return;
     let findIndex = 0;
     let credit = totalCredit;
 
-    orderedRows.forEach((row, index) => {
-      credit += row.credit;
-      if (credit >= reqCredit) findIndex = index - 1;
-      else findIndex = index + 1;
-    });
+    for (let i = 0; i < orderedRows.length; i++) {
+      if (orderedRows[i].description === "모집요강") {
+        findIndex = i + i;
+      } else if (credit >= reqCredit) {
+        findIndex = i;
+        break;
+      } else {
+        findIndex = i + 1;
+      }
+      credit += orderedRows[i].credit;
+    }
 
     const recommendModel: GridRowId[] = orderedRows
       .slice(0, findIndex)
       .map((row) => row.id!);
+
     handleSelectionModelChange(recommendModel, {}, guidelineLength);
+  };
+
+  const updateRows = async () => {
+    const unSelectedModel = updateTotalCredit();
+    const precedencesSubjectList = await savePrecedenceSubjectsDataGridFormat();
+    setRows(
+      uniqBy([...unSelectedModel, ...(precedencesSubjectList || [])], "id")
+    );
+  };
+
+  const onClickMajor = async (id: string) => {
+    const major = majorResultList.find((v) => v.id === id);
+    if (!major) return;
+    if (id) setSelectedMajorCode(id);
+
+    setLoading(true);
+
+    const list = await service.readSubjectList(major.guidelines || []);
+    const model = getSubjectsHaveTaken();
+    const result = {
+      ...major,
+      guidelines: major.guidelines?.map((g, i) => {
+        if (model) handleSelectionModelChange(model, {}, i);
+        return {
+          ...g,
+          options: g.options.map((id) => {
+            const item = list.find((item) => item?.id === id);
+            return {
+              id,
+              name: item?.name,
+              groups: item?.groups,
+              credit: item?.credit ?? 0,
+            };
+          }),
+        };
+      }),
+    };
+    setMajorResult(result);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    updateRows();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guidelineLength, handleSelectionModelChange, orderedRows.length]);
-
-  // effects
-  useEffect(
-    () => () => {
-      setUnivKeyword("");
-      setFullNameKeyword("");
-      setSelectedMajorCode(null);
-    },
-    [setUnivKeyword, setFullNameKeyword, setSelectedMajorCode]
-  );
-
-  useEffect(() => {
-    initializeSelectionModel();
-  }, [initializeSelectionModel]);
-
-  useEffect(() => {
-    updateTotalCredit();
-  }, [updateTotalCredit]);
-
-  useEffect(() => {
-    savePrecedenceSubjectsDataGridFormat();
-  }, [savePrecedenceSubjectsDataGridFormat]);
+  }, [selectionModel]);
 
   useEffect(() => {
     selectAllRecommendSubjects();
-  }, [selectAllRecommendSubjects]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderedRows.length]);
 
   useChangeKeywordEffect(service);
+
+  useEffect(() => {
+    setUnivKeyword("");
+    setFullNameKeyword("");
+    setSelectedMajorCode("");
+  }, [setFullNameKeyword, setUnivKeyword, setSelectedMajorCode]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let shouldConfirm = false;
+
+    if (!account || !selectionModel || !isNaN(avgScore)) return;
+
+    const confirmPrompt = () => {
+      const confirm = window.confirm("점수를 입력해주세요");
+      if (confirm) {
+        shouldConfirm = true;
+        navigate(authPermissionRoutes.my.path);
+      }
+    };
+
+    confirmPrompt();
+
+    return () => {
+      if (shouldConfirm) {
+        window.removeEventListener("beforeunload", confirmPrompt);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, avgScore, selectionModel]);
 
   return (
     <div className="mt-6">
@@ -296,36 +322,7 @@ const SubjectRecommendInteractor = () => {
               return;
           }
         }, 250)}
-        clickMajor={(id) => {
-          const major = majorResultList.find((v) => v.id === id);
-          if (!major) {
-            return;
-          }
-          if (id) setSelectedMajorCode(id);
-          setLoading(true);
-
-          service
-            .readSubjectList(major.guidelines || [])
-            .then((list) => {
-              const result = {
-                ...major,
-                guidelines: major.guidelines?.map((g) => ({
-                  ...g,
-                  options: g.options.map((id) => {
-                    const item = list.find((item) => item?.id === id);
-                    return {
-                      id,
-                      name: item?.name,
-                      groups: item?.groups,
-                      credit: item?.credit ?? 0,
-                    };
-                  }),
-                })),
-              };
-              setMajorResult(result);
-            })
-            .finally(() => setLoading(false));
-        }}
+        clickMajor={(id) => onClickMajor(id!)}
       />
       <div className="mt-4 pb-12">
         {account ? (

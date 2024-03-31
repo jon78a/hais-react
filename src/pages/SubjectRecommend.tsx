@@ -37,10 +37,6 @@ const SubjectRecommendPage = (): JSX.Element => {
   const setStudent = useSetRecoilState(studentState);
   const setCredit = useSetRecoilState(creditState);
 
-  // const [hasScore, setHasScore] = useState<boolean | undefined>(undefined);
-
-  // const navigate = useNavigate();
-
   useEffect(() => {
     authSessionRepository.find().then((session) => {
       const current = Math.floor(Date.now() / 1000);
@@ -84,21 +80,10 @@ const SubjectRecommendPage = (): JSX.Element => {
       Promise.all([
         studentRepository.getSubjectGrade(student.id, true),
         studentRepository.getSubjectGrade(student.id, false),
-        schoolRepository.getCommonSubjects(),
-        schoolRepository.getOptionalSubjects(student.schoolId),
       ]).then((value) => {
-        const [
-          commonSubjectScores,
-          optionalSubjectsScores,
-          commonSubjects,
-          optionalSubjects,
-        ] = value;
+        const [commonSubjectScores, optionalSubjectsScores] = value;
         setCommonSubjectScore(commonSubjectScores);
         setOptionalCommonSubjectScore(optionalSubjectsScores);
-        // setHasScore(
-        //   commonSubjectScores.length <= commonSubjects.length &&
-        //     optionalSubjectsScores.length <= optionalSubjects.length
-        // );
       });
     });
   }, [
@@ -107,11 +92,6 @@ const SubjectRecommendPage = (): JSX.Element => {
     setOptionalCommonSubjectScore,
     setStudent,
   ]);
-
-  // const handleScoreClose = () => {
-  //   setHasScore(undefined);
-  //   navigate(routes.myScore.path);
-  // };
 
   return (
     <SubjectRecommendContainer

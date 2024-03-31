@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { useRecoilValue } from "recoil";
 
 import {
@@ -104,4 +103,4 @@ const SubjectList: React.FC<SubjectListUx> = (ux) => {
   );
 };
 
-export default memo(SubjectList);
+export default SubjectList;
