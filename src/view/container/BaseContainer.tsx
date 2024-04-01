@@ -327,7 +327,7 @@ export function SubNavSeparator() {
               admin && (
                 <Link
                   key={0}
-                  to={routes.adminHome.path}
+                  to={routes.adminSchool.path}
                   className="text-base text-black"
                 >
                   <Button sx={{ color: "GrayText" }}>관리자</Button>
