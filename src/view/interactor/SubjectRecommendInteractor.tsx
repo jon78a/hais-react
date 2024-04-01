@@ -263,6 +263,7 @@ const SubjectRecommendInteractor = () => {
     setLoading(false);
   };
 
+  // effects
   useEffect(() => {
     updateRows();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -286,7 +287,13 @@ const SubjectRecommendInteractor = () => {
   useEffect(() => {
     let shouldConfirm = false;
 
-    if (!account || !selectionModel || !isNaN(avgScore)) return;
+    if (
+      !majorResultList.length ||
+      !account ||
+      !selectionModel ||
+      !isNaN(avgScore)
+    )
+      return;
 
     const confirmPrompt = () => {
       const confirm = window.confirm("점수를 입력해주세요");
@@ -303,8 +310,7 @@ const SubjectRecommendInteractor = () => {
         window.removeEventListener("beforeunload", confirmPrompt);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, avgScore, selectionModel]);
+  }, [account, avgScore, majorResultList, navigate, selectionModel]);
 
   return (
     <div className="mt-6">
