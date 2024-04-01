@@ -20,7 +20,7 @@ const DepartmentDeleteDialog: React.FC<DepartmentDeleteDialogUx> = (ux) => {
       onClose={() => context.modal.set(null)}
     >
       <DialogTitle>
-        교과목을 삭제하시겠습니까? (아래의 항목이 삭제됩니다)
+        전공을 삭제하시겠습니까? (아래의 항목이 삭제됩니다)
       </DialogTitle>
       <DialogContent>
         <List sx={{ maxHeight: 280, overflowY: "scroll" }}>

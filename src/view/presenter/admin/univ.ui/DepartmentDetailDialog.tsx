@@ -134,7 +134,7 @@ const DepartmentDetailDialog: React.FC<DepartmentDetailDialogUx> = (ux) => {
       scroll={"paper"}
       open={context.modal.state === "UPDATE"}
     >
-      <DialogTitle>교과목 수정</DialogTitle>
+      <DialogTitle>전공 수정</DialogTitle>
       <Box
         component="form"
         onSubmit={(e) => {

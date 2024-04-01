@@ -143,7 +143,7 @@ const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
       scroll={"paper"}
       open={context.modal.state === "CREATE"}
     >
-      <DialogTitle>교과목 추가</DialogTitle>
+      <DialogTitle>전공 등록</DialogTitle>
       <Box
         component="form"
         onSubmit={(e) => {
