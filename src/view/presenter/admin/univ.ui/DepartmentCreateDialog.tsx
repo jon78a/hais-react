@@ -7,15 +7,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { DepartmentCreateDialogUx } from "../univ.ux/DepartmentCreateDialogUx";
 import { useRecoilValue } from "recoil";
 import { univListState, univState } from "../../../../schema/states/AdminUniv";
 import { DepartmentTableContext } from "./DepartmentTableContext";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
   const context = useContext(DepartmentTableContext);
@@ -25,7 +22,6 @@ const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
   );
   const univList = useRecoilValue(univListState);
   const univ = useRecoilValue(univState);
-  const univNameRef = useRef("");
 
   useEffect(() => {
     if (context.modal.state !== "CREATE") return undefined;
@@ -83,38 +79,29 @@ const DepartmentCreateDialog: React.FC<DepartmentCreateDialogUx> = (ux) => {
           }
         />
 
-        <FormControl fullWidth sx={{ mt: 2 }} required>
-          <InputLabel id="대학교">대학교</InputLabel>
-          <Select
-            required
-            labelId="대학교"
-            label={"대학교"}
-            value={form.data?.universityId}
-            onChange={(e) => {
-              form.data &&
-                setForm({
-                  ...form,
-                  data: {
-                    ...form.data,
-                    universityId: e.target.value as string,
-                    universityName: univNameRef.current,
-                  },
-                });
-            }}
-          >
-            {Object.values(univList).map((e) => (
-              <MenuItem
-                key={e.id}
-                value={e.id}
-                onClick={() => {
-                  univNameRef.current = e.name;
-                }}
-              >
-                {e.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          sx={{ mt: 2 }}
+          fullWidth
+          options={Object.values(univList)}
+          getOptionLabel={(option) => option.name}
+          value={univList.find((univ) => univ.id === form.data?.universityId)}
+          onChange={(event, newValue) => {
+            const selectedUniversityId = newValue ? newValue.id : "";
+            const selectedUniversityName = newValue ? newValue.name : "";
+            setForm({
+              ...form,
+              data: {
+                ...form.data,
+                universityId: selectedUniversityId,
+                universityName: selectedUniversityName,
+              },
+            });
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="대학교" required variant="outlined" />
+          )}
+        />
+
         <TextField
           label="선호도"
           fullWidth

@@ -1,7 +1,4 @@
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   schoolListState,
@@ -9,6 +6,7 @@ import {
   studentState,
 } from "../../../schema/states/MyScore";
 import { SchoolSelectUx } from "../myScore.ux/SchoolSelectUx";
+import { Autocomplete, TextField } from "@mui/material";
 
 const SchoolSelect: React.FC<SchoolSelectUx> = (ux) => {
   const schoolList = useRecoilValue(schoolListState);
@@ -17,35 +15,34 @@ const SchoolSelect: React.FC<SchoolSelectUx> = (ux) => {
     selectedSchoolIdState
   );
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setSelectedSchool(event.target.value as string);
-    ux.onChangeSchool(event.target.value as string);
+  const handleChange = (selectedId: string) => {
+    setSelectedSchool(selectedId);
+    ux.onChangeSchool(selectedId);
   };
 
   if (ux.loading)
     return <Select label="학교" sx={{ minWidth: 120 }} size="small" />;
 
   return (
-    <FormControl
+    <Autocomplete
       sx={{
-        minWidth: 120,
+        minWidth: 240,
       }}
-    >
-      <InputLabel>내 학교</InputLabel>
-      <Select
-        label="학교"
-        defaultValue={student?.schoolId}
-        value={selectedSchoolId}
-        onChange={handleChange}
-        size={"small"}
-      >
-        {schoolList.map((_school) => (
-          <MenuItem key={_school.id} value={_school.id}>
-            {_school.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+      options={schoolList}
+      getOptionLabel={(option) => option.name}
+      value={
+        schoolList.find((school) => school.id === selectedSchoolId) ||
+        schoolList.find((school) => school.id === student?.schoolId) ||
+        null
+      }
+      onChange={(event, newValue) => {
+        const selectedId = newValue ? newValue.id : null;
+        if (selectedId) handleChange(selectedId);
+      }}
+      renderInput={(params) => (
+        <TextField {...params} label="학교" variant="outlined" size="small" />
+      )}
+    />
   );
 };
 
