@@ -15,8 +15,13 @@ const AdminSchoolContainer = ({
   return (
     <AdminSchoolContext.Provider
       value={{
-        async getSchoolList(filter) {
-          const payload = await schoolRepository.findBy({ ...filter });
+        async getSchoolList({ filter, cursor, pageSize = 10, isPrev = false }) {
+          const payload = await schoolRepository.findBy({
+            filter,
+            cursor,
+            pageSize,
+            isPrev,
+          });
           return payload;
         },
         async getSchool(id) {

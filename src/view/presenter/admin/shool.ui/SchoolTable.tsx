@@ -1,14 +1,17 @@
 import { useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { schoolListState } from "../../../../schema/states/AdminSchool";
+import {
+  schoolListState,
+  schoolPaginationState,
+} from "../../../../schema/states/AdminSchool";
 import { SchoolTableUx } from "../school.ux/SchoolTableUx";
 import useScreenHeight from "../../../../hooks/useScreenHeight";
 import { TableContext, ModalState } from "./TableContext";
 
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
@@ -16,7 +19,6 @@ import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { userState } from "../../../../schema/states/User";
 import { School } from "../../../../domain/school/school.interface";
 
 const SchoolTable: React.FC<{
@@ -29,10 +31,21 @@ const SchoolTable: React.FC<{
 
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const screenHeight = useScreenHeight();
-  const user = useRecoilValue(userState);
   const [rowSelection, setRowSelection] = useState<School | null>(null);
-
+  const [page, setPage] = useRecoilState(schoolPaginationState);
   const schoolList = useRecoilValue(schoolListState);
+
+  const setPaginationModel = (model: GridPaginationModel): void => {
+    setPage((prev) => {
+      return {
+        ...prev,
+        cursor: schoolList[model.pageSize - 1],
+        page: model.page,
+        isPrev: prev.page > model.page,
+      };
+    });
+  };
+
   const schoolColumns = useMemo<GridColDef[]>(
     () => [
       { field: "id" },
@@ -87,7 +100,7 @@ const SchoolTable: React.FC<{
         },
       },
     ],
-    [mobile, user?.email]
+    [mobile]
   );
 
   const [modalState, setModalState] = useState<ModalState>(null);
@@ -144,6 +157,7 @@ const SchoolTable: React.FC<{
           <DataGrid
             rows={schoolList}
             columns={schoolColumns}
+            rowCount={page.totalElements}
             initialState={{
               columns: {
                 columnVisibilityModel: {
@@ -151,10 +165,12 @@ const SchoolTable: React.FC<{
                 },
               },
               pagination: {
-                paginationModel: { page: 0, pageSize: 25 },
+                paginationModel: { page: 0, pageSize: page.size },
               },
             }}
             disableRowSelectionOnClick
+            paginationMode="server"
+            onPaginationModelChange={setPaginationModel}
           />
         </Box>
       </Stack>

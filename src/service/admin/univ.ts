@@ -15,13 +15,33 @@ import { SchoolSubject } from "../../domain/school/school.interface";
 import { SchoolSubjectType } from "../../policy/school";
 
 interface AdminUnivService {
-  getUnivList: (filter: UnivFilter) => Promise<Univ[]>;
+  getUnivList: ({
+    filter,
+    isPrev,
+    cursor,
+    pageSize,
+  }: {
+    filter: UnivFilter;
+    isPrev?: boolean;
+    cursor?: Univ;
+    pageSize?: number;
+  }) => Promise<{ data: Univ[]; totalElements: number }>;
   getUniv: (id: string) => Promise<Univ | null>;
   editUniv: (req: EditRequest) => Promise<void>;
   addUniv: (req: CreateRequest) => Promise<{ id: string }>;
   deleteUniv: (req: DeleteRequest) => Promise<void>;
 
-  getDepartmentList: (filter: UnivFilter) => Promise<Department[]>;
+  getDepartmentList: ({
+    filter,
+    isPrev,
+    cursor,
+    pageSize,
+  }: {
+    filter: UnivFilter;
+    isPrev?: boolean;
+    cursor: Department;
+    pageSize: number;
+  }) => Promise<{ data: Department[]; totalElements: number }>;
   addDepartment: (req: DepartmentCreateRequest) => Promise<{ id: string }>;
   deleteDepartment: (req: DepartmentDeleteRequest) => Promise<void>;
   editDepartment: (req: DepartmentEditRequest) => Promise<void>;

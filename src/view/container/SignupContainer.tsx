@@ -275,8 +275,12 @@ export default function SignupContainer({
           }
           return null;
         },
-        async getSchoolList() {
-          const schools = await schoolRepository.findBy({ nameKeyword: "" });
+        async getSchoolList({ filter, cursor, pageSize }) {
+          const schools = await schoolRepository.findBy({
+            filter,
+            cursor,
+            pageSize,
+          });
           return schools;
         },
       }}

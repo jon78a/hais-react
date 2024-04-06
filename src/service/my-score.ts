@@ -14,7 +14,13 @@ interface MyScoreService {
     form: StudentGrade
   ) => Promise<void>;
   showSubjectSummaryList: (label: SubjectLabel) => Promise<SubjectSummary[]>;
-  getSchoolList: () => Promise<School[]>;
+  getSchoolList: ({
+    cursor,
+    pageSize,
+  }: {
+    cursor?: School;
+    pageSize: number;
+  }) => Promise<{ data: School[]; totalElements: number }>;
   saveMySchool: (schoolId: string) => Promise<void>;
   getStudent: () => Promise<Student | undefined>;
   getCommonSubjects: () => Promise<SchoolSubject[]>;

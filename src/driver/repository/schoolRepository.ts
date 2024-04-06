@@ -8,6 +8,10 @@ import {
   setDoc,
   deleteDoc,
   where,
+  startAfter,
+  limit,
+  startAt,
+  endBefore,
 } from "firebase/firestore";
 import { CollectionName } from "../firebase/constants";
 import { firebaseDb } from "../firebase";
@@ -49,18 +53,31 @@ export const optionalSubjectRef = collection(
 );
 
 const schoolRepository: SchoolRepository = {
-  async findBy(filter) {
-    const conds = [];
-    conds.push(orderBy("name"));
+  async findBy({ filter, cursor, pageSize = 10, isPrev = false }) {
+    const queryForData = query(
+      schoolRef,
+      orderBy("name"),
+      ...(cursor
+        ? [isPrev ? endBefore(cursor.name) : startAfter(cursor.name)]
+        : []),
+      limit(pageSize),
+      ...(filter?.nameKeyword ? [where("name", ">=", filter.nameKeyword)] : [])
+    );
 
-    const q = query(schoolRef);
+    const queryForCount = query(
+      schoolRef,
+      ...(filter?.nameKeyword ? [where("name", ">=", filter.nameKeyword)] : [])
+    );
 
-    const snapshot = await getDocs(q);
-    let _list: School[] = [];
-    snapshot.forEach((doc) => {
-      _list.push(doc.data() as School);
-    });
-    return _list.filter((v) => v.name.includes(filter.nameKeyword));
+    const [dataSnapshot, countSnapshot] = await Promise.all([
+      getDocs(queryForData),
+      getDocs(queryForCount),
+    ]);
+
+    const data = dataSnapshot.docs.map((doc) => doc.data() as School);
+    const totalElements = countSnapshot.docs.length;
+
+    return { data, totalElements };
   },
   async findById(id) {
     const docRef = doc(schoolRef, id);
@@ -92,25 +109,35 @@ const schoolRepository: SchoolRepository = {
   async delete(id) {
     await deleteDoc(doc(schoolRef, id));
   },
-  async findSubjectBy(filter) {
+  async findSubjectBy({ filter }) {
     let _subjects: SchoolSubject[] = [];
 
-    const conds = [];
-    conds.push(orderBy("name"));
+    const commonSubjectQuery = query(
+      commonSubjectRef,
+      orderBy("name"),
+      ...(filter?.nameKeyword ? [where("name", ">=", filter.nameKeyword)] : [])
+    );
 
-    const commonSubjectQuery = query(commonSubjectRef);
-    const commonSubjectsSnapshot = await getDocs(commonSubjectQuery);
+    const optionalSubjectQuery = query(
+      optionalSubjectRef,
+      orderBy("name"),
+      ...(filter?.nameKeyword ? [where("name", ">=", filter.nameKeyword)] : [])
+    );
+
+    const [commonSubjectsSnapshot, optionalSubjectsSnapshot] =
+      await Promise.all([
+        getDocs(commonSubjectQuery),
+        getDocs(optionalSubjectQuery),
+      ]);
+
     commonSubjectsSnapshot.forEach((doc) => {
       _subjects.push(doc.data() as SchoolSubject);
     });
-
-    const optionalSubjectQuery = query(optionalSubjectRef);
-    const subjectsSnapshot = await getDocs(optionalSubjectQuery);
-    subjectsSnapshot.forEach((doc) => {
+    optionalSubjectsSnapshot.forEach((doc) => {
       _subjects.push(doc.data() as SchoolSubject);
     });
 
-    return _subjects.filter((v) => v.name.includes(filter.nameKeyword));
+    return _subjects;
   },
   async getCommonSubjects() {
     let _subjects: SchoolSubject[] = [];

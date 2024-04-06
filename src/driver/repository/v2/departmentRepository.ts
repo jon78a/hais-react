@@ -4,10 +4,14 @@ import {
   collection,
   deleteDoc,
   doc,
+  endBefore,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   setDoc,
+  startAfter,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -19,7 +23,6 @@ import { v4 as uuidv4 } from "uuid";
 import { firebaseDb } from "../../firebase";
 import { CollectionName } from "../../firebase/constants";
 import { VERSION, YEAR } from "../_constant/constant";
-import { orderBy } from "lodash";
 
 const departmentRef = collection(
   firebaseDb,
@@ -31,21 +34,31 @@ const departmentRef = collection(
 );
 
 const departmentRepository: DepartmentRepository = {
-  async findBy(filter) {
-    const conds = [];
-    conds.push(orderBy("name"));
+  async findBy({ filter, cursor, pageSize = 10, isPrev = false }) {
+    const queryForData = query(
+      departmentRef,
+      orderBy("name"),
+      ...(cursor
+        ? [isPrev ? endBefore(cursor.name) : startAfter(cursor.name)]
+        : []),
+      limit(pageSize),
+      ...(filter?.nameKeyword ? [where("name", ">=", filter.nameKeyword)] : [])
+    );
 
-    let q = query(departmentRef);
-    if (filter.nameKeyword) {
-      q = query(departmentRef, where("name", ">=", filter.nameKeyword));
-    }
+    const queryForCount = query(
+      departmentRef,
+      ...(filter?.nameKeyword ? [where("name", ">=", filter.nameKeyword)] : [])
+    );
 
-    const snapshot = await getDocs(q);
-    let _list: Department[] = [];
-    snapshot.forEach((doc) => {
-      _list.push(doc.data() as Department);
-    });
-    return _list;
+    const [dataSnapshot, countSnapshot] = await Promise.all([
+      getDocs(queryForData),
+      getDocs(queryForCount),
+    ]);
+
+    const data = dataSnapshot.docs.map((doc) => doc.data() as Department);
+    const totalElements = countSnapshot.docs.length;
+
+    return { data, totalElements };
   },
   async findByUnivId(name, univId) {
     const conds = [];

@@ -1,13 +1,16 @@
 import { useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import useScreenHeight from "../../../../hooks/useScreenHeight";
 import { DepartmentTableContext, ModalState } from "./DepartmentTableContext";
 
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import { departmentListState } from "../../../../schema/states/AdminUniv";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  departmentListState,
+  departmentPaginationState,
+} from "../../../../schema/states/AdminUniv";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
@@ -27,6 +30,19 @@ const DepartmentTable: React.FC<{
   const [rowSelection, setRowSelection] = useState<Department | null>(null);
   const [modalState, setModalState] = useState<ModalState>(null);
   const [keywordValue, setKeywordValue] = useState<string>("");
+  const [page, setPage] = useRecoilState(departmentPaginationState);
+
+  const setPaginationModel = (model: GridPaginationModel): void => {
+    setPage((prev) => {
+      return {
+        ...prev,
+        cursor: departmentList[model.pageSize - 1],
+        page: model.page,
+        isPrev: prev.page > model.page,
+      };
+    });
+  };
+
   const subjectColumns = useMemo<GridColDef[]>(
     () => [
       { field: "id" },
@@ -140,6 +156,7 @@ const DepartmentTable: React.FC<{
             disableRowSelectionOnClick
             rows={departmentList}
             columns={subjectColumns}
+            rowCount={page.totalElements}
             initialState={{
               columns: {
                 columnVisibilityModel: {
@@ -147,9 +164,11 @@ const DepartmentTable: React.FC<{
                 },
               },
               pagination: {
-                paginationModel: { page: 0, pageSize: 25 },
+                paginationModel: { page: 0, pageSize: page.size },
               },
             }}
+            paginationMode="server"
+            onPaginationModelChange={setPaginationModel}
           />
         </Box>
       </Stack>

@@ -61,12 +61,32 @@ export interface Guideline {
 export interface UnivRepository {
   save: (form: Univ, id?: string) => Promise<{ id: string }>;
   delete: (key: string) => Promise<void>;
-  findBy: (filter: UnivFilter) => Promise<Univ[]>;
+  findBy: ({
+    filter,
+    cursor,
+    pageSize,
+    isPrev,
+  }: {
+    filter?: UnivFilter;
+    cursor?: Univ;
+    pageSize: number;
+    isPrev?: boolean;
+  }) => Promise<{ data: Univ[]; totalElements: number }>;
   findById: (id: string) => Promise<Univ | null>;
 }
 
 export interface DepartmentRepository {
-  findBy: (filter: UnivFilter) => Promise<Department[]>;
+  findBy: ({
+    filter,
+    cursor,
+    pageSize,
+    isPrev,
+  }: {
+    filter?: UnivFilter;
+    cursor?: Department;
+    pageSize: number;
+    isPrev?: boolean;
+  }) => Promise<{ data: Department[]; totalElements: number }>;
   save: (form: Department, id?: string) => Promise<{ id: string }>;
   delete: (key: string) => Promise<void>;
   findByUnivId: (name: string, univId: string) => Promise<Department[]>;

@@ -1,7 +1,6 @@
 import { SchoolRepository } from "../../../domain/school/school.interface";
 import {
   DepartmentRepository,
-  Guideline,
   UnivRepository,
 } from "../../../domain/univ/univ.interface";
 import { AdminUnivContext } from "../../../service/admin/univ";
@@ -23,8 +22,13 @@ const AdminUnivContainer = ({
   return (
     <AdminUnivContext.Provider
       value={{
-        async getUnivList(filter) {
-          const payload = await univRepository.findBy({ ...filter });
+        async getUnivList({ filter, pageSize = 10, cursor, isPrev = false }) {
+          const payload = await univRepository.findBy({
+            filter,
+            pageSize,
+            cursor,
+            isPrev,
+          });
           return payload;
         },
         async addUniv(req) {

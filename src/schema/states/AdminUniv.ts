@@ -8,6 +8,8 @@ import {
   GuidelineDto,
 } from "../types/AdminUniv";
 import { SchoolSubjectDto } from "../types/AdminSchool";
+import { TablePagination } from "../types/Table";
+import { Department } from "../../domain/univ/univ.interface";
 
 export const univTabState = atom<UnivTabItem>({
   key: "/schema/states/AdminUniv/SchoolTab",
@@ -49,4 +51,24 @@ export const guideLineFormState = atom<Partial<GuidelineDto> | null>({
 export const subjectListState = atom<SchoolSubjectDto[]>({
   key: "/schema/states/AdminUniv/subjectList",
   default: [],
+});
+
+export const univPaginationState = atom<TablePagination<UnivDto>>({
+  key: "schema/states/AdminUniv/univPagination",
+  default: {
+    page: 0,
+    size: 10,
+    totalElements: 0,
+    isPrev: false,
+  },
+});
+
+export const departmentPaginationState = atom<TablePagination<DepartmentDto>>({
+  key: "schema/states/AdminUniv/departmentPagination",
+  default: {
+    page: 0,
+    size: 10,
+    totalElements: 0,
+    isPrev: false,
+  },
 });

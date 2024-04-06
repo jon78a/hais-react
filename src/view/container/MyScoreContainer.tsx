@@ -96,8 +96,8 @@ const MyScoreContainer = ({
           const student = await studentRepository.findByUser(userId);
           return student;
         },
-        async getSchoolList() {
-          const schools = await schoolRepository.findBy({ nameKeyword: "" });
+        async getSchoolList({ cursor, pageSize }) {
+          const schools = await schoolRepository.findBy({ cursor, pageSize });
           return schools;
         },
         async saveMySchool(schoolId) {

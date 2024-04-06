@@ -4,6 +4,7 @@ import type { StudentProfile, SignupRequest } from "../schema/types/Signup";
 import type { ExceptionDetail } from "../types";
 import { SocialType } from "../policy/auth";
 import { School } from "../domain/school/school.interface";
+import { SchoolFilter } from "../schema/types/AdminSchool";
 
 interface SignupService {
   submitStudentInfo: (form: StudentProfile) => void;
@@ -18,7 +19,15 @@ interface SignupService {
     passwordConfirm: string
   ) => ExceptionDetail | null;
   checkName: (value: string) => ExceptionDetail | null;
-  getSchoolList: () => Promise<School[]>;
+  getSchoolList: ({
+    filter,
+    cursor,
+    pageSize,
+  }: {
+    filter?: SchoolFilter;
+    cursor?: School;
+    pageSize: number;
+  }) => Promise<{ data: School[]; totalElements: number }>;
 }
 
 export const SignupContext = createContext<SignupService | undefined>(

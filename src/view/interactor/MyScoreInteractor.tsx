@@ -17,6 +17,7 @@ import Divider from "@mui/material/Divider";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import SchoolSelect from "../presenter/myScore.ui/SchoolSelect";
+import { schoolPaginationState } from "../../schema/states/AdminSchool";
 
 const MyScoreInteractor = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,16 +30,17 @@ const MyScoreInteractor = () => {
   const setGradeList = useSetRecoilState(gradeListState);
   const [student, setStudent] = useRecoilState(studentState);
   const selectedSchoolId = useRecoilValue(selectedSchoolIdState);
+  const page = useRecoilValue(schoolPaginationState);
   const refetch = useCallback(() => {
     setLoading(true);
 
     Promise.all([
-      service.getSchoolList(),
+      service.getSchoolList({ pageSize: 1000 }),
       service.getStudent(),
       service.getCommonSubjects(),
     ]).then((dataList) => {
       const [schoolList, student, subjectList] = dataList;
-      setSchoolList(schoolList);
+      setSchoolList(schoolList.data);
       setStudent(student);
       setSubjectList(subjectList);
       setLoading(false);

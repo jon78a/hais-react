@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import useScreenHeight from "../../../../hooks/useScreenHeight";
 import { TableContext, ModalState } from "./UnivContext";
 
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
@@ -16,7 +16,10 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { Univ } from "../../../../domain/univ/univ.interface";
 import { UnivTableUx } from "../univ.ux/UnivTableUx";
-import { univListState } from "../../../../schema/states/AdminUniv";
+import {
+  univListState,
+  univPaginationState,
+} from "../../../../schema/states/AdminUniv";
 
 const UnivTable: React.FC<{
   ux: UnivTableUx;
@@ -29,8 +32,19 @@ const UnivTable: React.FC<{
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const screenHeight = useScreenHeight();
   const [rowSelection, setRowSelection] = useState<Univ | null>(null);
+  const [page, setPage] = useRecoilState(univPaginationState);
 
   const univList = useRecoilValue(univListState);
+  const setPaginationModel = (model: GridPaginationModel): void => {
+    setPage((prev) => {
+      return {
+        ...prev,
+        cursor: univList[model.pageSize - 1],
+        page: model.page,
+        isPrev: prev.page > model.page,
+      };
+    });
+  };
   const univColumns = useMemo<GridColDef[]>(
     () => [
       { field: "id" },
@@ -137,6 +151,7 @@ const UnivTable: React.FC<{
           <DataGrid
             rows={univList}
             columns={univColumns}
+            rowCount={page.totalElements}
             initialState={{
               columns: {
                 columnVisibilityModel: {
@@ -144,10 +159,12 @@ const UnivTable: React.FC<{
                 },
               },
               pagination: {
-                paginationModel: { page: 0, pageSize: 25 },
+                paginationModel: { page: 0, pageSize: page.size },
               },
             }}
             disableRowSelectionOnClick
+            paginationMode="server"
+            onPaginationModelChange={setPaginationModel}
           />
         </Box>
       </Stack>

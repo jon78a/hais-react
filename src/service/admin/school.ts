@@ -12,13 +12,27 @@ import {
 import { School, SchoolSubject } from "../../domain/school/school.interface";
 
 interface AdminSchoolService {
-  getSchoolList: (filter: SubjectFilter) => Promise<School[]>;
+  getSchoolList: ({
+    filter,
+    cursor,
+    pageSize,
+    isPrev,
+  }: {
+    filter?: SubjectFilter;
+    cursor?: School;
+    pageSize: number;
+    isPrev?: boolean;
+  }) => Promise<{ data: School[]; totalElements: number }>;
   getSchool: (id: string) => Promise<School | null>;
   editSchool: (req: EditRequest) => Promise<void>;
   addSchool: (req: CreateRequest) => Promise<{ id: string }>;
   deleteSchool: (req: DeleteRequest) => Promise<void>;
 
-  getSubjectList: (filter: SubjectFilter) => Promise<SchoolSubject[]>;
+  getSubjectList: ({
+    filter,
+  }: {
+    filter: SubjectFilter;
+  }) => Promise<SchoolSubject[]>;
   getSubject: ({
     isCommonSubject,
     subjectId,

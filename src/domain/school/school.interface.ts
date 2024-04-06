@@ -41,7 +41,17 @@ export interface SchoolSubject {
 export interface SchoolRepository {
   save: (form: School, id?: string) => Promise<{ id: string }>;
   delete: (key: string) => Promise<void>;
-  findBy: (filter: SchoolFilter) => Promise<School[]>;
+  findBy: ({
+    filter,
+    cursor,
+    pageSize,
+    isPrev,
+  }: {
+    filter?: SchoolFilter;
+    cursor?: School;
+    pageSize: number;
+    isPrev?: boolean;
+  }) => Promise<{ data: School[]; totalElements: number }>;
   findById: (id: string) => Promise<School | null>;
 
   saveSubject: ({
@@ -62,7 +72,11 @@ export interface SchoolRepository {
     groups: string[],
     schoolId: string
   ) => Promise<SchoolSubject[]>;
-  findSubjectBy: (filter: SchoolFilter) => Promise<SchoolSubject[]>;
+  findSubjectBy: ({
+    filter,
+  }: {
+    filter: SchoolFilter;
+  }) => Promise<SchoolSubject[]>;
   findSubjectByType: (
     type: SchoolSubjectType
   ) => Promise<SchoolSubject[] | null>;

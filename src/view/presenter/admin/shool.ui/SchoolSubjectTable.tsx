@@ -142,7 +142,7 @@ const SchoolSubjectTable: React.FC<{
                 },
               },
               pagination: {
-                paginationModel: { page: 0, pageSize: 25 },
+                paginationModel: { page: 0, pageSize: 10 },
               },
             }}
           />

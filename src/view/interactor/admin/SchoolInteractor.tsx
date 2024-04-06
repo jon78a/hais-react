@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
@@ -7,6 +7,7 @@ import SchoolTabs from "../../presenter/admin/shool.ui/SchoolTabs";
 import {
   schoolFilterState,
   schoolListState,
+  schoolPaginationState,
   schoolState,
   schoolSubjectListState,
   schoolTabState,
@@ -14,6 +15,7 @@ import {
 import SchoolTabContent from "../../presenter/admin/shool.ui/SchoolTabContent";
 import SchoolSubjectTabContent from "../../presenter/admin/shool.ui/SchoolSubjectTabContent";
 import { userState } from "../../../schema/states/User";
+import { School, SchoolSubject } from "../../../domain/school/school.interface";
 
 const AdminSchoolInteractor = () => {
   const [tabItem, setTabItem] = useRecoilState(schoolTabState);
@@ -21,6 +23,7 @@ const AdminSchoolInteractor = () => {
   const [schoolList, setSchoolList] = useRecoilState(schoolListState);
   const user = useRecoilValue(userState);
   const setSchool = useSetRecoilState(schoolState);
+  const [page, setPage] = useRecoilState(schoolPaginationState);
 
   const [schoolSubjectList, setSchoolSubjectList] = useRecoilState(
     schoolSubjectListState
@@ -30,28 +33,60 @@ const AdminSchoolInteractor = () => {
   const isSubjectTabSelected = tabItem === "SUBJECT";
 
   const service = useAdminSchoolService();
+  const fetchSchoolList = useCallback((): void => {
+    service
+      .getSchoolList({
+        filter,
+        cursor: page.cursor as School,
+        pageSize: page.size,
+        isPrev: page.isPrev,
+      })
+      .then((data) => {
+        setSchoolList(data.data);
+        setPage((prev) => ({ ...prev, totalElements: data.totalElements }));
+      });
+  }, [
+    filter,
+    page.cursor,
+    page.isPrev,
+    page.size,
+    service,
+    setPage,
+    setSchoolList,
+  ]);
 
   useEffect(() => {
     if (isSchoolTabSelected) {
-      service.getSchoolList(filter).then((data) => {
-        setSchoolList(data);
-      });
+      fetchSchoolList();
     }
-  }, [filter, isSchoolTabSelected, service, setSchoolList]);
+  }, [fetchSchoolList, isSchoolTabSelected]);
 
   useEffect(() => {
     if (isSubjectTabSelected) {
-      service.getSubjectList(filter).then((data) => {
-        const subjectHavingSchoolName = data.map((subject) => ({
-          ...subject,
-          schoolName: schoolList.find(
-            (school) => school.id === subject.schoolId
-          )?.name,
-        }));
-        setSchoolSubjectList(subjectHavingSchoolName);
-      });
+      service
+        .getSubjectList({
+          filter,
+        })
+        .then((data) => {
+          const subjectHavingSchoolName = data.map((subject) => ({
+            ...subject,
+            schoolName: schoolList.find(
+              (school) => school.id === subject.schoolId
+            )?.name,
+          }));
+          setSchoolSubjectList(subjectHavingSchoolName);
+        });
     }
-  }, [filter, isSubjectTabSelected, schoolList, service, setSchoolSubjectList]);
+  }, [
+    filter,
+    isSubjectTabSelected,
+    page.cursor,
+    page.isPrev,
+    page.size,
+    schoolList,
+    service,
+    setSchoolSubjectList,
+  ]);
 
   const renderTabContent: React.JSX.Element | undefined = useMemo(() => {
     if (isSchoolTabSelected) {
@@ -100,15 +135,12 @@ const AdminSchoolInteractor = () => {
                 },
               };
               service.addSchool(updatedForm).then(({ id }) => {
-                setSchoolList((prev) => [...prev, { ...form.data, id }]);
+                fetchSchoolList();
               });
             },
             delete: (req) => {
               service.deleteSchool(req).then(() => {
-                const newSchoolList = schoolList.filter(
-                  (school) => school.id !== req.id
-                );
-                setSchoolList(newSchoolList);
+                fetchSchoolList();
               });
             },
           }}

@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useSignupService } from "../../service/signup";
 import { SignupMain } from "../presenter/signup.ui/SignupMain";
@@ -12,6 +12,7 @@ import {
 import { StudentProfileStep } from "../presenter/signup.ui/StudentProfileStep";
 import type { StudentCategoryCode } from "../../policy/school";
 import { studentState } from "../../domain/subject/school.impl";
+import { debounce } from "lodash";
 
 const SignupInteractor: React.FC = () => {
   const service = useSignupService();
@@ -22,12 +23,22 @@ const SignupInteractor: React.FC = () => {
     useRecoilState(studentProfileState);
   const setSelectedSchool = useSetRecoilState(schoolListState);
   const studentSnapshot = useRecoilValue(studentState);
+  const [schoolName, setSchoolName] = useState("");
+
+  const getSchoolWithFilter = debounce((nameKeyword: string) => {
+    service
+      .getSchoolList({
+        pageSize: 100,
+        ...(nameKeyword && { filter: { nameKeyword: nameKeyword } }),
+      })
+      .then((data) => {
+        setSelectedSchool(data.data);
+      });
+  }, 1000);
 
   useEffect(() => {
-    service.getSchoolList().then((data) => {
-      setSelectedSchool(data);
-    });
-  }, [service, setSelectedSchool]);
+    getSchoolWithFilter(schoolName);
+  }, [getSchoolWithFilter, schoolName]);
 
   useEffect(() => {
     if (studentSnapshot.loading) {
@@ -104,11 +115,13 @@ const SignupInteractor: React.FC = () => {
             service.resetRequest();
           }}
           selectSchool={(value) => {
-            console.log("value", value);
             setStudentProfile({
               ...studentProfile,
               schoolId: value,
             });
+          }}
+          onChangeSchoolName={(value) => {
+            setSchoolName(value);
           }}
         />
       );

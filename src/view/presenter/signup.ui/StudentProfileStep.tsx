@@ -129,7 +129,12 @@ export const StudentProfileStep: React.FC<StudentProfileStepUx> = (ux) => {
               options={schoolList}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
-                <TextField {...params} label="대학명 입력" size={"small"} />
+                <TextField
+                  {...params}
+                  label="학교명 입력"
+                  size={"small"}
+                  onChange={(e) => ux.onChangeSchoolName(e.target.value)}
+                />
               )}
             ></Autocomplete>
           </div>

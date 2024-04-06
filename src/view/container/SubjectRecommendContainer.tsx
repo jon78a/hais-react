@@ -65,8 +65,11 @@ const SubjectRecommendContainer = ({
     <SubjectRecommendContext.Provider
       value={{
         async suggestUniv(nameKeyword) {
-          const univs = await univRepository.findBy({ nameKeyword });
-          return univs.map((univ) => {
+          const univs = await univRepository.findBy({
+            filter: { nameKeyword },
+            pageSize: 1000,
+          });
+          return univs.data.map((univ) => {
             return {
               id: univ.id,
               name: univ.name,

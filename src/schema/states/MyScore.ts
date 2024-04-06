@@ -7,7 +7,7 @@ import {
 } from "../types/MyScore";
 import { School } from "../../domain/school/school.interface";
 import { Student } from "../../domain/subject/school.interface";
-import { SchoolSubjectDto } from "../types/AdminSchool";
+import { SchoolDto, SchoolSubjectDto } from "../types/AdminSchool";
 
 export const subjectListState = atom<SchoolSubjectDto[]>({
   key: "schema/states/MyScore/SchoolSubject",
@@ -34,7 +34,7 @@ export const subjectSummaryListState = atom<SubjectSummary[]>({
   default: [],
 });
 
-export const schoolListState = atom<School[]>({
+export const schoolListState = atom<SchoolDto[]>({
   key: "schema/states/MyScore/SchoolList",
   default: [],
 });

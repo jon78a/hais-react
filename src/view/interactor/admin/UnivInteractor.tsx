@@ -1,12 +1,14 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { debounce } from "lodash";
 
 import {
   departmentListState,
+  departmentPaginationState,
   guideLineFormState,
   univFilterState,
   univListState,
+  univPaginationState,
   univState,
   univTabState,
 } from "../../../schema/states/AdminUniv";
@@ -15,6 +17,7 @@ import UnivTabContent from "../../presenter/admin/univ.ui/UnivTabContent";
 import UnivTabs from "../../presenter/admin/univ.ui/UnivTabs";
 import DepartmentTabContent from "../../presenter/admin/univ.ui/DepartmentTabContent";
 import { userState } from "../../../schema/states/User";
+import { Department, Univ } from "../../../domain/univ/univ.interface";
 
 const AdminUnivInteractor = () => {
   const [tabItem, setTabItem] = useRecoilState(univTabState);
@@ -24,6 +27,10 @@ const AdminUnivInteractor = () => {
   const [departmentList, setDepartmentList] =
     useRecoilState(departmentListState);
   const user = useRecoilValue(userState);
+  const [page, setPage] = useRecoilState(univPaginationState);
+  const [departmentPage, setDepartmentPage] = useRecoilState(
+    departmentPaginationState
+  );
 
   const guidelineForm = useRecoilValue(guideLineFormState);
 
@@ -31,25 +38,68 @@ const AdminUnivInteractor = () => {
   const isSubjectTabSelected = tabItem === "DEPARTMENT";
 
   const service = useAdminUnivService();
+  const fetchUnivList = useCallback((): void => {
+    service
+      .getUnivList({
+        filter,
+        cursor: page.cursor as Univ,
+        isPrev: page.isPrev,
+        pageSize: page.size,
+      })
+      .then((data) => {
+        setUnivList(data.data);
+        setPage((prev) => ({ ...prev, totalElements: data.totalElements }));
+      });
+  }, [
+    filter,
+    page.cursor,
+    page.isPrev,
+    page.size,
+    service,
+    setPage,
+    setUnivList,
+  ]);
 
-  useEffect(() => {
-    service.getUnivList(filter).then((data) => {
-      setUnivList(data);
-    });
-  }, [filter, service, setUnivList]);
-
-  useEffect(() => {
-    if (isSubjectTabSelected) {
-      service.getDepartmentList(filter).then((data) => {
-        const departmentListHavingUnivName = data.map((department) => ({
+  const fetchDepartmentList = useCallback((): void => {
+    service
+      .getDepartmentList({
+        filter,
+        cursor: departmentPage.cursor as Department,
+        isPrev: departmentPage.isPrev,
+        pageSize: departmentPage.size,
+      })
+      .then((data) => {
+        const departmentListHavingUnivName = data.data.map((department) => ({
           ...department,
           universityName: univList.find((u) => u.id === department.universityId)
             ?.name,
         }));
+        setDepartmentPage((prev) => ({
+          ...prev,
+          totalElements: data.totalElements,
+        }));
         setDepartmentList(departmentListHavingUnivName);
       });
+  }, [
+    departmentPage.cursor,
+    departmentPage.isPrev,
+    departmentPage.size,
+    filter,
+    service,
+    setDepartmentList,
+    setDepartmentPage,
+    univList,
+  ]);
+
+  useEffect(() => {
+    fetchUnivList();
+  }, [fetchUnivList]);
+
+  useEffect(() => {
+    if (isSubjectTabSelected) {
+      fetchDepartmentList();
     }
-  }, [filter, isSubjectTabSelected, service, setDepartmentList, univList]);
+  }, [fetchDepartmentList, isSubjectTabSelected]);
 
   const renderTabContent: React.JSX.Element | undefined = useMemo(() => {
     if (isUnivTabSelected) {
@@ -96,15 +146,12 @@ const AdminUnivInteractor = () => {
                 },
               };
               service.addUniv(updatedForm).then(({ id }) => {
-                setUnivList((prev) => [...prev, { ...form.data, id }]);
+                fetchUnivList();
               });
             },
             delete: (req) => {
               service.deleteUniv(req).then(() => {
-                const newSchoolList = univList.filter(
-                  (univ) => univ.id !== req.id
-                );
-                setUnivList(newSchoolList);
+                fetchUnivList();
               });
             },
           }}
@@ -129,15 +176,12 @@ const AdminUnivInteractor = () => {
                 },
               };
               service.addDepartment(updatedReq).then(({ id }) => {
-                setDepartmentList((prev) => [...prev, { ...req.data, id }]);
+                fetchDepartmentList();
               });
             },
             delete(req) {
               service.deleteDepartment(req).then(() => {
-                const newDepartmentList = departmentList.filter(
-                  (department) => department.id !== req.id
-                );
-                setDepartmentList(newDepartmentList);
+                fetchDepartmentList();
               });
             },
             modify(form) {
@@ -219,6 +263,7 @@ const AdminUnivInteractor = () => {
     setUniv,
     setUnivList,
     univList,
+    user?.email,
   ]);
 
   return (

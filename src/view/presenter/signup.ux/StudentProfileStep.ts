@@ -5,6 +5,7 @@ export interface StudentProfileStepUx {
   selectSchoolYear: (value: number) => void;
   selectSubjectCategory: (value: string) => void;
   selectSchool: (value: string) => void;
+  onChangeSchoolName: (value: string) => void;
   inputTargetMajors: (values: string[]) => void;
   clickSignupDone: () => void;
   back: () => void;

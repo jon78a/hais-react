@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import { DepartmentTableContext } from "./DepartmentTableContext";
 import type { DepartmentCreateRequest } from "../../../../schema/types/AdminUniv";
