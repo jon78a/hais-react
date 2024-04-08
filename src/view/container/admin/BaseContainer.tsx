@@ -26,16 +26,12 @@ import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import SchoolIcon from "@mui/icons-material/School";
-import SpeedIcon from "@mui/icons-material/Speed";
 import { Book } from "@mui/icons-material";
 
 const titleMap = {
   [adminRoutes.adminHome.path]: "고등학교",
-  // [adminRoutes.adminSubject.path]: "교과과목",
   [adminRoutes.adminSchool.path]: "고등학교",
   [adminRoutes.adminUniversity.path]: "대학교",
-  // [adminRoutes.adminMajor.path]: "교과과목",
-  [adminRoutes.adminMeasurement.path]: "가중치 관리",
 };
 
 const BaseContainerContext = createContext<
@@ -87,13 +83,6 @@ const SideNavBar = () => {
           py: 1,
         }}
       >
-        {/*
-          * 과거 교과관리(고등학교)
-         <LinkItem
-          icon={<MenuBookIcon />}
-          title={titleMap[routes.adminSubject.path]}
-          href={routes.adminSubject.path}
-        /> */}
         <LinkItem
           icon={<SchoolIcon />}
           title={titleMap[routes.adminSchool.path]}
@@ -104,19 +93,6 @@ const SideNavBar = () => {
           title={titleMap[routes.adminUniversity.path]}
           href={routes.adminUniversity.path}
         />
-
-        {/* 
-          * 과거 학과관리(대학교)
-        <LinkItem
-          icon={<Book />}
-          title={titleMap[routes.adminMajor.path]}
-          href={routes.adminMajor.path}
-        /> */}
-        {/* <LinkItem
-          icon={<SpeedIcon />}
-          title={titleMap[routes.adminMeasurement.path]}
-          href={routes.adminMeasurement.path}
-        /> */}
       </Stack>
     </Drawer>
   );
