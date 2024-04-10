@@ -4,8 +4,11 @@ interface AuthorizeService {
   isLogined: () => Promise<boolean>;
   terminateSession: () => Promise<void>;
   isAdmin: () => Promise<boolean>;
+  isPremium: () => Promise<boolean>;
 }
 
-export const AuthorizeContext = createContext<AuthorizeService | undefined>(undefined);
+export const AuthorizeContext = createContext<AuthorizeService | undefined>(
+  undefined
+);
 
 export const useAuthorizeService = () => useContext(AuthorizeContext)!;

@@ -32,6 +32,7 @@ export const adminRoutes: AdminRoutesType = {
 
 interface PublicRoutesType {
   home: RouteExp;
+  premium: RouteExp;
   login: RouteExp;
   signup: RouteExp;
   findCredentialId: RouteExp;
@@ -46,6 +47,10 @@ export const publicRoutes: PublicRoutesType = {
   home: {
     path: "/",
     re: new RegExp("^/$"),
+  },
+  premium: {
+    path: "/premium",
+    re: new RegExp("^/premium"),
   },
   login: {
     path: "/login",
@@ -84,6 +89,7 @@ export const publicRoutes: PublicRoutesType = {
 
 interface AuthPermissionRoutesType {
   my: RouteExp;
+  myPremium: RouteExp;
   myScore: RouteExp;
 }
 
@@ -91,6 +97,10 @@ export const authPermissionRoutes: AuthPermissionRoutesType = {
   my: {
     path: "/my",
     re: new RegExp("^/my"),
+  },
+  myPremium: {
+    path: "/my/premium",
+    re: new RegExp("^/my/premium"),
   },
   myScore: {
     path: "/my/score",

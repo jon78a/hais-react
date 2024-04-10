@@ -26,3 +26,6 @@ const analytics = getAnalytics(app);
 export const firebaseDb = getFirestore(app);
 export const firebaseAuth = getAuth(app);
 export const firebaseStorage = getStorage();
+
+export const firebaseStorageURL =
+  "https://firebasestorage.googleapis.com/v0/b/hais-72666.appspot.com/o/";

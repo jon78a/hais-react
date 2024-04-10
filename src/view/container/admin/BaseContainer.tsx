@@ -27,11 +27,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import SchoolIcon from "@mui/icons-material/School";
 import { Book } from "@mui/icons-material";
+import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 
 const titleMap = {
   [adminRoutes.adminHome.path]: "고등학교",
   [adminRoutes.adminSchool.path]: "고등학교",
   [adminRoutes.adminUniversity.path]: "대학교",
+  [adminRoutes.adminPremium.path]: "구독 회원",
 };
 
 const BaseContainerContext = createContext<
@@ -92,6 +94,11 @@ const SideNavBar = () => {
           icon={<Book />}
           title={titleMap[routes.adminUniversity.path]}
           href={routes.adminUniversity.path}
+        />
+        <LinkItem
+          icon={<WorkspacePremiumRoundedIcon />}
+          title={titleMap[routes.adminPremium.path]}
+          href={routes.adminPremium.path}
         />
       </Stack>
     </Drawer>
@@ -222,6 +229,17 @@ const AdminBaseContainer = ({
               return !!session.isAdmin;
             return false;
           },
+          async isPremium() {
+            const session = await authSessionRepository.find();
+            const current = Math.floor(Date.now() / 1000);
+            if (
+              !!session &&
+              session.exp > current &&
+              session.status === "GRANT"
+            )
+              return !!session.isPremium;
+            return false;
+          },
         }}
       >
         <div className="w-screen h-screen flex flex-row">
@@ -269,9 +287,8 @@ const AdminBaseContainer = ({
                   variant={"h4"}
                   component={"h1"}
                   sx={{
-                    textDecoration: "underline",
-                    color: "primary.main",
-                    textAlign: "center",
+                    display: "none",
+                    textAlign: "left",
                     mb: 3,
                   }}
                 >

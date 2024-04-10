@@ -1,7 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
-import { AuthSession, AuthSessionRepository } from "../../domain/account/auth.interface";
+import {
+  AuthSession,
+  AuthSessionRepository,
+} from "../../domain/account/auth.interface";
 import { User } from "../../domain/account/user.interface";
 import { AUTH_SESSION_KEY } from "../sessionStorage/constants";
 import { AUTH_SESSION_TTL } from "../../policy/auth";
@@ -25,12 +28,14 @@ const authSessionRepository: AuthSessionRepository = {
       exp: Math.floor(Date.now() / 1000) + AUTH_SESSION_TTL,
       userId,
       status,
-      isAdmin: user.isAdmin || false
-    }
+      isAdmin: user.isAdmin || false,
+      isPremium: user.isPremium ?? false,
+      premiumId: user.premiumId ?? "",
+    };
 
     await setDoc(doc(firebaseDb, CollectionName.AuthSession, id), {
       ...session,
-      id
+      id,
     });
 
     sessionStorage.setItem(AUTH_SESSION_KEY, id);
@@ -55,6 +60,6 @@ const authSessionRepository: AuthSessionRepository = {
   async clear() {
     sessionStorage.removeItem(AUTH_SESSION_KEY);
   },
-}
+};
 
 export default authSessionRepository;

@@ -9,13 +9,6 @@ import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export const Carousel = () => {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
   const [isMobile, setIsMobile] = useState<boolean>();
 
   useEffect(() => {
@@ -144,7 +137,7 @@ const UnivOption: readonly UnivOptionType[] = [
 
 const HomePage = (): JSX.Element => {
   const screenWidth = window.screen.width;
-  const screenHeight = window.screen.height;
+
   return (
     <>
       <div

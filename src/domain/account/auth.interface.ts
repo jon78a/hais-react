@@ -18,18 +18,20 @@ export interface AuthSession {
   userId: string;
   status: AuthSessionStatus;
   isAdmin?: boolean;
+  isPremium?: boolean;
+  premiumId?: string;
   createdAt?: number;
 }
 
 export interface AuthRepository {
-  register: (credential: UserCredential) => Promise<{userId: string}>;
+  register: (credential: UserCredential) => Promise<{ userId: string }>;
   sendEmail: (email: string) => Promise<void>;
   oAuthAuthorize: (oAuthProviderName: OAuthEnum) => Promise<void>;
   oAuthLogout: (oAuthProviderName: OAuthEnum) => Promise<void>;
   validateUserByCredential: (credential: UserCredential) => Promise<void>;
 }
 
-export type OAuthStatusType = "LOGIN" | "SIGNUP"
+export type OAuthStatusType = "LOGIN" | "SIGNUP";
 
 export interface OAuthStatusRepository {
   find: () => OAuthStatusType | null;

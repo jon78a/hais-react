@@ -20,6 +20,9 @@ import MyPage from "./pages/My";
 import People from "./pages/People";
 import AdminSchoolPage from "./pages/admin/School";
 import AdminUniversityPage from "./pages/admin/Univ";
+import AdminPremium from "./pages/admin/Premium";
+import MyPremiumPage from "./pages/MyPremium";
+import PremiumHomePage from "./pages/PremiumHome";
 
 function App() {
   return (
@@ -27,6 +30,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path={routes.home.path} element={<HomePage />} />
+          <Route
+            path={`${routes.premium.path}/:id`}
+            element={<PremiumHomePage />}
+          />
           <Route path={routes.signup.path} element={<SignupPage />} />
           <Route path={`${routes.oauth.path}/:slug`} element={<OAuthPage />} />
           <Route
@@ -40,6 +47,7 @@ function App() {
           />
           <Route path={`/oauth/logout/:slug`} element={<OAuthLogout />} />
           <Route path={routes.myScore.path} element={<MyScorePage />} />
+          <Route path={routes.myPremium.path} element={<MyPremiumPage />} />
           <Route path={routes.my.path} element={<MyPage />} />
           <Route path={routes.people.path} element={<People />} />
         </Route>
@@ -55,6 +63,10 @@ function App() {
           <Route
             path={adminRoutes.adminUniversity.path}
             element={<AdminUniversityPage />}
+          />
+          <Route
+            path={adminRoutes.adminPremium.path}
+            element={<AdminPremium />}
           />
         </Route>
         <Route path={"/*"} element={<NotFound />} />

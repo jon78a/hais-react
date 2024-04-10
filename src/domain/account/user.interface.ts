@@ -23,6 +23,8 @@ export interface User {
   activated: boolean;
   verified: boolean;
   isAdmin?: boolean;
+  isPremium?: boolean;
+  premiumId?: string;
   serviceAgreement: YN;
   marketingAgreement: YN;
   privacyAgreement: YN;
@@ -47,12 +49,15 @@ export interface UserExceptionMap {
 export interface UserRepository {
   findByUserId: (userId: string) => Promise<User | null>;
   save: (user: User) => Promise<void>;
-  update: (userId: string, req: {
-    activated?: boolean;
-    password?: string;
-    verified?: boolean;
-    isAdmin?: boolean;
-  }) => Promise<void>;
+  update: (
+    userId: string,
+    req: {
+      activated?: boolean;
+      password?: string;
+      verified?: boolean;
+      isAdmin?: boolean;
+    }
+  ) => Promise<void>;
   findByCredential: (email: string, password: string) => Promise<User | null>;
 }
 

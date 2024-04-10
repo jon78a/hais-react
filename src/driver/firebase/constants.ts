@@ -15,6 +15,7 @@ export class CollectionName {
   static Department = "department";
   static Year = "year";
   static Version = "version";
+  static Premium = "premium_account";
 }
 
 export class StorageSource {

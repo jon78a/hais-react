@@ -38,7 +38,7 @@ const SearchBar: React.FC<SearchBarUx> = (ux) => {
     useRecoilState(selectedMajorIdState);
 
   return (
-    <Box width="100%">
+    <Box width="100%" sx={{ py: 2 }}>
       <div className="flex sm:flex-row flex-col sm:space-x-2 sm:space-y-0 space-y-1">
         <Autocomplete
           sx={{ width: "100%", maxWidth: 400 }}

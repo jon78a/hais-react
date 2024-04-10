@@ -28,6 +28,10 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { authSessionState } from "../../schema/states/AuthSession";
+import { premiumState } from "../../schema/states/Premium";
+import { firebaseStorageURL } from "../../driver/firebase/firebase";
 
 export const BaseContainer = ({
   children,
@@ -42,6 +46,16 @@ export const BaseContainer = ({
 }): JSX.Element => {
   const { authSessionRepository, authRepository, userRepository } =
     repositories;
+
+  const setAuthSessionState = useSetRecoilState(authSessionState);
+  const premiumInfo = useRecoilValue(premiumState);
+
+  const linkUrl = premiumInfo?.id ? `/premium/${premiumInfo.id}` : "/";
+  const logoImg = premiumInfo?.id
+    ? firebaseStorageURL +
+      premiumInfo?.logoSrc?.replaceAll("/", "%2F") +
+      "?alt=media"
+    : "/logo-main.png";
 
   return (
     <AuthorizeContext.Provider
@@ -73,22 +87,45 @@ export const BaseContainer = ({
             return !!session.isAdmin;
           return false;
         },
+        async isPremium() {
+          const session = await authSessionRepository.find();
+          const current = Math.floor(Date.now() / 1000);
+          if (
+            !!session &&
+            session.exp > current &&
+            session.status === "GRANT"
+          ) {
+            const isPremium = !!session.isPremium;
+            setAuthSessionState({
+              isPremium,
+              premiumId: session.premiumId ?? "",
+            });
+            return isPremium;
+          }
+          return false;
+        },
       }}
     >
       <div className="w-screen h-screen">
-        <TopNavBarXl />
-        <TopNavBarSm />
+        <TopNavBarXl logoImg={logoImg} linkUrl={linkUrl} />
+        <TopNavBarSm logoImg={logoImg} linkUrl={linkUrl} />
         {children}
       </div>
     </AuthorizeContext.Provider>
   );
 };
 
-export function TopNavBarXl() {
+export function TopNavBarXl({
+  linkUrl,
+  logoImg,
+}: {
+  linkUrl: string;
+  logoImg: string;
+}) {
   const matchesDesktopXl = useMediaQuery("(min-width: 450px)"); //matchesDesktopXl에 최소 너비 1100px 일 때 true 또는 false를 설정
   return (
     <div
-      className={`px-6 flex justify-center ${
+      className={`px-6 flex justify-center h-[64px] my-8 ${
         matchesDesktopXl ? `` : "hidden"
       } `}
     >
@@ -99,11 +136,13 @@ export function TopNavBarXl() {
           boxShadow: "none",
         }}
       >
-        <div className="flex flex-row items-center justify-between py-4 mx-auto w-full">
-          <Link to={"/"} className="w-[60px] h-[60px]">
-            <img src="/logo-main.png" alt="logo" />
-          </Link>
-          <MyTabs />
+        <div className="flex items-center justify-between px-4 mx-auto w-full">
+          <div className="flex items-center">
+            <Link to={linkUrl} className="mr-8">
+              <img src={logoImg} alt="logo" height="48px" />
+            </Link>
+            <MyTabs />
+          </div>
           <SubNavSeparator />
         </div>
       </AppBar>
@@ -111,7 +150,13 @@ export function TopNavBarXl() {
   );
 }
 
-export function TopNavBarSm() {
+export function TopNavBarSm({
+  linkUrl,
+  logoImg,
+}: {
+  linkUrl: string;
+  logoImg: string;
+}) {
   const matchesDesktopSm = useMediaQuery("(max-width: 449px)");
   const [navHeight] = useState<number>(30);
   const StyledToolbar = styled(Toolbar)`
@@ -127,8 +172,8 @@ export function TopNavBarSm() {
       <AppBar color={"inherit"} position={"fixed"} sx={{ boxShadow: "none" }}>
         <StyledToolbar>
           <TemporaryDrawer />
-          <Link to={"/"}>
-            <img src="/logo-sm.png" alt="logo" height={`${navHeight}px`} />
+          <Link to={linkUrl}>
+            <img src={logoImg} alt="logo" height={`${navHeight}px`} />
           </Link>
         </StyledToolbar>
       </AppBar>
@@ -290,11 +335,13 @@ export function SubNavSeparator() {
   const authService = useAuthorizeService();
   const [login, setLogin] = useState<boolean | undefined>(undefined);
   const [admin, setAdmin] = useState<boolean | undefined>(undefined);
+  const [premium, setPremium] = useState<boolean | undefined>(undefined);
   const { pathname } = useLocation();
 
   useEffect(() => {
     authService.isLogined().then((result) => setLogin(result));
     authService.isAdmin().then((result) => setAdmin(result));
+    authService.isPremium().then((result) => setPremium(result));
   }, [pathname, authService]);
 
   if (typeof login === "undefined") return <></>;
